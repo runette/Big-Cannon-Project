@@ -1,0 +1,79 @@
+{% extends "header.html" %}
+
+{% block main_content %}
+<!--main-content-->
+<div class="full-width map full-height">
+<div class="map-container" id="map_canvas">
+</div>
+<div class="filters">
+<a href="#" class="toggle-filters">Filter Results</a>
+<div class="content container">
+<form id="search-anchor" class="submit" name="search-anchor" action="/database" method="post">
+<input type="hidden" name="_csrf" value="gdPIOlQ9M6j2uKSaiPiPnSzF38QXmBI8aeTKO10HnaTZvIlSGVkH0YPC8PHxkdX3c7KZm3X6aF0xiaxVHFbNlg=="> <div class="search">
+<span>
+<input type="text" id="location" class="search-field" name="SearchForm[location]" placeholder="Search for Location"> <input type="submit" class="search-btn" value=""> </span>
+</div>
+<div>
+<select id="anchor-type" name="SearchForm[anchor_type]">
+    <option value="">Material</option>
+    <option value="CAST">Cast Iron</option>
+    <option value="WROUGHT">Wrought Iron</option>
+    <option value="BRONZE">Bronze</option>
+    <option value="NOT_KNOWN">Not Known</option>
+</select> </div>
+<div>
+<select id="quality" name="SearchForm[quality]">
+<option value="">Quality</option>
+<option value="gold">Gold Records</option>
+<option value="silver">Silver Record</option>
+<option value="bronze">Bronze Records</option>
+</select> </div>
+<div>
+<select id="order" name="SearchForm[order]">
+<option value="">Order</option>
+<option value="4">Date Ascending</option>
+<option value="3" selected>Date Descending</option>
+</select> </div>
+</form> </div>
+</div>
+</div>
+<div class="full-width">
+<section class="content container">
+<div class="grid12 col"></div>
+<div class="grid12 col results">
+<div class="no-data hide">No data found.</div>
+<table id="table-entries" data-role="table" class="white map hide">
+<thead>
+<tr>
+<th>Image</th>
+<th>ID</th>
+<th>Type</th>
+<th>Description</th>
+<th>Country</th>
+<th>Author</th>
+<th>Record</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</section>
+</div>
+
+<!--end of main-content-->
+{% endblock %}
+
+{% block script %}
+
+<script src="/static/sweetalert.min.js"></script>
+<script src="/static/markerclusterer.js"></script>
+<script src="/static/gmap_functions.js"></script>
+<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBlWzi9DiiSCHjP9cy22yhnWqxyyNWXv6Q&amp;callback=initMap"></script>
+<script src="/static/yii.activeForm.js"></script>
+<script>jQuery(function ($) {
+
+jQuery('#search-anchor').yiiActiveForm([], []);
+
+});</script>
+
+${% endblock %}
