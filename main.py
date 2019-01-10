@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2007 Google Inc.
+# Copyright 2018 Paul Harwood
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import webapp2, jinja2, os, json
+import webapp2, jinja2, os, json, datetime
 from data import Gun, GUN_TYPES, RECORD_QUALITIES
 from google.appengine.ext import ndb
 
@@ -33,9 +33,19 @@ class MainHandler(webapp2.RequestHandler):
         self.response.write(template.render(template_values))
         return
 
+class About(webapp2.RequestHandler):
+    def get(self):
+        template_values = {
+            'index': 2
+        }
+        template = JINJA_ENVIRONMENT.get_template('about.html')
+        self.response.write(template.render(template_values))
+        return
+
 class Database(webapp2.RequestHandler):
     def get(self):
         template_values = {
+            'gun_types': GUN_TYPES,
             'index': 3
         }
         template = JINJA_ENVIRONMENT.get_template('database.html')
@@ -77,11 +87,13 @@ class FetchEntry(webapp2.RequestHandler):
                 description="",
                 type=Gun.Types.NOT_KNOWN,
                 names="",
-                location= ndb.GeoPt(52,0)
+                location= ndb.GeoPt(52,0),
+                date= datetime.date.today()
             )
         template_values = {
             'gun' : gun,
-            'gun_types' : GUN_TYPES
+            'gun_types' : GUN_TYPES,
+            'index' : 4,
         }
         template = JINJA_ENVIRONMENT.get_template('detail.html')
         self.response.write(template.render(template_values))
@@ -114,5 +126,6 @@ app = webapp2.WSGIApplication([
     ('/database/entry', FetchEntry),
     ('/database', Database),
     ('/map_fetch', FetchMap),
-    ('/set_entry', SetEntry)
+    ('/set_entry', SetEntry),
+    ('/about', About)
 ], debug=True)

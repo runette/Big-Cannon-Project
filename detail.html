@@ -4,7 +4,7 @@
     <div class="full-width banner parallax" style="background: url(/img/bkg/anchor-pattern.png) 0 0 repeat; background-size: 40%;">
         <section class="content container">
             <div class="entry-header">
-                <h1>Anchor : {{ gun.id }} </h1>
+                <h1>Gun ID : {{ gun.id }} </h1>
             </div>
             <div class="thumb-container">
                 <a class="fancybox" href="./Entry _ Database _ Big Anchor Project_files/2707general.jpg"><img src="./Entry _ Database _ Big Anchor Project_files/2707general.jpg" alt=""></a></div>
@@ -15,10 +15,7 @@
             <div class="grid6 col">
                 <h3 class="bold">Basic Info</h3>
                 <table data-role="table" class="white">
-                    <tbody><tr>
-                        <td>ID</td>
-                        <td><input type="text" name="id" value="{{gun.id}}" read-only></td>
-                    </tr>
+                    <tbody>
                     <tr>
                         <td>Material</td>
                         <td> <select name="type">
@@ -34,16 +31,12 @@
                         <td><input type="text" name="description" value="{{ gun.description }}" > </td>
                     </tr>
                     <tr>
-                        <td>Country</td>
-                        <td></td>
-                    </tr>
-                    <tr>
                         <td>Author</td>
                         <td><input type="text" name="name" value="{{ gun.name }}" ></td>
                     </tr>
                     <tr>
                         <td>Date Recorded</td>
-                        <td>{{gun.date}}</td>
+                        <td>{{gun.date.strftime('%d %b %Y')}}</td>
                     </tr>
                 </tbody></table>
             </div><!-- end grid -->

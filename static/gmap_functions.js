@@ -79,6 +79,8 @@
         bounds = null;
         if (arrEntries.length > 1) {
             bounds = new google.maps.LatLngBounds();
+            bounds.extend ({lat:50, lng:-6});
+            bounds.extend ({lat:59, lng:2});
         }
 
         addMarkers();
@@ -403,7 +405,7 @@
     refreshMap();
     //resize
         $(window).off('resize.map').on('resize.map', function () {
-            if(map.getZoom() < MIN_ZOOM){
+            if(map.getZoom()< MIN_ZOOM){
                 map.setZoom(MIN_ZOOM);
             }
         });
