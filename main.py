@@ -86,7 +86,7 @@ class FetchEntry(webapp2.RequestHandler):
                 id=str(Gun.get_next()),
                 description="",
                 type=Gun.Types.NOT_KNOWN,
-                names="",
+                name="",
                 location= ndb.GeoPt(52,0),
                 date= datetime.date.today()
             )
@@ -103,20 +103,25 @@ class SetEntry(webapp2.RequestHandler):
         id = self.request.get('id')
         description = self.request.get('description')
         type = self.request.get('type')
-        names = self.request.get('name')
+        name = self.request.get('name')
         location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
         type= Gun.Types.lookup_by_name(type)
-        gun = Gun(
-            id= id,
+        gun = Gun.get_id(id)
+        if not gun :
+            gun = Gun(
+                id=id
+            )
+        gun.populate(
             description= description,
             type= type,
-            names= names,
+            name= name,
             location= location,
         )
         gun.put()
         template_values = {
             'gun': gun,
-            'gun_types': GUN_TYPES
+            'gun_types': GUN_TYPES,
+            'index': 4,
         }
         template = JINJA_ENVIRONMENT.get_template('detail.html')
         self.response.write(template.render(template_values))

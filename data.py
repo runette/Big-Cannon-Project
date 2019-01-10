@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import datetime
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
@@ -39,7 +38,7 @@ class Gun(ndb.Model):
     type = ndb.msgprop.EnumProperty(Types)
     quality = ndb.msgprop.EnumProperty(Quality)
     description = ndb.StringProperty()
-    names = ndb.StringProperty()
+    name = ndb.StringProperty()
     date = ndb.DateProperty(auto_now = True)
 
     @classmethod
@@ -54,7 +53,7 @@ class Gun(ndb.Model):
                 "longitude" : gun.location.lon,
                 "anchor_type" : GUN_TYPES[gun.type.number],
                 "location"  : gun.description,
-                "names" : gun.names,
+                "names" : gun.name,
             })
         return map_data
 
@@ -69,7 +68,3 @@ class Gun(ndb.Model):
     @classmethod
     def get_id(self, id):
         return Gun.query(Gun.id == id).get()
-
-
-
-

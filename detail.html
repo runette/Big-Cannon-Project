@@ -1,6 +1,7 @@
 {% extends "header.html" %}
 {% block main_content %}
 <form action="/set_entry" method="post">
+    <input type="hidden" name="id" value="{{ gun.id }}" read-only >
     <div class="full-width banner parallax" style="background: url(/img/bkg/anchor-pattern.png) 0 0 repeat; background-size: 40%;">
         <section class="content container">
             <div class="entry-header">
@@ -82,7 +83,7 @@
                             };
 
                         location = {
-                            lat: parseFloat({{gun.location.lat }}),
+                            lat: parseFloat({{ gun.location.lat }}),
                             lng: parseFloat({{ gun.location.lon }})
                         };
 
@@ -104,7 +105,7 @@
                         <td>Latitude</td>
                         <td><input type="text" name="lat" value="{{ gun.location.lat }}" ></td>
                         <td>Longitude</td>
-                        <td>1<input type="text" name="lon" value="{{ gun.location.lon }}" ></td>
+                        <td><input type="text" name="lon" value="{{ gun.location.lon }}" ></td>
                     </tr>
                 </tbody></table>
             </div>
@@ -141,4 +142,13 @@
     </div>
     <button type="submit">Submit</button>
 </form>
+{% endblock %}
+
+{% block script %}
+
+script src="/static/sweetalert.min.js"></script>
+<script src="/static/markerclusterer.js"></script>
+
+<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBlWzi9DiiSCHjP9cy22yhnWqxyyNWXv6Q&amp;callback=initMap"></script>
+
 {% endblock %}
