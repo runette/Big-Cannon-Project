@@ -19,6 +19,7 @@ from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from protorpc import messages
 
+
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ("gold", "silver", 'bronze')
@@ -40,21 +41,32 @@ class Gun(ndb.Model):
     description = ndb.StringProperty()
     name = ndb.StringProperty()
     date = ndb.DateProperty(auto_now = True)
+    site = ndb.StringProperty()
+    context = ndb.StringProperty()
+    collection = ndb.BooleanProperty()
+    coll_name = ndb.StringProperty()
+    coll_ref = ndb.StringProperty()
+    images = ndb.TextProperty(repeated=True)
+
 
     @classmethod
     def map_data(cls):
         list = cls.query().order(Gun.id).fetch()
         map_data = []
         for gun in list :
-            map_data.append({
-                "anchor_id" : gun.id,
-                "description" : gun.description,
-                "latitude" : gun.location.lat,
-                "longitude" : gun.location.lon,
-                "anchor_type" : GUN_TYPES[gun.type.number],
-                "location"  : gun.description,
-                "names" : gun.name,
-            })
+            try:
+                map_data.append({
+                    "anchor_id" : gun.id,
+                    "description" : gun.description,
+                    "latitude" : gun.location.lat,
+                    "longitude" : gun.location.lon,
+                    "anchor_type" : GUN_TYPES[gun.type.number],
+                    "location"  : gun.description,
+                    "names" : gun.name,
+                    'filename' : gun.images[0]
+                })
+            except :
+                pass
         return map_data
 
     @classmethod
@@ -68,3 +80,10 @@ class Gun(ndb.Model):
     @classmethod
     def get_id(self, id):
         return Gun.query(Gun.id == id).get()
+
+def to_bool(bool_str):
+    """Parse the string and return the boolean value encoded or raise an exception"""
+    if isinstance(bool_str, basestring) and bool_str:
+        if bool_str.lower() in ['true', 't', '1']: return True
+        elif bool_str.lower() in ['false', 'f', '0']: return False
+

@@ -153,7 +153,7 @@
             filename = AnchorGmap['defaultThumb'];
         }
         else {
-            filename = AnchorGmap['thumbnalePath'] + entry['filename'];
+            filename =  entry['filename'];
         }
         return [
             '<div class="info" style="width: 300px;">',
@@ -243,7 +243,7 @@
             filename = AnchorGmap['defaultThumb'];
         }
         else {
-            filename = AnchorGmap['thumbnalePath'] + entry['filename'];
+            filename = entry['filename'];
         }
 
         return [

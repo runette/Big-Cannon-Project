@@ -6,9 +6,10 @@
         <section class="content container">
             <div class="entry-header">
                 <h1>Gun ID : {{ gun.id }} </h1>
+                <h1><button type="submit">Save Entry</button></h1>
             </div>
             <div class="thumb-container">
-                <a class="fancybox" href="./Entry _ Database _ Big Anchor Project_files/2707general.jpg"><img src="./Entry _ Database _ Big Anchor Project_files/2707general.jpg" alt=""></a></div>
+                <a class="fancybox" href="{{gun.images[0]}}"><img src="{{gun.images[0]}}" alt=""></a></div>
         </section>
     </div>
     <div class="full-width">
@@ -39,30 +40,43 @@
                         <td>Date Recorded</td>
                         <td>{{gun.date.strftime('%d %b %Y')}}</td>
                     </tr>
+                    <tr>
+                        <td>
+                            Image
+                        </td>
+                        <td><input type="text" name="images" value="{{gun.images}}">
+                        </td>
+                    </tr>
                 </tbody></table>
             </div><!-- end grid -->
             <div class="grid6 col">
                 <h3 class="bold">Context Info</h3>
                 <table data-role="table" class="white">
-                    <tbody><tr>
-                        <td>Context</td>
-                        <td>Outside the front of Ramsgate Maritime Museum, next to side of wet dock</td>
+                    <tr>
+                        <td>Description of Location</td>
+                        <td><input type="text" name="context" value="{{gun.context}}"></td>
                     </tr>
                     <tr>
                         <td>Site Name</td>
-                        <td></td>
+                        <td><input type="text" name="site" value="{{gun.site}}"></td>
                     </tr>
-                                        <tr>
-                        <td>Description</td>
-                        <td>Whole anchor with original stock sitting on side of wet dock in Ramsgate outside the maritime museum</td>
-                    </tr>
-                                        <tr>
+                    <tr>
                         <td>Museum / Collection</td>
-                        <td>0</td>
+                        <td>
+                            <select name="collection">
+                                <option value="true" {% if gun.collection %} selected {% endif %}>Yes</option>
+                                <option value="false" {% if not gun.collection %} selected {% endif %}>No</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Museum / Collection Name</td>
+                        <td><input type="text" name="coll_name" value="{{gun.coll_name}}"></td>
+
                     </tr>
                     <tr>
                         <td>Museum / Collection Ref</td>
-                        <td></td>
+                        <td><input type="text" name="coll_ref" value="{{gun.coll_ref}}"></td>
                     </tr>
                 </tbody></table>
             </div>
@@ -110,45 +124,29 @@
                 </tbody></table>
             </div>
             <div class="grid6 col">
-                <h3 class="bold">Date &amp; Origin</h3>
-                <table data-role="table" class="white">
-                    <tbody><tr>
-                        <td>Most probable date (year)</td>
-                        <td>1800</td>
-                    </tr>
-                    <tr>
-                        <td>Date Confidence interval (+/- years)</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td>Country of origin</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Ship Name</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Ship Type</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Ship Size (Tonnes)</td>
-                        <td>0</td>
-                    </tr>
-                </tbody></table>
+                <h3 class="bold">Photos</h3>
+
+                          <a href="{{gun.images[0]}}" data-fancybox-trigger="gun_images" data-caption="My caption">
+                              <img src="{{gun.images[0]}}" alt="" />
+                          </a>
+            </div>
+            <div class="hidden">
+                {% for i in gun.images %}
+                    <a href="{{i}}" data-fancybox="gun_images" data-caption="My caption">
+                              <img src="{{i}}" alt="" />
+                          </a>
+                {% endfor %}
             </div>
         </section>
     </div>
-    <button type="submit">Submit</button>
+
 </form>
 {% endblock %}
 
 {% block script %}
 
-script src="/static/sweetalert.min.js"></script>
+<script src="/static/sweetalert.min.js"></script>
 <script src="/static/markerclusterer.js"></script>
-
 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBlWzi9DiiSCHjP9cy22yhnWqxyyNWXv6Q&amp;callback=initMap"></script>
 
 {% endblock %}

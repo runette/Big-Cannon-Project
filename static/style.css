@@ -1115,4 +1115,8 @@ form.login a.link { padding: 20px 0; display: block; }
 }
 /* ./pagination */
 
+.hidden {
+    display: none
+}
+
 

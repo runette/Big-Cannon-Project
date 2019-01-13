@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 import webapp2, jinja2, os, json, datetime
-from data import Gun, GUN_TYPES, RECORD_QUALITIES
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool
 from google.appengine.ext import ndb
 
 
@@ -106,6 +106,12 @@ class SetEntry(webapp2.RequestHandler):
         name = self.request.get('name')
         location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
         type= Gun.Types.lookup_by_name(type)
+        site = self.request.get('site')
+        context = self.request.get('context')
+        collection = to_bool(self.request.get('collection'))
+        coll_name= self.request.get('coll_name')
+        coll_ref=self.request.get('coll_ref')
+        images = json.loads(self.request.get('images'))
         gun = Gun.get_id(id)
         if not gun :
             gun = Gun(
@@ -116,6 +122,12 @@ class SetEntry(webapp2.RequestHandler):
             type= type,
             name= name,
             location= location,
+            site=site,
+            context=context,
+            collection=collection,
+            coll_name=coll_name,
+            coll_ref=coll_ref,
+            images=images,
         )
         gun.put()
         template_values = {
