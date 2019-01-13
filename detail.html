@@ -6,7 +6,9 @@
         <section class="content container">
             <div class="entry-header">
                 <h1>Gun ID : {{ gun.id }} </h1>
-                <h1><button type="submit">Save Entry</button></h1>
+                {% if user_data.user %}}
+                    <h1><button type="submit">Save Entry</button></h1>
+                {% endif %}
             </div>
             <div class="thumb-container">
                 <a class="fancybox" href="{{gun.images[0]}}"><img src="{{gun.images[0]}}" alt=""></a></div>
@@ -34,7 +36,7 @@
                     </tr>
                     <tr>
                         <td>Author</td>
-                        <td><input type="text" name="name" value="{{ gun.name }}" ></td>
+                        <td><input type="text" name="name" value="{{ gun.name }}" readonly ></td>
                     </tr>
                     <tr>
                         <td>Date Recorded</td>
@@ -63,18 +65,18 @@
                     <tr>
                         <td>Museum / Collection</td>
                         <td>
-                            <select name="collection">
+                            <select id="collection" name="collection" onchange="collection_button()">
                                 <option value="true" {% if gun.collection %} selected {% endif %}>Yes</option>
                                 <option value="false" {% if not gun.collection %} selected {% endif %}>No</option>
                             </select>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="hidden collection">
                         <td>Museum / Collection Name</td>
                         <td><input type="text" name="coll_name" value="{{gun.coll_name}}"></td>
 
                     </tr>
-                    <tr>
+                    <tr class="hidden collection">
                         <td>Museum / Collection Ref</td>
                         <td><input type="text" name="coll_ref" value="{{gun.coll_ref}}"></td>
                     </tr>
@@ -126,7 +128,7 @@
             <div class="grid6 col">
                 <h3 class="bold">Photos</h3>
 
-                          <a href="{{gun.images[0]}}" data-fancybox-trigger="gun_images" data-caption="My caption">
+                          <a href="{{gun.images[0]}}" data-fancybox="gun_images" data-caption="My caption">
                               <img src="{{gun.images[0]}}" alt="" />
                           </a>
             </div>
@@ -148,5 +150,20 @@
 <script src="/static/sweetalert.min.js"></script>
 <script src="/static/markerclusterer.js"></script>
 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBlWzi9DiiSCHjP9cy22yhnWqxyyNWXv6Q&amp;callback=initMap"></script>
-
+<script >
+    $('[data-fancybox]').fancybox({
+	protect: true
+});
+    function collection_button () {
+        let el = $('#collection');
+        let value = el.val();
+        if (value === "true") {
+            $('.collection').show()
+        }
+        else {
+            $('.collection').hide()
+        }
+    };
+    collection_button()
+</script>
 {% endblock %}

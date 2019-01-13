@@ -18,6 +18,7 @@ import datetime
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from protorpc import messages
+from google.appengine.api import users
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
@@ -86,4 +87,16 @@ def to_bool(bool_str):
     if isinstance(bool_str, basestring) and bool_str:
         if bool_str.lower() in ['true', 't', '1']: return True
         elif bool_str.lower() in ['false', 'f', '0']: return False
+
+def UserStatus(uri):
+    # set up the user context and links for the navbar
+    user = users.get_current_user()
+    uri = uri.split("?")[0]
+    if user:
+        url = users.create_logout_url(uri)
+        url_linktext = 'Logout'
+    else:
+        url = users.create_login_url(uri)
+        url_linktext = 'Login'
+    return {'user': user, 'url': url, 'url_linktext': url_linktext}
 

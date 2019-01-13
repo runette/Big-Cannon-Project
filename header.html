@@ -46,8 +46,7 @@
 <div id="top-bar">
 <div class="container">
 <div class="users">
-<a href="/user/login" class="login">Login</a>
-<a href="/user/register" class="account">Register</a>
+<a class="login"  href="{{ user_data['url']|safe }}" role="button"> {% if user %}  {% endif %}{{ user_data['url_linktext']}}</a>
 </div>
 </div>
 </div>

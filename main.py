@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 import webapp2, jinja2, os, json, datetime
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus
 from google.appengine.ext import ndb
 
 
@@ -26,7 +26,9 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
+        user_data = UserStatus(self.request.uri)
         template_values = {
+            'user_data': user_data,
             'index': 1
         }
         template = JINJA_ENVIRONMENT.get_template('index.html')
@@ -35,8 +37,10 @@ class MainHandler(webapp2.RequestHandler):
 
 class About(webapp2.RequestHandler):
     def get(self):
+        user_data = UserStatus(self.request.uri)
         template_values = {
-            'index': 2
+            'index': 2,
+            'user_data': user_data,
         }
         template = JINJA_ENVIRONMENT.get_template('about.html')
         self.response.write(template.render(template_values))
@@ -44,7 +48,9 @@ class About(webapp2.RequestHandler):
 
 class Database(webapp2.RequestHandler):
     def get(self):
+        user_data = UserStatus(self.request.uri)
         template_values = {
+            'user_data': user_data,
             'gun_types': GUN_TYPES,
             'index': 3
         }
@@ -78,19 +84,25 @@ class FetchMap(webapp2.RequestHandler):
 
 class FetchEntry(webapp2.RequestHandler):
     def get(self):
+        user_data = UserStatus(self.request.uri)
+        user = user_data['user']
         gun_id = self.request.get('anchor_id')
         if gun_id:
             gun = Gun.get_id(gun_id)
         else:
-            gun = Gun(
-                id=str(Gun.get_next()),
-                description="",
-                type=Gun.Types.NOT_KNOWN,
-                name="",
-                location= ndb.GeoPt(52,0),
-                date= datetime.date.today()
-            )
+            if user:
+                gun = Gun(
+                    id=str(Gun.get_next()),
+                    description="",
+                    type=Gun.Types.NOT_KNOWN,
+                    name=user.email(),
+                    location= ndb.GeoPt(52,0),
+                    date= datetime.date.today()
+                )
+            else :
+                return
         template_values = {
+            'user_data':user_data,
             'gun' : gun,
             'gun_types' : GUN_TYPES,
             'index' : 4,
@@ -100,43 +112,48 @@ class FetchEntry(webapp2.RequestHandler):
 
 class SetEntry(webapp2.RequestHandler):
     def post(self):
-        id = self.request.get('id')
-        description = self.request.get('description')
-        type = self.request.get('type')
-        name = self.request.get('name')
-        location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
-        type= Gun.Types.lookup_by_name(type)
-        site = self.request.get('site')
-        context = self.request.get('context')
-        collection = to_bool(self.request.get('collection'))
-        coll_name= self.request.get('coll_name')
-        coll_ref=self.request.get('coll_ref')
-        images = json.loads(self.request.get('images'))
-        gun = Gun.get_id(id)
-        if not gun :
-            gun = Gun(
-                id=id
+        user_data = UserStatus(self.request.uri)
+        user = user_data['user']
+        if user:
+            id = self.request.get('id')
+            description = self.request.get('description')
+            type = self.request.get('type')
+            name = self.request.get('name')
+            location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
+            type= Gun.Types.lookup_by_name(type)
+            site = self.request.get('site')
+            context = self.request.get('context')
+            collection = to_bool(self.request.get('collection'))
+            coll_name= self.request.get('coll_name')
+            coll_ref=self.request.get('coll_ref')
+            images = json.loads(self.request.get('images'))
+            gun = Gun.get_id(id)
+            if not gun :
+                gun = Gun(
+                    id=id,
+                    name=user_data['email'],
+                )
+            gun.populate(
+                description= description,
+                type= type,
+                name= name,
+                location= location,
+                site=site,
+                context=context,
+                collection=collection,
+                coll_name=coll_name,
+                coll_ref=coll_ref,
+                images=images,
             )
-        gun.populate(
-            description= description,
-            type= type,
-            name= name,
-            location= location,
-            site=site,
-            context=context,
-            collection=collection,
-            coll_name=coll_name,
-            coll_ref=coll_ref,
-            images=images,
-        )
-        gun.put()
-        template_values = {
-            'gun': gun,
-            'gun_types': GUN_TYPES,
-            'index': 4,
-        }
-        template = JINJA_ENVIRONMENT.get_template('detail.html')
-        self.response.write(template.render(template_values))
+            gun.put()
+            template_values = {
+                'user_data':user_data,
+                'gun': gun,
+                'gun_types': GUN_TYPES,
+                'index': 4,
+            }
+            template = JINJA_ENVIRONMENT.get_template('detail.html')
+            self.response.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
