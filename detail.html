@@ -1,14 +1,17 @@
 {% extends "header.html" %}
 {% block main_content %}
 <form action="/set_entry" method="post">
-    <input type="hidden" name="id" value="{{ gun.id }}" read-only >
+    <input type="hidden" id="id" name="id" value="{{ gun.id }}" read-only >
     <div class="full-width banner parallax" style="background: url(/img/bkg/anchor-pattern.png) 0 0 repeat; background-size: 40%;">
         <section class="content container">
             <div class="entry-header">
-                <h1>Gun ID : {{ gun.id }} </h1>
-                {% if user_data.user %}}
-                    <h1><button type="submit">Save Entry</button></h1>
+                <h1>Gun ID : {{ gun.id }}
+                {% if user_data.user %}
+                    <button type="submit" >Save Entry</button>
+                {% else %}
+                    Read-only
                 {% endif %}
+                </h1>
             </div>
             <div class="thumb-container">
                 <a class="fancybox" href="{{gun.images[0]}}"><img src="{{gun.images[0]}}" alt=""></a></div>
@@ -42,14 +45,53 @@
                         <td>Date Recorded</td>
                         <td>{{gun.date.strftime('%d %b %Y')}}</td>
                     </tr>
+                    </tbody>
+                </table>
+                <table>
                     <tr>
-                        <td>
-                            Image
-                        </td>
-                        <td><input type="text" name="images" value="{{gun.images}}">
-                        </td>
+                        <tr>
+                            <td>
+                                Markings
+                            </td>
+                            <td>
+                                <select id="markings" name="markings" onchange="markings_button()">
+                                    <option value="true" {% if gun.markings %} selected {% endif %}>Yes</option>
+                                    <option value="false" {% if not gun.markings %} selected {% endif %}>No</option>
+                                </select>
+                            </td>
+                            <td>
+                                Interpretations
+                            </td>
+                            <td>
+                                <select id="interpretation" name="interpretation" onchange="inter_button()">
+                                    <option value="true" {% if gun.interpretation %} selected {% endif %}>Yes</option>
+                                    <option value="false" {% if not gun.interpretation %} selected {% endif %}>No</option>
+                                </select>
+                            </td>
+                        </tr>
+                </table>
+                <table>
+
                     </tr>
-                </tbody></table>
+                        <tr class="hidden markings">
+                            <td>
+                                Describe the Markings
+                            </td>
+                            <td>
+                                <input type="text" name="mark_details" value="{{gun.mark_details}}">
+                            </td>
+                        </tr>
+                        <tr class="hidden inter">
+                            <td>
+                                Describe the Interpretations
+                            </td>
+                            <td>
+                                <input type="text" name="inter_details" value="{{gun.inter_details}}">
+                            </td>
+                        </tr>
+
+
+                </table>
             </div><!-- end grid -->
             <div class="grid6 col">
                 <h3 class="bold">Context Info</h3>
@@ -72,12 +114,12 @@
                         </td>
                     </tr>
                     <tr class="hidden collection">
-                        <td>Museum / Collection Name</td>
+                        <td>Collection Name</td>
                         <td><input type="text" name="coll_name" value="{{gun.coll_name}}"></td>
 
                     </tr>
                     <tr class="hidden collection">
-                        <td>Museum / Collection Ref</td>
+                        <td>Collection Ref</td>
                         <td><input type="text" name="coll_ref" value="{{gun.coll_ref}}"></td>
                     </tr>
                 </tbody></table>
@@ -126,7 +168,7 @@
                 </tbody></table>
             </div>
             <div class="grid6 col">
-                <h3 class="bold">Photos</h3>
+                <h3 class="bold">Photos  <button type="button" onclick="send_file()">Upload file</button> </h3>
 
                           <a href="{{gun.images[0]}}" data-fancybox="gun_images" data-caption="My caption">
                               <img src="{{gun.images[0]}}" alt="" />
@@ -155,9 +197,7 @@
 	protect: true
 });
     function collection_button () {
-        let el = $('#collection');
-        let value = el.val();
-        if (value === "true") {
+        if ($('#collection').val() === "true") {
             $('.collection').show()
         }
         else {
@@ -165,5 +205,100 @@
         }
     };
     collection_button()
+    function markings_button () {
+        if ($('#markings').val() === "true") {
+            $('.markings').show()
+        }
+        else {
+            $('.markings').hide()
+        }
+    };
+    markings_button()
+    function inter_button () {
+        if ($('#interpretation').val() === "true") {
+            $('.inter').show()
+        }
+        else {
+            $('.inter').hide()
+        }
+    };
+    inter_button();
+
+    //from https://stackoverflow.com/a/16808048/9652221
+    async function send_file() {
+            let files = await selectFile("image/*", false);
+            let json_data = await new Promise( function(resolve){
+                $.post(
+            "/get_upload_key",
+            function (data, status) {
+                let json_data = JSON.parse(data);
+                resolve(json_data)
+            })
+            });
+            let url = json_data.url;
+            let request_body = JSON.stringify({
+                "name": "/" + $('#id').val() + "/" +  files.name
+            });
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                let payload = event.target.result;
+                let length = payload.length;
+                let request_headers = {
+                    "Authorization": "Bearer " + json_data.key,
+                    "Content-Type": "application/json; charset=UTF-8",
+                    "X-Upload-Content-Length": length,
+                };
+                request = $.ajax({
+                    url: url,
+                    method: "POST",
+                    data: request_body,
+                    headers: request_headers
+                });
+                request.done(function (data, textStatus, jqXHR) {
+                    let location = jqXHR.getResponseHeader("location");
+                    upload = $.ajax({
+                        url: location,
+                        method: "PUT",
+                        data: payload,
+                        processData: false,
+                        contentType: false,
+                    });
+                    upload.done(function (data, textStatus, jqXHR) {
+                        let json_data = JSON.stringify(data)
+                        $.post({
+                            url: "/add_photo?id=" + $('#id').val(),
+                            method: "POST",
+                            data: json_data
+                        })
+                    });
+                    upload.fail(function (jqXHR, textStatus) {
+                        alert("upload failed" + textStatus)
+                    });
+                });
+                request.fail(function (jqXHR, textStatus) {
+                    alert("upload request failed" + textStatus)
+                });
+                };
+            reader.readAsArrayBuffer(files);
+        }
+// from https://stackoverflow.com/questions/16215771/how-open-select-file-dialog-via-js
+    function selectFile (contentType, multiple){
+        return new Promise(function (resolve, reject){
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = multiple;
+            input.accept = contentType;
+            input.onchange = _ => {
+                let files = Array.from(input.files);
+			if (multiple)
+				resolve(files);
+			else
+				resolve(files[0]);
+            };
+            input.click();
+        })};
+
+
+
 </script>
 {% endblock %}

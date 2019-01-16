@@ -14,11 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
+import datetime, urllib
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from protorpc import messages
 from google.appengine.api import users
+from google.appengine.api import app_identity
+from google.appengine.api import urlfetch
+from datetime import datetime
+import logging
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
@@ -48,6 +52,11 @@ class Gun(ndb.Model):
     coll_name = ndb.StringProperty()
     coll_ref = ndb.StringProperty()
     images = ndb.TextProperty(repeated=True)
+    markings = ndb.BooleanProperty()
+    mark_details = ndb.StringProperty()
+    interpretation = ndb.BooleanProperty()
+    inter_details = ndb.StringProperty()
+
 
 
     @classmethod
@@ -99,4 +108,29 @@ def UserStatus(uri):
         url = users.create_login_url(uri)
         url_linktext = 'Login'
     return {'user': user, 'url': url, 'url_linktext': url_linktext}
+
+class Auth:
+    def __init__(self, scope):
+        self.scope = scope
+        self.service_name = app_identity.get_application_id()
+        return
+
+    def get_token(self):
+        self.auth_token, _ = app_identity.get_access_token(
+            self.scope)
+        logging.info(
+            'Using token {} to represent identity {}'.format(
+                self.auth_token, app_identity.get_service_account_name()))
+        return self.auth_token
+
+    def get_signed_url(self, content_name, content_type):
+        now = datetime.utcnow()
+        delta = datetime.timedelta(hours=3)
+        expiry = now + delta
+        timestamp = expiry.timestamp()
+        signed_string= "PUT \n \n" + content_type + "\n" + str(timestamp) + "\n" + "/" + self.service_name + "/" + content_name
+
+    def get_url(self):
+        return "https://www.googleapis.com/upload/storage/v1/b/" + self.service_name + ".appspot.com/o?uploadType=resumable"
+
 

@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import webapp2, jinja2, os, json, datetime
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus
+import webapp2, jinja2, os, json, datetime, logging
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth
 from google.appengine.ext import ndb
 
 
@@ -116,34 +116,27 @@ class SetEntry(webapp2.RequestHandler):
         user = user_data['user']
         if user:
             id = self.request.get('id')
-            description = self.request.get('description')
-            type = self.request.get('type')
-            name = self.request.get('name')
-            location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
-            type= Gun.Types.lookup_by_name(type)
-            site = self.request.get('site')
-            context = self.request.get('context')
-            collection = to_bool(self.request.get('collection'))
-            coll_name= self.request.get('coll_name')
-            coll_ref=self.request.get('coll_ref')
-            images = json.loads(self.request.get('images'))
             gun = Gun.get_id(id)
             if not gun :
                 gun = Gun(
                     id=id,
-                    name=user_data['email'],
+                    name=user.email(),
+                    images=[""]
                 )
             gun.populate(
-                description= description,
-                type= type,
-                name= name,
-                location= location,
-                site=site,
-                context=context,
-                collection=collection,
-                coll_name=coll_name,
-                coll_ref=coll_ref,
-                images=images,
+                description= self.request.get('description'),
+                type= Gun.Types.lookup_by_name(self.request.get('type')),
+                name= self.request.get('name'),
+                location= ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon')),
+                site=self.request.get('site'),
+                context=self.request.get('context'),
+                collection=to_bool(self.request.get('collection')),
+                coll_name=self.request.get('coll_name'),
+                coll_ref=self.request.get('coll_ref'),
+                markings=to_bool(self.request.get('markings')),
+                mark_details=self.request.get('mark_details'),
+                interpretation=to_bool(self.request.get('interpretation')),
+                inter_details=self.request.get('inter_details'),
             )
             gun.put()
             template_values = {
@@ -155,11 +148,48 @@ class SetEntry(webapp2.RequestHandler):
             template = JINJA_ENVIRONMENT.get_template('detail.html')
             self.response.write(template.render(template_values))
 
+class GetKey(webapp2.RequestHandler):
+    def post(self):
+        user_data = UserStatus(self.request.uri)
+        user = user_data['user']
+        if user:
+            logging.info("Creating key for " + user.email() + (" to upload"))
+            auth = Auth('https://www.googleapis.com/auth/cloud-platform')
+            key = auth.get_token()
+            url = auth.get_url()
+            response = json.dumps({
+                'key': key,
+                'url': url
+            })
+            self.response.write(response)
+        return
+
+class AddPhoto(webapp2.RequestHandler):
+    def post(self):
+        user_data = UserStatus(self.request.uri)
+        user = user_data['user']
+        if user:
+            data = json.loads(self.request.body)
+            logging.info( user.email() + " added Object " + data['name'] + "." )
+            url = data['mediaLink']
+            id = self.request.get('id')
+            gun = Gun.get_id(id)
+            if gun :
+                images = gun.images
+                if len(images) == 1 and images[0] == "":
+                    gun.images = [url]
+                else :
+                    gun.images.append(url)
+            gun.put()
+        return
+
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/database/entry', FetchEntry),
     ('/database', Database),
     ('/map_fetch', FetchMap),
     ('/set_entry', SetEntry),
-    ('/about', About)
+    ('/about', About),
+    ('/get_upload_key', GetKey),
+    ('/add_photo', AddPhoto)
 ], debug=True)
