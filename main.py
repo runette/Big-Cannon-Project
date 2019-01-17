@@ -17,6 +17,7 @@
 import webapp2, jinja2, os, json, datetime, logging
 from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth
 from google.appengine.ext import ndb
+from google.appengine.api import images
 
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -171,16 +172,19 @@ class AddPhoto(webapp2.RequestHandler):
         if user:
             data = json.loads(self.request.body)
             logging.info( user.email() + " added Object " + data['name'] + "." )
-            url = data['mediaLink']
+            name = data['name']
+            bucket = data['bucket']
             id = self.request.get('id')
+            url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name))
             gun = Gun.get_id(id)
             if gun :
-                images = gun.images
-                if len(images) == 1 and images[0] == "":
+                image_list = gun.images
+                if len(image_list) == 1 and image_list[0] == "":
                     gun.images = [url]
                 else :
                     gun.images.append(url)
             gun.put()
+            self.response.write(url)
         return
 
 app = webapp2.WSGIApplication([

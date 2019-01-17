@@ -14,7 +14,7 @@
                 </h1>
             </div>
             <div class="thumb-container">
-                <a class="fancybox" href="{{gun.images[0]}}"><img src="{{gun.images[0]}}" alt=""></a></div>
+                <a class="fancybox" href="{{gun.images[0]}}"><img src="{{gun.images[0]}}=s32" alt=""></a></div>
         </section>
     </div>
     <div class="full-width">
@@ -171,13 +171,13 @@
                 <h3 class="bold">Photos  <button type="button" onclick="send_file()">Upload file</button> </h3>
 
                           <a href="{{gun.images[0]}}" data-fancybox="gun_images" data-caption="My caption">
-                              <img src="{{gun.images[0]}}" alt="" />
+                              <img id="image_container" src="{{gun.images[0]}}=s100" height="300px"   alt=""      />
                           </a>
             </div>
-            <div class="hidden">
+            <div class="hidden" >
                 {% for i in gun.images %}
                     <a href="{{i}}" data-fancybox="gun_images" data-caption="My caption">
-                              <img src="{{i}}" alt="" />
+                              <img src="{{i}}=s100" alt="" />
                           </a>
                 {% endfor %}
             </div>
@@ -265,10 +265,13 @@
                     });
                     upload.done(function (data, textStatus, jqXHR) {
                         let json_data = JSON.stringify(data)
-                        $.post({
+                        addphoto = $.post({
                             url: "/add_photo?id=" + $('#id').val(),
                             method: "POST",
                             data: json_data
+                        })
+                        addphoto.done(function (data, textStatus, jqXHR) {
+                            $("#image_container").attr("src", data);
                         })
                     });
                     upload.fail(function (jqXHR, textStatus) {

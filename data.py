@@ -25,6 +25,8 @@ from datetime import datetime
 import logging
 
 
+
+
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ("gold", "silver", 'bronze')
@@ -73,7 +75,7 @@ class Gun(ndb.Model):
                     "anchor_type" : GUN_TYPES[gun.type.number],
                     "location"  : gun.description,
                     "names" : gun.name,
-                    'filename' : gun.images[0]
+                    'filename' : gun.images[0] + "=s32"
                 })
             except :
                 pass
@@ -132,5 +134,7 @@ class Auth:
 
     def get_url(self):
         return "https://www.googleapis.com/upload/storage/v1/b/" + self.service_name + ".appspot.com/o?uploadType=resumable"
+
+
 
 
