@@ -1,0 +1,61 @@
+/* Map Container */
+
+.full-width.map { top: 0; padding: 0 !important; margin-top: 50px; position: relative; }
+
+.map-container {width: 100%;height: 80vh !important;display: block;overflow: hidden;}
+.map-container iframe { width: 100%; height:100vh !important; }
+
+.map-container.inline { height: 30vh !important; border: 1px solid #CCC; }
+.map-container.inline iframe { width: 100%; height: 100% !important; }
+
+/* Map Filter */
+
+.toggle-filters {
+  padding: 15px; color: #FFF !important; font-size: 18px; text-decoration: none; display: block;
+  background: url(../img/icons/icon-filter3.png) no-repeat right 10px center; background-size: 30px; background-color: #64a3cf;
+  -webkit-transition: all .3s ease-in-out; transition: all .3s ease-in-out;
+}
+
+.toggle-filters:hover { background-color: #4187b9;  }
+.toggle-filters.active { background: url(../img/icons/icon-arrow-down.png) no-repeat right 10px center; background-size: 30px; background-color: #64a3cf; }
+
+.map .filters {display: block; position: relative; z-index: 5000;bottom: 0;left: 0;right: 0;padding: 0;background-color: #EEE;}
+.map .filters .container { padding: 0; display: none; }
+
+.map .filters form { margin: 0; padding: 0; display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap; flex-grow: 1; }
+
+.map .filters form div { position: relative; margin: 10px 10px 0 10px; width: 100%; }
+.map .filters form div:last-child { margin: 10px; }
+
+.map .filters form div input {
+  margin: 0; padding: 12px;
+  border-radius: 3px; -webkit-border-radius: 3px;
+  font-size: 16px; line-height: 16px; width: 90%; color: #333;
+}
+
+.map .filters form div.search span { display: block; }
+.map .filters form div.search span input {  }
+.map .filters form div input.search-field { border: 0; }
+.map .filters form div input.search-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  z-index: 1000;
+  top: 1px;
+  right: 3px;
+  background: url('../img/icons/search-btn.png') no-repeat center;
+  background-size: 100%;
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
+  -webkit-border-radius: 0 3px 3px 0;
+}
+
+.hidden {
+    display: none
+}
+
+.bg-ur {
+background-color: #e3f2fd;
+}

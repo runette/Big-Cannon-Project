@@ -355,7 +355,7 @@
     }
 
     function initSearchForm() {
-        var $form = $('#search-anchor');
+        var $form = $('#search');
         $form
             .on('submit', function (e) {
                 e.preventDefault();

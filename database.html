@@ -2,63 +2,64 @@
 
 {% block main_content %}
 <!--main-content-->
-<div class="full-width map full-height">
-<div class="map-container" id="map_canvas">
+<div class="map">
+    <div class="map-container" id="map_canvas"></div>
 </div>
-<div class="filters">
-<a href="#" class="toggle-filters">Filter Results</a>
-<div class="content container">
-<form id="search-anchor" class="submit" name="search-anchor" action="/database" method="post">
-<input type="hidden" name="_csrf" value="gdPIOlQ9M6j2uKSaiPiPnSzF38QXmBI8aeTKO10HnaTZvIlSGVkH0YPC8PHxkdX3c7KZm3X6aF0xiaxVHFbNlg=="> <div class="search">
-<span>
-<input type="text" id="location" class="search-field" name="SearchForm[location]" placeholder="Search for Location"> <input type="submit" class="search-btn" value=""> </span>
+    <form class="table" id="search"  name="search" action="/database" method="post">
+        <input type="hidden" name="_csrf" value="gdPIOlQ9M6j2uKSaiPiPnSzF38QXmBI8aeTKO10HnaTZvIlSGVkH0YPC8PHxkdX3c7KZm3X6aF0xiaxVHFbNlg==">
+        <div class="row bg-ur mx-1" >
+        <div class="col-3 input-group">
+            <input class="form-control" type="text" id="location" class="search-field" name="SearchForm[location]" placeholder="Search">
+            <div class="input-group-append">
+                <input type="submit" class="search-btn" value="">
+            </div>
+        </div>
+        <div class="col-3">
+            <select class="custom-select" id="anchor-type" name="SearchForm[anchor_type]">
+                <option value="">Material</option>
+                <option value="{{gun_types[0]}}">Cast Iron</option>
+                <option value="{{gun_types[1]}}">Wrought Iron</option>
+                <option value="{{gun_types[2]}}">Bronze</option>
+                <option value="{{gun_types[3]}}">Not Known</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <select class="custom-select" id="quality" name="SearchForm[quality]">
+                <option value="">Quality</option>
+                <option value="gold">Gold Records</option>
+                <option value="silver">Silver Record</option>
+                <option value="bronze">Bronze Records</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <select class="custom-select" id="order" name="SearchForm[order]">
+                <option value="">Order</option>
+                <option value="4">Date Ascending</option>
+                <option value="3" selected>Date Descending</option>
+            </select>
+        </div>
+    </form>
 </div>
-<div>
-<select id="anchor-type" name="SearchForm[anchor_type]">
-    <option value="">Material</option>
-    <option value="{{gun_types[0]}}">Cast Iron</option>
-    <option value="{{gun_types[1]}}">Wrought Iron</option>
-    <option value="{{gun_types[2]}}">Bronze</option>
-    <option value="{{gun_types[3]}}">Not Known</option>
-</select> </div>
-<div>
-<select id="quality" name="SearchForm[quality]">
-<option value="">Quality</option>
-<option value="gold">Gold Records</option>
-<option value="silver">Silver Record</option>
-<option value="bronze">Bronze Records</option>
-</select> </div>
-<div>
-<select id="order" name="SearchForm[order]">
-<option value="">Order</option>
-<option value="4">Date Ascending</option>
-<option value="3" selected>Date Descending</option>
-</select> </div>
-</form> </div>
-</div>
-</div>
-<div class="full-width">
-<section class="content container">
-<div class="grid12 col"></div>
-<div class="grid12 col results">
-<div class="no-data hide">No data found.</div>
-<table id="table-entries" data-role="table" class="white map hide">
-<thead>
+
+<div class="row">
+
+<div class="no-data hidden">No data found.</div>
+<table id="table-entries" data-role="table" class="table table-striped">
+<thead class="thead-dark">
 <tr>
-<th>Image</th>
-<th>ID</th>
-<th>Type</th>
-<th>Description</th>
-<th>Country</th>
-<th>Author</th>
-<th>Record</th>
+<th scope="col">Image</th>
+<th scpoe="col">ID</th>
+<th scope="col">Type</th>
+<th scope="col">Description</th>
+<th scope="col">Country</th>
+<th scope="col">Author</th>
+<th scope="col">Record</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
 </div>
-</section>
-</div>
+
 
 <!--end of main-content-->
 {% endblock %}
