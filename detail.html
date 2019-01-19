@@ -51,11 +51,11 @@
                 <table class="table table-striped">
                     <tbody>
                     <tr>
-                        <tr>
-                            <td>
+                        <div class="row">
+                            <div class="col-md-3">
                                 Markings
-                            </td>
-                            <td>
+                            </div><div class="col-md-3">
+
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons" >
                                 <label class="btn btn-secondary {% if gun.markings %} active {% endif %}"  onclick="select_button('markings','show')" >
                                     <input type="radio" name="collection" id="option1" autocomplete="off" {% if gun.markings %} checked {% endif %} value="true"> Yes
@@ -64,11 +64,13 @@
                                     <input type="radio" name="collection" id="option2" autocomplete="off" {% if not gun.markings %} checked {% endif %} value="false"> No
                                 </label>
                             </div>
-                            </td>
-                            <td>
+                            </div>
+                            <div class="col-lg-3">
+
                                 Interpretations
-                            </td>
-                            <td>
+
+                                </div><div class="col-md-3">
+
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons" >
                                 <label class="btn btn-secondary {% if gun.interpretation %} active {% endif %}"  onclick="select_button('inter','show')" >
                                     <input type="radio" name="collection"  autocomplete="off" {% if gun.collection %} checked {% endif %} value="true"> Yes
@@ -77,7 +79,7 @@
                                     <input type="radio" name="collection"  autocomplete="off" {% if not gun.collection %} checked {% endif %} value="false"> No
                                 </label>
                             </div>
-                            </td>
+                            </div>
                         </tr>
                     </tbody>
                 </table>
@@ -170,14 +172,17 @@
                         });
                     };
                 </script>
-                <table  class="table table-borderless">
-                    <tbody><tr>
-                        <td>Latitude</td>
-                        <td><input type="text" name="lat" value="{{ gun.location.lat }}" ></td>
-                        <td>Longitude</td>
-                        <td><input type="text" name="lon" value="{{ gun.location.lon }}" ></td>
-                    </tr>
-                </tbody></table>
+                <div class="row">
+                    <div class="col-md-3">
+                        Latitude
+                    </div> <div class="col-md-3">
+                        <input class="form-control" type="text" name="lat" value="{{ gun.location.lat }}" >
+                    </div> <div class="col-md-3">
+                        Longitude
+                    </div> <div class="col-md-3">
+                        <input class="form-control" type="text" name="lon" value="{{ gun.location.lon }}" >
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
                 <h3 class="bold">Photos  <button class="btn btn-primary" type="button" onclick="send_file()">Upload Photo</button> </h3>
@@ -185,7 +190,7 @@
                           <a href="{{gun.images[0]}}" data-fancybox="gun_images" data-caption="My caption">
                               <img id="image_container" src="{{gun.images[0]}}=s100" height="300px"   alt=""      />
                           </a>
-            </div>
+
             <div class="hidden" >
                 {% for i in gun.images %}
                     <a href="{{i}}" data-fancybox="gun_images" data-caption="My caption">
@@ -193,7 +198,9 @@
                           </a>
                 {% endfor %}
             </div>
+                 </div>
         </div>
+    </div>
 </form>
 {% endblock %}
 
