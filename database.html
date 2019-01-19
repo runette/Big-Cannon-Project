@@ -7,43 +7,48 @@
 </div>
     <form class="table" id="search"  name="search" action="/database" method="post">
         <input type="hidden" name="_csrf" value="gdPIOlQ9M6j2uKSaiPiPnSzF38QXmBI8aeTKO10HnaTZvIlSGVkH0YPC8PHxkdX3c7KZm3X6aF0xiaxVHFbNlg==">
-        <div class="row bg-ur mx-1" >
-        <div class="col-3 input-group">
-            <input class="form-control" type="text" id="location" class="search-field" name="SearchForm[location]" placeholder="Search">
-            <div class="input-group-append">
-                <input type="submit" class="search-btn" value="">
-            </div>
-        </div>
-        <div class="col-3">
-            <select class="custom-select" id="anchor-type" name="SearchForm[anchor_type]">
-                <option value="">Material</option>
-                <option value="{{gun_types[0]}}">Cast Iron</option>
-                <option value="{{gun_types[1]}}">Wrought Iron</option>
-                <option value="{{gun_types[2]}}">Bronze</option>
-                <option value="{{gun_types[3]}}">Not Known</option>
-            </select>
-        </div>
-        <div class="col-3">
-            <select class="custom-select" id="quality" name="SearchForm[quality]">
-                <option value="">Quality</option>
-                <option value="gold">Gold Records</option>
-                <option value="silver">Silver Record</option>
-                <option value="bronze">Bronze Records</option>
-            </select>
-        </div>
-        <div class="col-3">
-            <select class="custom-select" id="order" name="SearchForm[order]">
-                <option value="">Order</option>
-                <option value="4">Date Ascending</option>
-                <option value="3" selected>Date Descending</option>
-            </select>
-        </div>
+        <nav class="navbar navbar-expand-md bg-ur mx-1" >
+                <div class="collapse navbar-collapse" id="mapfilter">
+                    <div class="navbar-item input-group col-md-3">
+                        <input class="form-control" type="text" id="location" name="SearchForm[location]" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit" value=""> <img  src="/img/icons/magnifying-glass.svg" height="27px"></button>
+                        </div>
+                    </div>
+                    <div class="navbar-item col-md-3">
+                        <select class="custom-select" id="anchor-type" name="SearchForm[anchor_type]">
+                            <option value="">Material</option>
+                            <option value="{{gun_types[0]}}">Cast Iron</option>
+                            <option value="{{gun_types[1]}}">Wrought Iron</option>
+                            <option value="{{gun_types[2]}}">Bronze</option>
+                            <option value="{{gun_types[3]}}">Not Known</option>
+                        </select>
+                    </div>
+                    <div class="navbar-item col-md-3">
+                        <select class="custom-select" id="quality" name="SearchForm[quality]">
+                            <option value="">Quality</option>
+                            <option value="gold">Gold Records</option>
+                            <option value="silver">Silver Record</option>
+                            <option value="bronze">Bronze Records</option>
+                        </select>
+                    </div>
+                    <div class="navbar-item col-md-3">
+                        <select class="custom-select" id="order" name="SearchForm[order]">
+                            <option value="">Order</option>
+                            <option value="4">Date Ascending</option>
+                            <option value="3" selected>Date Descending</option>
+                        </select>
+                    </div>
+                </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mapfilter" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <img src="/img/icons/caret-bottom.svg" height="25px" >
+            </button>
+        </nav>
     </form>
 </div>
 
 <div class="row">
 
-<div class="no-data hidden">No data found.</div>
 <table id="table-entries" data-role="table" class="table table-striped">
 <thead class="thead-dark">
 <tr>

@@ -14,7 +14,7 @@
                 $('#top-link').stop().animate({opacity: 0}, 500);
             }
         }).trigger('scroll');
-    }
+
     function initialize() {
         initFancybox();
     }
