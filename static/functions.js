@@ -185,9 +185,7 @@ function select_button ( cl) {
             alert('conversion failed : ' + textStatus)}
         );
         radio_button('geolocation','bng')
-
     }
-
     function reset_map() {
         let location = {
             lat: parseFloat($('#lat').val()),
@@ -201,7 +199,7 @@ function select_button ( cl) {
         marker = new google.maps.Marker({
                             position: location,
                             map: map,
-                            icon: map_icons['bronze'],
+                            icon: map_icons[marker_quality],
                             draggable:true,
                         });
         google.maps.event.addListener(marker, 'dragend', function(){

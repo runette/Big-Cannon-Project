@@ -16,7 +16,7 @@
 #
 import webapp2, jinja2, os, json, datetime, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth, to_int, BNG
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth, to_int, BNG, geolocate
 from google.appengine.ext import ndb
 from google.appengine.api import images
 
@@ -92,6 +92,7 @@ class FetchEntry(webapp2.RequestHandler):
         gun_id = to_int(self.request.get('gun_id'))
         if gun_id:
             gun = Gun.get_id(gun_id)
+            index = 3
         else:
             if user:
                 gun = Gun(
@@ -102,13 +103,16 @@ class FetchEntry(webapp2.RequestHandler):
                     location= ndb.GeoPt(52,0),
                     date= datetime.date.today()
                 )
+                index = 4
             else :
                 return
         template_values = {
             'user_data':user_data,
             'gun' : gun,
             'gun_types' : GUN_TYPES,
-            'index' : 4,
+            'qualities_text': RECORD_QUALITIES,
+            'qualities': Gun.Quality,
+            'index' : index,
         }
         template = JINJA_ENVIRONMENT.get_template('detail.html')
         self.response.write(template.render(template_values))
@@ -119,6 +123,7 @@ class SetEntry(webapp2.RequestHandler):
         user = user_data['user']
         if user:
             id = to_int(self.request.get('id'))
+            new_location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
             gun = Gun.get_id(id)
             if not gun :
                 gun = Gun(
@@ -130,7 +135,6 @@ class SetEntry(webapp2.RequestHandler):
                 description= self.request.get('description'),
                 type= Gun.Types.lookup_by_name(self.request.get('type')),
                 name= self.request.get('name'),
-                location= ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon')),
                 site=self.request.get('site'),
                 context=self.request.get('context'),
                 collection=to_bool(self.request.get('collection')),
@@ -140,12 +144,22 @@ class SetEntry(webapp2.RequestHandler):
                 mark_details=self.request.get('mark_details'),
                 interpretation=to_bool(self.request.get('interpretation')),
                 inter_details=self.request.get('inter_details'),
+                quality=Gun.Quality.lookup_by_name(self.request.get('quality'))
             )
+            if  gun.country == 'none' or new_location != gun.location:
+                gun.location = new_location
+                address = geolocate(gun.location)
+                gun.geocode = json.dumps(address)
+                for location in address:
+                    if "country" in location['types']:
+                        gun.country = location['formatted_address']
             gun.put()
             template_values = {
                 'user_data':user_data,
                 'gun': gun,
                 'gun_types': GUN_TYPES,
+                'qualities_text': RECORD_QUALITIES,
+                'qualities': Gun.Quality,
                 'index': 4,
             }
             template = JINJA_ENVIRONMENT.get_template('detail.html')

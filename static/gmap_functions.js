@@ -66,7 +66,7 @@
     }
 
     function getIcon(icon) {
-        if (!window.AnchorGmap || !AnchorGmap.icons[icon]) {
+        if (!AnchorGmap || !AnchorGmap.icons[icon]) {
             return AnchorGmap.icons['none'];
         }
 
@@ -250,8 +250,8 @@
 
         return [
             '<tr class="clickable-row" data-href="' + href + '">',
-            '<td class="thumb">',
-            '<span><img src="' + filename + '" alt /></span>',
+            '<td >',
+            '<span><img class="img-thumbnail" src="' + filename + '" alt /></span>',
             '</td>',
             '<td>' + entry["anchor_id"] + '</td>',
             '<td>' + entry["anchor_type"] + '</td>',

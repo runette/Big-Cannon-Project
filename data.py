@@ -23,13 +23,17 @@ from google.appengine.api import app_identity
 from google.appengine.api import urlfetch
 from datetime import datetime
 import logging
+import googlemaps
+from requests_toolbelt.adapters import appengine
+appengine.monkeypatch()
+
 
 
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
-RECORD_QUALITIES = ("gold", "silver", 'bronze')
+RECORD_QUALITIES = ('bronze', "silver", "gold")
 
 class BNG(ndb.Model):
     eastings = ndb.IntegerProperty()
@@ -73,13 +77,13 @@ class Gun(ndb.Model):
         BRONZE = 2
         NOT_KNOWN = 3
     class Quality(messages.Enum):
-        GOLD = 0
+        GOLD = 2
         SILVER = 1
-        BRONZE = 2
+        BRONZE = 0
     id = ndb.IntegerProperty()
     location = ndb.GeoPtProperty()
     type = ndb.msgprop.EnumProperty(Types)
-    quality = ndb.msgprop.EnumProperty(Quality)
+    quality = ndb.msgprop.EnumProperty(Quality, default=Quality.BRONZE)
     description = ndb.StringProperty()
     name = ndb.StringProperty()
     date = ndb.DateProperty(auto_now = True)
@@ -94,12 +98,21 @@ class Gun(ndb.Model):
     interpretation = ndb.BooleanProperty()
     inter_details = ndb.StringProperty()
     bng = ndb.StructuredProperty(BNG)
+    country = ndb.StringProperty(default="none")
+    geocode = ndb.JsonProperty()
 
     @classmethod
     def map_data(cls):
         list = cls.query().order(Gun.id).fetch()
         map_data = []
         for gun in list :
+            if gun.quality is None:
+                gun.quality = Gun.Quality.BRONZE
+
+            if gun.images[0] == "":
+                thumbnail = "/img/32x32.png"
+            else:
+                thumbnail = gun.images[0] + "=s32"
             try:
                 map_data.append({
                     "anchor_id" : gun.id,
@@ -109,7 +122,9 @@ class Gun(ndb.Model):
                     "anchor_type" : GUN_TYPES[gun.type.number],
                     "location"  : gun.context,
                     "names" : gun.name,
-                    'filename' : gun.images[0] + "=s32"
+                    'filename' : thumbnail,
+                    'quality' : RECORD_QUALITIES[gun.quality.number],
+                    'nationality': gun.country,
                 })
             except :
                 pass
@@ -176,4 +191,7 @@ class Auth:
         return "https://www.googleapis.com/upload/storage/v1/b/" + self.service_name + ".appspot.com/o?uploadType=resumable"
 
 
-
+def geolocate(location) :
+    gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
+    reverse_geocode_result = gmaps.reverse_geocode((location.lat, location.lon))
+    return reverse_geocode_result

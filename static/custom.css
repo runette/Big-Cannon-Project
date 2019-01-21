@@ -59,3 +59,15 @@
 .bg-ur {
 background-color: #e3f2fd;
 }
+
+
+table td.status { width: 1%; white-space:nowrap; padding: 5px; }
+table td.status span {
+  width: 15px; height: 15px;  background: #CCC;
+  color: #FFF; display: block; margin: 0 auto;
+  border-radius: 100px; -webkit-border-radius: 100px;
+}
+
+table td.status span.gold { background: #ffcc00; }
+table td.status span.silver { background: #CCC; }
+table td.status span.bronze { background: #ae7a3c; }
