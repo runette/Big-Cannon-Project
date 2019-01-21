@@ -13,6 +13,12 @@
             zoom: 7,
             center: location_uk,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: false,
+            rotateControl: true,
+            fullscreenControl: true
         };
 
         window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
@@ -38,11 +44,7 @@
         infoWindow,
 
         //entries
-        anchorTypes = {
-            'stocked': 'Stocked Anchor',
-            'stone': 'Stone Anchor',
-            'na': 'NA'
-        },
+
         $tableEntries = $('#table-entries'),
         $noData = $('.no-data'),
         $location = $('#location'),
@@ -65,7 +67,7 @@
 
     function getIcon(icon) {
         if (!window.AnchorGmap || !AnchorGmap.icons[icon]) {
-            return null;
+            return AnchorGmap.icons['none'];
         }
 
         return AnchorGmap.icons[icon];
@@ -157,13 +159,13 @@
         }
         return [
             '<div class="info" style="width: 300px;">',
-            '<a href="' + (BaseUrl + '/database/entry?anchor_id=' + entry.anchor_id) + '" style="text-decoration: none;">',
+            '<a href="' + (BaseUrl + '/database/entry?gun_id=' + entry.anchor_id) + '" style="text-decoration: none;">',
             '<div class="info-inner" style="width: 100%;">',
             '<div style="width: 30%;float: left;padding: 5px 0 0;">',
             '<img src="' + filename + '" style="width: 100%; height: auto;">',
             '</div>',
             '<div style="overflow: hidden; padding-left: 10px;">',
-            '<p style="margin-bottom: 0;"><strong>Type: </strong>' + anchorTypes[entry.anchor_type] + '</p>',
+            '<p style="margin-bottom: 0;"><strong>Type: </strong>' + entry.anchor_type + '</p>',
             '<p style="margin-bottom: 0;"><strong>From: </strong>' + (entry.site == '' ? 'unknown' : entry.site) + '</p>',
             '<p style="margin-bottom: 0;"><strong>Location: </strong>' + entry.location + '</p>',
             '</div>',

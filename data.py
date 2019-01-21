@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime, urllib
+import datetime, urllib, json
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from protorpc import messages
@@ -31,6 +31,41 @@ GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ("gold", "silver", 'bronze')
 
+class BNG(ndb.Model):
+    eastings = ndb.IntegerProperty()
+    northings = ndb.IntegerProperty()
+
+    def convert_to_LL(self):
+        url = 'http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc?method=BNGtoLatLng&easting=' + str(self.eastings) + "&northing=" + str(self.northings)
+        return self.BGS_api(url)
+
+    @classmethod
+    def convert_from_LL(self, lat, lon):
+        url = "http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc?method=LatLongToBNG&lat=" + lat + "&lon=" + lon
+        return BNG.BGS_api(url)
+
+    @classmethod
+    def BGS_api(self,url):
+        try:
+            result = urlfetch.fetch(
+                url= url,
+                method='GET',
+                headers={"content-type": "application/json"},
+                deadline=2000)
+            if result.status_code == 200:
+                try:
+                    payload = result.content
+                    response = json.loads(payload)
+                    return response
+                except:
+                    raise Exception('ParseError' + payload)
+            else:
+                raise Exception('ApiError' + str(result.status_code))
+        except Exception as e:
+            logging.error(str(e))
+            return
+
+
 class Gun(ndb.Model):
     class Types(messages.Enum):
         CAST = 0
@@ -41,7 +76,7 @@ class Gun(ndb.Model):
         GOLD = 0
         SILVER = 1
         BRONZE = 2
-    id = ndb.StringProperty()
+    id = ndb.IntegerProperty()
     location = ndb.GeoPtProperty()
     type = ndb.msgprop.EnumProperty(Types)
     quality = ndb.msgprop.EnumProperty(Quality)
@@ -58,8 +93,7 @@ class Gun(ndb.Model):
     mark_details = ndb.StringProperty()
     interpretation = ndb.BooleanProperty()
     inter_details = ndb.StringProperty()
-
-
+    bng = ndb.StructuredProperty(BNG)
 
     @classmethod
     def map_data(cls):
@@ -73,7 +107,7 @@ class Gun(ndb.Model):
                     "latitude" : gun.location.lat,
                     "longitude" : gun.location.lon,
                     "anchor_type" : GUN_TYPES[gun.type.number],
-                    "location"  : gun.description,
+                    "location"  : gun.context,
                     "names" : gun.name,
                     'filename' : gun.images[0] + "=s32"
                 })
@@ -85,7 +119,7 @@ class Gun(ndb.Model):
     def get_next(cls):
         all = Gun.query().order(-Gun.id).fetch()
         if all :
-            return int(all[0].id) + 1
+            return all[0].id + 1
         else:
             return 1
 
@@ -96,8 +130,14 @@ class Gun(ndb.Model):
 def to_bool(bool_str):
     """Parse the string and return the boolean value encoded or raise an exception"""
     if isinstance(bool_str, basestring) and bool_str:
-        if bool_str.lower() in ['true', 't', '1']: return True
-        elif bool_str.lower() in ['false', 'f', '0']: return False
+        if bool_str.lower() in ['true', 't', '1', 'on']: return True
+        elif bool_str.lower() in ['false', 'f', '0', 'off']: return False
+
+def to_int(int_string):
+    try:
+        return int(int_string)
+    except Exception :
+        return 0
 
 def UserStatus(uri):
     # set up the user context and links for the navbar
@@ -134,7 +174,6 @@ class Auth:
 
     def get_url(self):
         return "https://www.googleapis.com/upload/storage/v1/b/" + self.service_name + ".appspot.com/o?uploadType=resumable"
-
 
 
 

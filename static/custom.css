@@ -5,7 +5,7 @@
 .map-container {width: 100%;height: 80vh !important;display: block;overflow: hidden;}
 .map-container iframe { width: 100%; height:100vh !important; }
 
-.map-container.inline { height: 30vh !important; border: 1px solid #CCC; }
+.map-container.inline { height: 30vh !important; border: 1px solid #CCC;overflow: hidden }
 .map-container.inline iframe { width: 100%; height: 100% !important; }
 
 /* Map Filter */

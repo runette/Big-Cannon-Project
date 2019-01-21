@@ -15,7 +15,8 @@
 # limitations under the License.
 #
 import webapp2, jinja2, os, json, datetime, logging
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth
+from update import UpdateSchema
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth, to_int, BNG
 from google.appengine.ext import ndb
 from google.appengine.api import images
 
@@ -67,12 +68,13 @@ class FetchMap(webapp2.RequestHandler):
         map = {
             "defaultThumb" : "/img/70x70.png",
             "icons" : {
-                "bronze" : '/img/anchor-bronze.png',
-                "silver" : "/img/anchor-silver.png",
-                'gold' : "/img/anchor-gold.png"
+                "bronze" : '/img/cannon_bronze.png',
+                "silver" : "/img/cannon_silver.png",
+                'gold' : "/img/cannon_gold.png",
+                'none' : '/img/cannon_bronze.png',
             },
             "pageSize": 20,
-            "entryPath" : "/database/entry?anchor_id=",
+            "entryPath" : "/database/entry?gun_id=",
             "thumbnalePath" : "/up/thumbnails",
             "sort":{"asc": 4, "desc": 3},
         }
@@ -87,13 +89,13 @@ class FetchEntry(webapp2.RequestHandler):
     def get(self):
         user_data = UserStatus(self.request.uri)
         user = user_data['user']
-        gun_id = self.request.get('anchor_id')
+        gun_id = to_int(self.request.get('gun_id'))
         if gun_id:
             gun = Gun.get_id(gun_id)
         else:
             if user:
                 gun = Gun(
-                    id=str(Gun.get_next()),
+                    id=Gun.get_next(),
                     description="",
                     type=Gun.Types.NOT_KNOWN,
                     name=user.email(),
@@ -116,7 +118,7 @@ class SetEntry(webapp2.RequestHandler):
         user_data = UserStatus(self.request.uri)
         user = user_data['user']
         if user:
-            id = self.request.get('id')
+            id = to_int(self.request.get('id'))
             gun = Gun.get_id(id)
             if not gun :
                 gun = Gun(
@@ -174,7 +176,7 @@ class AddPhoto(webapp2.RequestHandler):
             logging.info( user.email() + " added Object " + data['name'] + "." )
             name = data['name']
             bucket = data['bucket']
-            id = self.request.get('id')
+            id = to_int(self.request.get('id'))
             url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name))
             gun = Gun.get_id(id)
             if gun :
@@ -187,13 +189,45 @@ class AddPhoto(webapp2.RequestHandler):
             self.response.write(url)
         return
 
+class BngConvert(webapp2.RequestHandler):
+    def post(self):
+        eastings = to_int(self.request.get('eastings'))
+        northings = to_int(self.request.get('northings'))
+        bng = BNG(
+            eastings=eastings,
+            northings=northings
+        )
+        convert = bng.convert_to_LL()
+        response = json.dumps({
+            "LATITUDE" : convert["LATITUDE"],
+            "LONGITUDE" : convert["LONGITUDE"]
+        })
+        self.response.write(response)
+        return
+
+class LlConvert(webapp2.RequestHandler):
+    def post(self):
+        lat = self.request.get('lat')
+        lon = self.request.get('lon')
+        convert = BNG.convert_from_LL(lat,lon)
+        response = json.dumps({
+            "EASTING" : convert["EASTING"],
+            "NORTHING" : convert["NORTHING"]
+        })
+        self.response.write(response)
+        return
+
+
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
+    ('/update_schema', UpdateSchema),
     ('/database/entry', FetchEntry),
     ('/database', Database),
     ('/map_fetch', FetchMap),
     ('/set_entry', SetEntry),
     ('/about', About),
     ('/get_upload_key', GetKey),
-    ('/add_photo', AddPhoto)
+    ('/add_photo', AddPhoto),
+    ('/bng_convert', BngConvert),
+    ('/ll_convert', LlConvert)
 ], debug=True)

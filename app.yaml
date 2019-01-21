@@ -4,6 +4,10 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
+builtins:
+# Deferred is required to use google.appengine.ext.deferred.
+- deferred: on
+
 handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
@@ -14,6 +18,11 @@ handlers:
 
 - url: /img
   static_dir: img
+
+- url: /update_schema
+  script: main.app
+  login: admin
+  secure: always
 
 - url: .*
   script: main.app

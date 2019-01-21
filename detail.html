@@ -1,10 +1,10 @@
 {% extends "header.html" %}
 {% block main_content %}
-<form action="/set_entry" method="post">
+<form action="/set_entry" name="bronze" method="post">
     <input type="hidden" id="id" name="id" value="{{ gun.id }}" read-only >
         <div class="row p-3 mb-3 bg-ur" >
             <div class="media">
-                <a class="align-self-center mr-3 fancybox" href="{{gun.images[0]}}"><img src="{% if gun.images|length > 0 %} {{gun.images[0]}}=s70 {% else %} /img/70x70.png {% endif %}" alt=""></a>
+                <a class="align-self-center mr-3 fancybox" href="{{gun.images[0]}}"><img src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}}=s70 {% else %} /img/70x70.png {% endif %}" alt=""></a>
             </div>
 
             <div class="media-body display-1 p-2">
@@ -52,35 +52,20 @@
                     <tbody>
                     <tr>
                         <div class="row">
-                            <div class="col-md-3">
-                                Markings
-                            </div><div class="col-md-3">
-
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons" >
-                                <label class="btn btn-secondary {% if gun.markings %} active {% endif %}"  onclick="select_button('markings','show')" >
-                                    <input type="radio" name="collection" id="option1" autocomplete="off" {% if gun.markings %} checked {% endif %} value="true"> Yes
-                                </label>
-                                <label class="btn btn-secondary {% if not gun.markings %} active {% endif %}"  onclick="select_button('markings','hide')">
-                                    <input type="radio" name="collection" id="option2" autocomplete="off" {% if not gun.markings %} checked {% endif %} value="false"> No
-                                </label>
+                            <div class="col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" name="markings" class="custom-control-input update-field" id="markings" {% if gun.markings %} checked {% endif %} onchange="select_button('markings')" >
+                                <label class="custom-control-label" for="markings">Markings?</label>
+                                </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" name="interpretation" class="custom-control-input update-field" id="inter" {% if gun.interpretation %} checked {% endif %} onchange="select_button('inter')" >
+                                    <label class="custom-control-label" for="inter">Interpretations?</label>
+                                </div>
                             </div>
-                            <div class="col-lg-3">
-
-                                Interpretations
-
-                                </div><div class="col-md-3">
-
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons" >
-                                <label class="btn btn-secondary {% if gun.interpretation %} active {% endif %}"  onclick="select_button('inter','show')" >
-                                    <input type="radio" name="collection"  autocomplete="off" {% if gun.collection %} checked {% endif %} value="true"> Yes
-                                </label>
-                                <label class="btn btn-secondary {% if not gun.interpretation %} active {% endif %}"  onclick="select_button('inter','hide')">
-                                    <input type="radio" name="collection"  autocomplete="off" {% if not gun.collection %} checked {% endif %} value="false"> No
-                                </label>
-                            </div>
-                            </div>
-                        </tr>
+                        </div>
+                    </tr>
                     </tbody>
                 </table>
                 <table class="table table-striped">
@@ -119,14 +104,10 @@
                     <tr>
                         <td>Museum / Collection</td>
                         <td>
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons" >
-                                <label class="btn btn-secondary {% if gun.collection %} active {% endif %}" id="collection" onclick="select_button('collection', 'show')" >
-                                    <input type="radio" name="collection"  autocomplete="off" {% if gun.collection %} checked {% endif %} value="true"> Yes
-                                </label>
-                                <label class="btn btn-secondary {% if not gun.collection %} active {% endif %}"  onclick="select_button('collection','hide')">
-                                    <input type="radio" name="collection"  autocomplete="off" {% if not gun.collection %} checked {% endif %} value="false"> No
-                                </label>
-                            </div>
+                            <div class="custom-control custom-switch">
+                                    <input type="checkbox" name="collection" class="custom-control-input update-field" id="collection" {% if gun.collection %} checked {% endif %} onchange="select_button('collection')" >
+                                    <label class="custom-control-label" for="collection">In a Museum / Collection?</label>
+                                </div>
                         </td>
                     </tr>
                     <tr class="hidden collection">
@@ -144,45 +125,96 @@
     <div class="row bg-light pt-3">
             <div class="col-md-6">
                 <h3 class="bold">Location</h3>
-                <div id="map_canvas" class="map-container inline" style="position: relative; overflow: hidden;"><div style="height: 100%; width: 100%; position: absolute; top: 0px; left: 0px; background-color: rgb(229, 227, 223);"><div class="gm-style" style="position: absolute; z-index: 0; left: 0px; top: 0px; height: 100%; width: 100%; padding: 0px; border-width: 0px; margin: 0px;"><div tabindex="0" style="position: absolute; z-index: 0; left: 0px; top: 0px; height: 100%; width: 100%; padding: 0px; border-width: 0px; margin: 0px; cursor: url(&quot;https://maps.gstatic.com/mapfiles/openhand_8_8.cur&quot;), default; touch-action: pan-x pan-y;"><div style="z-index: 1; position: absolute; left: 50%; top: 50%; width: 100%; transform: translate(0px, 0px);"><div style="position: absolute; left: 0px; top: 0px; z-index: 100; width: 100%;"><div style="position: absolute; left: 0px; top: 0px; z-index: 0;"><div style="position: absolute; z-index: 988; transform: matrix(1, 0, 0, 1, -46, -59);"><div style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px;"><div style="width: 256px; height: 256px;"></div></div><div style="position: absolute; left: -256px; top: 0px; width: 256px; height: 256px;"><div style="width: 256px; height: 256px;"></div></div><div style="position: absolute; left: -256px; top: -256px; width: 256px; height: 256px;"><div style="width: 256px; height: 256px;"></div></div><div style="position: absolute; left: 0px; top: -256px; width: 256px; height: 256px;"><div style="width: 256px; height: 256px;"></div></div><div style="position: absolute; left: 256px; top: -256px; width: 256px; height: 256px;"><div style="width: 256px; height: 256px;"></div></div><div style="position: absolute; left: 256px; top: 0px; width: 256px; height: 256px;"><div style="width: 256px; height: 256px;"></div></div></div></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 101; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 102; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 103; width: 100%;"><div style="position: absolute; left: 0px; top: 0px; z-index: -1;"><div style="position: absolute; z-index: 988; transform: matrix(1, 0, 0, 1, -46, -59);"><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 0px; top: 0px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: -256px; top: 0px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: -256px; top: -256px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 0px; top: -256px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 256px; top: -256px;"></div><div style="width: 256px; height: 256px; overflow: hidden; position: absolute; left: 256px; top: 0px;"></div></div></div><div style="width: 31px; height: 43px; overflow: hidden; position: absolute; left: -16px; top: -43px; z-index: 0;"><img alt="" src="./Entry _ Database _ Big Anchor Project_files/anchor-gold.png" draggable="false" style="position: absolute; left: 0px; top: 0px; user-select: none; width: 31px; height: 43px; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 0;"><div style="position: absolute; z-index: 988; transform: matrix(1, 0, 0, 1, -46, -59);"><div style="position: absolute; left: -256px; top: 0px; width: 256px; height: 256px; transition: opacity 200ms linear 0s;"><img draggable="false" alt="" role="presentation" src="./Entry _ Database _ Big Anchor Project_files/vt" style="width: 256px; height: 256px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div style="position: absolute; left: 0px; top: 0px; width: 256px; height: 256px; transition: opacity 200ms linear 0s;"><img draggable="false" alt="" role="presentation" src="./Entry _ Database _ Big Anchor Project_files/vt(1)" style="width: 256px; height: 256px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div style="position: absolute; left: 0px; top: -256px; width: 256px; height: 256px; transition: opacity 200ms linear 0s;"><img draggable="false" alt="" role="presentation" src="./Entry _ Database _ Big Anchor Project_files/vt(2)" style="width: 256px; height: 256px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div style="position: absolute; left: 256px; top: -256px; width: 256px; height: 256px; transition: opacity 200ms linear 0s;"><img draggable="false" alt="" role="presentation" src="./Entry _ Database _ Big Anchor Project_files/vt(3)" style="width: 256px; height: 256px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div style="position: absolute; left: 256px; top: 0px; width: 256px; height: 256px; transition: opacity 200ms linear 0s;"><img draggable="false" alt="" role="presentation" src="./Entry _ Database _ Big Anchor Project_files/vt(4)" style="width: 256px; height: 256px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div><div style="position: absolute; left: -256px; top: -256px; width: 256px; height: 256px; transition: opacity 200ms linear 0s;"><img draggable="false" alt="" role="presentation" src="./Entry _ Database _ Big Anchor Project_files/vt(5)" style="width: 256px; height: 256px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div></div></div><div class="gm-style-pbc" style="z-index: 2; position: absolute; height: 100%; width: 100%; padding: 0px; border-width: 0px; margin: 0px; left: 0px; top: 0px; opacity: 0;"><p class="gm-style-pbt"></p></div><div style="z-index: 3; position: absolute; height: 100%; width: 100%; padding: 0px; border-width: 0px; margin: 0px; left: 0px; top: 0px; touch-action: pan-x pan-y;"><div style="z-index: 4; position: absolute; left: 50%; top: 50%; width: 100%; transform: translate(0px, 0px);"><div style="position: absolute; left: 0px; top: 0px; z-index: 104; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 105; width: 100%;"></div><div style="position: absolute; left: 0px; top: 0px; z-index: 106; width: 100%;"><div title="" style="width: 31px; height: 43px; overflow: hidden; position: absolute; opacity: 0; cursor: pointer; touch-action: none; left: -16px; top: -43px; z-index: 0;"><img alt="" src="./Entry _ Database _ Big Anchor Project_files/anchor-gold.png" draggable="false" style="position: absolute; left: 0px; top: 0px; user-select: none; width: 31px; height: 43px; border: 0px; padding: 0px; margin: 0px; max-width: none;"></div></div><div style="position: absolute; left: 0px; top: 0px; z-index: 107; width: 100%;"></div></div></div></div><iframe aria-hidden="true" frameborder="0" style="z-index: -1; position: absolute; width: 100%; height: 100%; top: 0px; left: 0px; border: none;" src="./Entry _ Database _ Big Anchor Project_files/saved_resource.html"></iframe><div style="margin-left: 5px; margin-right: 5px; z-index: 1000000; position: absolute; left: 0px; bottom: 0px;"><a target="_blank" rel="noopener" href="https://maps.google.com/maps?ll=51.331588,1.42214&amp;z=12&amp;t=m&amp;hl=en-US&amp;gl=US&amp;mapclient=apiv3" title="Click to see this area on Google Maps" style="position: static; overflow: visible; float: none; display: inline;"><div style="width: 66px; height: 26px; cursor: pointer;"><img alt="" src="./Entry _ Database _ Big Anchor Project_files/google4_hdpi.png" draggable="false" style="position: absolute; left: 0px; top: 0px; width: 66px; height: 26px; user-select: none; border: 0px; padding: 0px; margin: 0px;"></div></a></div><div style="background-color: white; padding: 15px 21px; border: 1px solid rgb(171, 171, 171); font-family: Roboto, Arial, sans-serif; color: rgb(34, 34, 34); box-sizing: border-box; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 16px; z-index: 10000002; display: none; width: 300px; height: 164px; position: absolute; left: 80px; top: 5px;"><div style="padding: 0px 0px 10px; font-size: 16px;">Map Data</div><div style="font-size: 13px;">Map data ©2018 Google</div><button draggable="false" title="Close" aria-label="Close" type="button" class="gm-ui-hover-effect" style="background: none; display: block; border: 0px; margin: 0px; padding: 0px; position: absolute; cursor: pointer; user-select: none; top: 0px; right: 0px; width: 37px; height: 37px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224px%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="pointer-events: none; display: block; width: 13px; height: 13px; margin: 12px;"></button></div><div class="gmnoprint" style="z-index: 1000001; position: absolute; right: 166px; bottom: 0px; width: 121px;"><div draggable="false" class="gm-style-cc" style="user-select: none; height: 14px; line-height: 14px;"><div style="opacity: 0.7; width: 100%; height: 100%; position: absolute;"><div style="width: 1px;"></div><div style="background-color: rgb(245, 245, 245); width: auto; height: 100%; margin-left: 1px;"></div></div><div style="position: relative; padding-right: 6px; padding-left: 6px; font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); white-space: nowrap; direction: ltr; text-align: right; vertical-align: middle; display: inline-block;"><a style="text-decoration: none; cursor: pointer; display: none;">Map Data</a><span>Map data ©2018 Google</span></div></div></div><div class="gmnoscreen" style="position: absolute; right: 0px; bottom: 0px;"><div style="font-family: Roboto, Arial, sans-serif; font-size: 11px; color: rgb(68, 68, 68); direction: ltr; text-align: right; background-color: rgb(245, 245, 245);">Map data ©2018 Google</div></div><div class="gmnoprint gm-style-cc" draggable="false" style="z-index: 1000001; user-select: none; height: 14px; line-height: 14px; position: absolute; right: 95px; bottom: 0px;"><div style="opacity: 0.7; width: 100%; height: 100%; position: absolute;"><div style="width: 1px;"></div><div style="background-color: rgb(245, 245, 245); width: auto; height: 100%; margin-left: 1px;"></div></div><div style="position: relative; padding-right: 6px; padding-left: 6px; font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); white-space: nowrap; direction: ltr; text-align: right; vertical-align: middle; display: inline-block;"><a href="https://www.google.com/intl/en-US_US/help/terms_maps.html" target="_blank" rel="noopener" style="text-decoration: none; cursor: pointer; color: rgb(68, 68, 68);">Terms of Use</a></div></div><button draggable="false" title="Toggle fullscreen view" aria-label="Toggle fullscreen view" type="button" class="gm-control-active gm-fullscreen-control" style="background: none rgb(255, 255, 255); border: 0px; margin: 10px; padding: 0px; position: absolute; cursor: pointer; user-select: none; border-radius: 2px; height: 40px; width: 40px; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; overflow: hidden; top: 0px; right: 0px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%20018%2018%22%3E%0A%20%20%3Cpath%20fill%3D%22%23666%22%20d%3D%22M0%2C0v2v4h2V2h4V0H2H0z%20M16%2C0h-4v2h4v4h2V2V0H16z%20M16%2C16h-4v2h4h2v-2v-4h-2V16z%20M2%2C12H0v4v2h2h4v-2H2V12z%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="height: 18px; width: 18px; margin: 11px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%0A%20%20%3Cpath%20fill%3D%22%23333%22%20d%3D%22M0%2C0v2v4h2V2h4V0H2H0z%20M16%2C0h-4v2h4v4h2V2V0H16z%20M16%2C16h-4v2h4h2v-2v-4h-2V16z%20M2%2C12H0v4v2h2h4v-2H2V12z%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="height: 18px; width: 18px; margin: 11px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%0A%20%20%3Cpath%20fill%3D%22%23111%22%20d%3D%22M0%2C0v2v4h2V2h4V0H2H0z%20M16%2C0h-4v2h4v4h2V2V0H16z%20M16%2C16h-4v2h4h2v-2v-4h-2V16z%20M2%2C12H0v4v2h2h4v-2H2V12z%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="height: 18px; width: 18px; margin: 11px;"></button><div draggable="false" class="gm-style-cc" style="user-select: none; height: 14px; line-height: 14px; position: absolute; right: 0px; bottom: 0px;"><div style="opacity: 0.7; width: 100%; height: 100%; position: absolute;"><div style="width: 1px;"></div><div style="background-color: rgb(245, 245, 245); width: auto; height: 100%; margin-left: 1px;"></div></div><div style="position: relative; padding-right: 6px; padding-left: 6px; font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); white-space: nowrap; direction: ltr; text-align: right; vertical-align: middle; display: inline-block;"><a target="_blank" rel="noopener" title="Report errors in the road map or imagery to Google" href="https://www.google.com/maps/@51.331588,1.42214,12z/data=!10m1!1e1!12b1?source=apiv3&amp;rapsrc=apiv3" style="font-family: Roboto, Arial, sans-serif; font-size: 10px; color: rgb(68, 68, 68); text-decoration: none; position: relative;">Report a map error</a></div></div><div class="gmnoprint gm-bundled-control gm-bundled-control-on-bottom" draggable="false" controlwidth="0" controlheight="0" style="margin: 10px; user-select: none; position: absolute; display: none; bottom: 14px; right: 0px;"><div class="gm-svpc" controlwidth="40" controlheight="40" style="background-color: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; border-radius: 2px; width: 40px; height: 40px; cursor: url(&quot;https://maps.gstatic.com/mapfiles/openhand_8_8.cur&quot;), default; touch-action: none; display: none; position: absolute;"><div style="position: absolute; left: 50%; top: 50%;"></div></div><div class="gmnoprint" controlwidth="40" controlheight="40" style="display: none; position: absolute;"><div style="width: 40px; height: 40px;"><button draggable="false" title="Rotate map 90 degrees" aria-label="Rotate map 90 degrees" type="button" class="gm-control-active" style="background: none rgb(255, 255, 255); display: none; border: 0px; margin: 0px 0px 32px; padding: 0px; position: relative; cursor: pointer; user-select: none; width: 40px; height: 40px; top: 0px; left: 0px; overflow: hidden; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; border-radius: 2px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2222%22%20viewBox%3D%220%200%2024%2022%22%3E%0A%20%20%3Cpath%20fill%3D%22%23666%22%20fill-rule%3D%22evenodd%22%20d%3D%22M20%2010c0-5.52-4.48-10-10-10s-10%204.48-10%2010v5h5v-5c0-2.76%202.24-5%205-5s5%202.24%205%205v5h-4l6.5%207%206.5-7h-4v-5z%22%20clip-rule%3D%22evenodd%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="height: 28px; width: 28px; margin: 6px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2222%22%20viewBox%3D%220%200%2024%2022%22%3E%0A%20%20%3Cpath%20fill%3D%22%23333%22%20fill-rule%3D%22evenodd%22%20d%3D%22M20%2010c0-5.52-4.48-10-10-10s-10%204.48-10%2010v5h5v-5c0-2.76%202.24-5%205-5s5%202.24%205%205v5h-4l6.5%207%206.5-7h-4v-5z%22%20clip-rule%3D%22evenodd%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="height: 28px; width: 28px; margin: 6px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2222%22%20viewBox%3D%220%200%2024%2022%22%3E%0A%20%20%3Cpath%20fill%3D%22%23111%22%20fill-rule%3D%22evenodd%22%20d%3D%22M20%2010c0-5.52-4.48-10-10-10s-10%204.48-10%2010v5h5v-5c0-2.76%202.24-5%205-5s5%202.24%205%205v5h-4l6.5%207%206.5-7h-4v-5z%22%20clip-rule%3D%22evenodd%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="height: 28px; width: 28px; margin: 6px;"></button><button draggable="false" title="Tilt map" aria-label="Tilt map" type="button" class="gm-tilt gm-control-active" style="background: none rgb(255, 255, 255); display: block; border: 0px; margin: 0px; padding: 0px; position: relative; cursor: pointer; user-select: none; width: 40px; height: 40px; top: 0px; left: 0px; overflow: hidden; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; border-radius: 2px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218px%22%20height%3D%2216px%22%20viewBox%3D%220%200%2018%2016%22%3E%0A%20%20%3Cpath%20fill%3D%22%23666%22%20d%3D%22M0%2C16h8V9H0V16z%20M10%2C16h8V9h-8V16z%20M0%2C7h8V0H0V7z%20M10%2C0v7h8V0H10z%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="width: 18px; height: 16px; margin: 12px 11px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218px%22%20height%3D%2216px%22%20viewBox%3D%220%200%2018%2016%22%3E%0A%20%20%3Cpath%20fill%3D%22%23333%22%20d%3D%22M0%2C16h8V9H0V16z%20M10%2C16h8V9h-8V16z%20M0%2C7h8V0H0V7z%20M10%2C0v7h8V0H10z%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="width: 18px; height: 16px; margin: 12px 11px;"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218px%22%20height%3D%2216px%22%20viewBox%3D%220%200%2018%2016%22%3E%0A%20%20%3Cpath%20fill%3D%22%23111%22%20d%3D%22M0%2C16h8V9H0V16z%20M10%2C16h8V9h-8V16z%20M0%2C7h8V0H0V7z%20M10%2C0v7h8V0H10z%22%2F%3E%0A%3C%2Fsvg%3E%0A" style="width: 18px; height: 16px; margin: 12px 11px;"></button></div></div></div><div class="gmnoprint" style="margin: 10px; z-index: 0; position: absolute; cursor: pointer; display: none; left: 0px; top: 0px;"><div class="gm-style-mtc" style="float: left; position: relative;"><div role="button" tabindex="0" title="Show street map" aria-label="Show street map" aria-pressed="true" draggable="false" style="direction: ltr; overflow: hidden; text-align: center; height: 40px; display: table-cell; vertical-align: middle; position: relative; color: rgb(0, 0, 0); font-family: Roboto, Arial, sans-serif; user-select: none; font-size: 18px; background-color: rgb(255, 255, 255); padding: 0px 17px; border-bottom-left-radius: 2px; border-top-left-radius: 2px; background-clip: padding-box; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; min-width: 36px; font-weight: 500;">Map</div><div style="background-color: white; z-index: -1; padding: 2px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; position: absolute; left: 0px; top: 0px; text-align: left; display: none;"><div draggable="false" title="Show street map with terrain" style="color: rgb(0, 0, 0); font-family: Roboto, Arial, sans-serif; user-select: none; font-size: 18px; background-color: rgb(255, 255, 255); padding: 6px 8px 6px 6px; direction: ltr; text-align: left; white-space: nowrap;"><span role="checkbox" style="box-sizing: border-box; position: relative; line-height: 0; font-size: 0px; margin: 0px 5px 0px 0px; display: inline-block; background-color: rgb(255, 255, 255); border: 1px solid rgb(198, 198, 198); border-radius: 1px; width: 13px; height: 13px; vertical-align: middle;"><div style="position: absolute; left: 1px; top: -2px; width: 13px; height: 11px; overflow: hidden; display: none;"><img alt="" src="./Entry _ Database _ Big Anchor Project_files/imgs8.png" draggable="false" style="position: absolute; left: -52px; top: -44px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none; width: 68px; height: 67px;"></div></span><label style="vertical-align: middle; cursor: pointer;">Terrain</label></div></div></div><div class="gm-style-mtc" style="float: left; position: relative;"><div role="button" tabindex="0" title="Show satellite imagery" aria-label="Show satellite imagery" aria-pressed="false" draggable="false" style="direction: ltr; overflow: hidden; text-align: center; height: 40px; display: table-cell; vertical-align: middle; position: relative; color: rgb(86, 86, 86); font-family: Roboto, Arial, sans-serif; user-select: none; font-size: 18px; background-color: rgb(255, 255, 255); padding: 0px 17px; border-bottom-right-radius: 2px; border-top-right-radius: 2px; background-clip: padding-box; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; min-width: 66px; border-left: 0px;">Satellite</div><div style="background-color: white; z-index: -1; padding: 2px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; position: absolute; right: 0px; top: 0px; text-align: left; display: none;"><div draggable="false" title="Show imagery with street names" style="color: rgb(0, 0, 0); font-family: Roboto, Arial, sans-serif; user-select: none; font-size: 18px; background-color: rgb(255, 255, 255); padding: 6px 8px 6px 6px; direction: ltr; text-align: left; white-space: nowrap;"><span role="checkbox" style="box-sizing: border-box; position: relative; line-height: 0; font-size: 0px; margin: 0px 5px 0px 0px; display: inline-block; background-color: rgb(255, 255, 255); border: 1px solid rgb(198, 198, 198); border-radius: 1px; width: 13px; height: 13px; vertical-align: middle;"><div style="position: absolute; left: 1px; top: -2px; width: 13px; height: 11px; overflow: hidden;"><img alt="" src="./Entry _ Database _ Big Anchor Project_files/imgs8.png" draggable="false" style="position: absolute; left: -52px; top: -44px; user-select: none; border: 0px; padding: 0px; margin: 0px; max-width: none; width: 68px; height: 67px;"></div></span><label style="vertical-align: middle; cursor: pointer;">Labels</label></div></div></div></div></div></div></div>
+                <div id="map_canvas" class="map-container inline" > </div>
                 <script>
                     window.initMap = function () {
-                        var map, marker, location,
-                            icons = {
-                                'bronze': "/img/map/31x43/anchor-bronze.png",
-                                'gold': "/img/map/31x43/anchor-gold.png",
-                                'silver': "/img/map/31x43/anchor-silver.png"
+                        map_icons = {
+                                'bronze': "/img/cannon_bronze.png",
+                                'gold': "/img/cannon_gold.png",
+                                'silver': "/img/cannon_silver.png"
                             };
 
-                        location = {
-                            lat: parseFloat({{ gun.location.lat }}),
-                            lng: parseFloat({{ gun.location.lon }})
+                        let location = {
+                            lat: parseFloat($('#lat').val()),
+                            lng: parseFloat($('#lon').val())
                         };
-
                         map = new google.maps.Map(document.getElementById('map_canvas'), {
                             zoom: 12,
                             center: location,
-                            gestureHandling: 'none',
-                            zoomControl: false
+                            mapTypeId: google.maps.MapTypeId.ROADMAP,
+                            zoomControl: true,
+                            mapTypeControl: false,
+                            scaleControl: true,
+                            streetViewControl: false,
+                            rotateControl: true,
+                            fullscreenControl: true
                         });
-                        marker = new google.maps.Marker({
-                            position: location,
-                            map: map,
-                            icon: icons['gold']
-                        });
+                        marker = null;
+                        reset_map()
                     };
                 </script>
+
                 <div class="row">
+                    <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="geolocation" class="custom-control-input" id="latlon" checked onchange="radio_button('geolocation','latlon')" >
+                            <label class="custom-control-label" for="latlon">Lat/Lon</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="geolocation" class="custom-control-input" id="bng"  onchange="LL_convert('bronze')" >
+                            <label class="custom-control-label" for="bng">Grid Ref</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="geolocation" class="custom-control-input" id="locate"  onchange="radio_button('geolocation',  'locate')" >
+                            <label class="custom-control-label" for="locate">Device Location</label>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row latlon">
                     <div class="col-md-3">
                         Latitude
                     </div> <div class="col-md-3">
-                        <input class="form-control" type="text" name="lat" value="{{ gun.location.lat }}" >
+                        <input class="form-control" type="text" id="lat" name="lat" value="{{ gun.location.lat }}" >
                     </div> <div class="col-md-3">
                         Longitude
                     </div> <div class="col-md-3">
-                        <input class="form-control" type="text" name="lon" value="{{ gun.location.lon }}" >
+                        <input class="form-control" type="text" id="lon" name="lon" value="{{ gun.location.lon }}" >
                     </div>
                 </div>
+                <div class="row latlon">
+                    <small class="text-muted mx-auto">All Lat/lon coordinates must be in WGS84</small>
+                </div>
+                <div class="row bng">
+                    <div class="col-2">
+                        Easting
+                    </div>
+                    <div class="col-3">
+                        <input class="form-control" type="text" name="eastings" id="eastings" value="" >
+                    </div>
+                    <div class="col-2">
+                        Northing
+                    </div>
+                    <div class="col-3">
+                        <input class="form-control" type="text" name="northings" id="northings" value="">
+                   </div>
+                    <div class="col-2">
+                        <button class="btn btn-small btn-primary" type="button" onclick="BNG_convert('bronze')">Map</button>
+                    </div>
+                </div>
+                <div class="row bng">
+                    <small class="text-muted mx-auto">Conversion provided by British Geological Survey <a href="https://www.bgs.ac.uk/data/webservices/convertForm.cfm#bngToLatLng">link</a></small>
+                </div>
+                <div class="row locate">
+                    <button class="btn btn-primary mx-auto d-block" type="button" onclick="getLocation()">Current Location</button>
+                </div>
+
             </div>
             <div class="col-md-6">
                 <h3 class="bold">Photos  <button class="btn btn-primary float-right" type="button" onclick="send_file()">Upload Photo</button> </h3>
@@ -190,6 +222,7 @@
                 <a class="max-width:100%" href="{{gun.images[0]}}" data-fancybox="gun_images" data-caption="My caption">
                     <img class=" mx-auto d-block" id="image_container" src="{{gun.images[0]}}=s100" width="300px"   alt="" />
                 </a>
+
 
             <div class="hidden">
                 {% for i in gun.images %}
@@ -202,18 +235,17 @@
         </div>
 
 </form>
+
 {% endblock %}
 
 {% block script %}
 
 <script src="/static/sweetalert.min.js"></script>
 <script src="/static/markerclusterer.js"></script>
-<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBlWzi9DiiSCHjP9cy22yhnWqxyyNWXv6Q&amp;callback=initMap"></script>
-<script >
-    $('[data-fancybox]').fancybox({
-	protect: true
-});
-    if
+<script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyBlWzi9DiiSCHjP9cy22yhnWqxyyNWXv6Q&amp;callback=initMap"></script>
+<script type="application/javascript" >
+                    $('.bng').hide();
+                    $('.locate').hide();
 
 </script>
 {% endblock %}
