@@ -278,16 +278,16 @@
         }
 
         if (AnchorGmap.pageSize && entries.length && entries.length > AnchorGmap.pageSize) {
-            var total = 10,
-                totalPages = Math.floor(entries.length / AnchorGmap.pageSize),
+            let total = 10,
+                totalPages = Math.ceil(entries.length / AnchorGmap.pageSize),
                 i = 0,
                 html = '';
 
             if (curentPage <= 0) {
-                html += '<li class="prev disabled"><span>«</span></li>';
+                html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
             }
             else {
-                html += '<li class="prev"><a href="/database?page=' + curentPage + '" data-page="'+(curentPage-1)+'">«</a></li>';
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="'+(curentPage-1)+'"><span>&laquo;</span></a></li>';
             }
 
             if (curentPage - 5 > 0) {
@@ -302,18 +302,18 @@
             for (; i < total; i++) {
                 var p = i + 1,
                     a = '';
-                if (i == curentPage) {
+                if (i === curentPage) {
                     a = 'active';
                 }
-                html += '<li class="' + a + '"><a href="/database?page=' + p + '" data-page="' + i + '">' + p + '</li>';
+                html += '<li class="page-item ' + a + '"><a class="page-link" href="#" data-page="' + i + '">' + p + '</li>';
             }
             $pagination.html(html);
             var next = curentPage + 1;
             if (next >= totalPages) {
-                var $next = $('<li class="next disabled"><span>»</span></li>');
+                var $next = $('<li class="page-item disabled"><span class="page-link">&raquo;</span></li>');
             }
             else {
-                var $next = $('<li class="next"><a href="/database?page=' + (next + 1) + '" data-page="' + next + '">»</a></li>');
+                var $next = $('<li class="page-item"><a class="page-link" href="#" data-page="' + next + '"><span>&raquo;</span></a></li>');
             }
             $pagination.append($next);
         }
@@ -334,13 +334,16 @@
             curentPage = 0;
         }
 
+
         if (entries && entries.length) {
             var pageSize = Math.min(AnchorGmap['pageSize'], entries.length),
                 i = curentPage * pageSize,
                 l = i + pageSize,
                 html = '';
             for (; i < l; i++) {
+                if (entries[i]) {
                 html += generateEntry(entries[i]);
+                }
             }
 
             $tableEntries.children('tbody').html(html);
@@ -403,8 +406,8 @@
 
     map = window.map;
     infoWindow = window.infoWindow;
-    $(initialize);
     refreshMap();
+    $(initialize);
     //resize
         $(window).off('resize.map').on('resize.map', function () {
             if(map.getZoom()< MIN_ZOOM){

@@ -73,9 +73,8 @@ class FetchMap(webapp2.RequestHandler):
                 'gold' : "/img/cannon_gold.png",
                 'none' : '/img/cannon_bronze.png',
             },
-            "pageSize": 20,
+            "pageSize": 10,
             "entryPath" : "/database/entry?gun_id=",
-            "thumbnalePath" : "/up/thumbnails",
             "sort":{"asc": 4, "desc": 3},
         }
         entries = Gun.map_data()
@@ -105,7 +104,15 @@ class FetchEntry(webapp2.RequestHandler):
                 )
                 index = 4
             else :
-                return
+                gun = Gun(
+                    id=Gun.get_next(),
+                    description="",
+                    type=Gun.Types.NOT_KNOWN,
+                    name="",
+                    location=ndb.GeoPt(52, 0),
+                    date=datetime.date.today()
+                )
+                index = 4
         template_values = {
             'user_data':user_data,
             'gun' : gun,

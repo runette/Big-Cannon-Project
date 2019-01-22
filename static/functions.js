@@ -8,13 +8,6 @@
         $('[data-fancybox]').fancybox({
 	    protect: true
         })}
-        $win.on('scroll', function () {
-            if ($win.scrollTop() > 0) {
-                $('#top-link').stop().animate({opacity: 1}, 500);
-            } else {
-                $('#top-link').stop().animate({opacity: 0}, 500);
-            }
-        }).trigger('scroll');
 
     function initialize() {
         initFancybox();

@@ -28,9 +28,6 @@ from requests_toolbelt.adapters import appengine
 appengine.monkeypatch()
 
 
-
-
-
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ('bronze', "silver", "gold")
@@ -97,7 +94,6 @@ class Gun(ndb.Model):
     mark_details = ndb.StringProperty()
     interpretation = ndb.BooleanProperty()
     inter_details = ndb.StringProperty()
-    bng = ndb.StructuredProperty(BNG)
     country = ndb.StringProperty(default="none")
     geocode = ndb.JsonProperty()
 
@@ -148,6 +144,7 @@ def to_bool(bool_str):
     if isinstance(bool_str, basestring) and bool_str:
         if bool_str.lower() in ['true', 't', '1', 'on']: return True
         elif bool_str.lower() in ['false', 'f', '0', 'off']: return False
+        else: raise TypeError
 
 def to_int(int_string):
     try:

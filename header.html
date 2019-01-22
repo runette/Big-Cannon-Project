@@ -37,12 +37,13 @@
                     <li class="nav-item {% if index == 5 %} active {% endif %}" id="nav-4">
                         <a class="nav-link" href="/donate">Donate</a>
                     </li>
+                    <li class="nav-bar nav " >
+                        <a class="nav-link"  href="{{ user_data['url']|safe }}" role="button"> {% if user %}  {% endif %}{{ user_data['url_linktext']}}</a>
+                    </li>
                 </ul>
           </div>
-            <div class="nav navbar-nav navbar-right">
-                <ul class="nav-bar nav " >
-                   <a class="btn btn-primary"  href="{{ user_data['url']|safe }}" role="button"> {% if user %}  {% endif %}{{ user_data['url_linktext']}}</a>
-                </ul>
+            <div class="nav navbar-nav navbar-right" id="top-button">
+
             </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>

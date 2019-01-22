@@ -1,6 +1,6 @@
 {% extends "header.html" %}
 {% block main_content %}
-<form action="/set_entry" name="bronze" method="post">
+<form action="/set_entry" id="bronze" method="post">
     <input type="hidden" id="id" name="id" value="{{ gun.id }}" read-only >
         <div class="row p-3  bg-ur" >
             <div class="media">
@@ -8,13 +8,13 @@
             </div>
 
             <div class="media-body display-1 p-2">
-                <h1>Gun ID : {{ gun.id }}
+                <h2>Gun ID : {{ gun.id }}
                 {% if user_data.user %}
-                    <button class="btn btn-primary float-right" type="submit" >Save Entry</button>
+
                 {% else %}
-                    Read-only
+                    <small class="text-muted float-right align-middle"> Read-only </small>
                 {% endif %}
-                </h1>
+                </h2>
             </div>
         </div>
     <div class="row  p-3 mb-3 bg-ur">
@@ -271,6 +271,7 @@
         </div>
 
 </form>
+<a href="#top" id="top-link"><span>Test</span></a>
 
 {% endblock %}
 
@@ -280,8 +281,18 @@
 <script src="/static/markerclusterer.js"></script>
 <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
 <script type="application/javascript" >
+                    let user = "{{user_data.user}}";
                     $('.bng').hide();
                     $('.locate').hide();
+                    if (user !== "None") {
+                        $('#top-button').html(
+                            '<ul class="nav-bar nav px-1"><Button type="submit" form="bronze" class="btn btn-primary"  href="#">Save</Button></ul>' + $('#top-button').html()
+                        )}
+                    else {
+                        $('input').prop("readonly", true);
+                        $('select').prop("disabled", true);
+
+                    }
 
 </script>
 {% endblock %}
