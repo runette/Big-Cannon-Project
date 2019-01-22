@@ -125,6 +125,7 @@ class Gun(ndb.Model):
                     'filename' : thumbnail,
                     'quality' : RECORD_QUALITIES[gun.quality.number],
                     'nationality': gun.country,
+                    'site' : gun.site,
                 })
             except :
                 pass

@@ -166,7 +166,7 @@
             '</div>',
             '<div style="overflow: hidden; padding-left: 10px;">',
             '<p style="margin-bottom: 0;"><strong>Type: </strong>' + entry.anchor_type + '</p>',
-            '<p style="margin-bottom: 0;"><strong>From: </strong>' + (entry.site == '' ? 'unknown' : entry.site) + '</p>',
+            '<p style="margin-bottom: 0;"><strong>Site: </strong>' + (entry.site == '' ? 'unknown' : entry.site) + '</p>',
             '<p style="margin-bottom: 0;"><strong>Location: </strong>' + entry.location + '</p>',
             '</div>',
             '</div>',
