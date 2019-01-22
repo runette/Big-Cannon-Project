@@ -191,7 +191,7 @@ class AddPhoto(webapp2.RequestHandler):
             name = data['name']
             bucket = data['bucket']
             id = to_int(self.request.get('id'))
-            url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name))
+            url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name), secure_url=True)
             gun = Gun.get_id(id)
             if gun :
                 image_list = gun.images
@@ -199,7 +199,7 @@ class AddPhoto(webapp2.RequestHandler):
                     gun.images = [url]
                 else :
                     gun.images.append(url)
-            gun.put()
+                gun.put()
             self.response.write(url)
         return
 
