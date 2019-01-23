@@ -11,9 +11,18 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class UpdateSchema(webapp2.RequestHandler):
     def get(self):
-        deferred.defer(update_schema_task)
-        self.response.write("started")
-        return
+        # deferred.defer(update_schema_task)
+        # self.response.write("started")
+        try:
+            guns = Gun.query().fetch()
+            for gun in guns:
+                for idx, image in enumerate(gun.images):
+                    gun.images[idx] = image.replace("https", "https:")
+                gun.put()
+            self.response.write('done')
+        except Exception as e:
+            self.response.write(str(e))
+
 
 
 def update_schema_task( cursor=None, num_updated=0, batch_size=100):

@@ -123,8 +123,8 @@ class Gun(ndb.Model):
                     'nationality': gun.country,
                     'site' : gun.site,
                 })
-            except :
-                pass
+            except Exception as e:
+                logging.error(str(e))
         return map_data
 
     @classmethod
