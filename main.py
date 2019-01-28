@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import webapp2, jinja2, os, json, datetime, logging
 from update import UpdateSchema
 from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth, to_int, BNG, geolocate
