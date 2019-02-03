@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-import webapp2, jinja2, os, json, datetime, logging
+import  webapp2,jinja2, os, json, datetime, logging
 from update import UpdateSchema
 from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth, to_int, BNG, geolocate
 from google.appengine.ext import ndb
