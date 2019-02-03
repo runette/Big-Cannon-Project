@@ -1,0 +1,23 @@
+#!wing
+#!version=6.0
+##################################################################
+# Wing IDE project file                                          #
+##################################################################
+[project attributes]
+proj.debug-sub-processes = True
+proj.directory-list = [{'dirloc': loc('.'),
+                        'excludes': (),
+                        'filter': u'*',
+                        'include_hidden': False,
+                        'recursive': True,
+                        'watch_for_changes': True}]
+proj.file-list = [loc('../../../Shared/Library/google-cloud-sdk/platform/google_appengine/dev_appserver.py')]
+proj.file-type = 'shared'
+proj.launch-config = {loc('../../../Shared/Library/google-cloud-sdk/platform/google_appengine/dev_appserver.py'): ('p'\
+        'roject',
+        (u'${WING:PROJECT_DIR}/app.yaml --max_module_instances=1',
+         '')),
+                      loc('main.py'): ('project',
+                                       (u'${WING:PROJECT_DIR}/main --max_module_instances=1 ',
+        ''))}
+proj.main-file = loc('../../../Shared/Library/google-cloud-sdk/platform/google_appengine/dev_appserver.py')
