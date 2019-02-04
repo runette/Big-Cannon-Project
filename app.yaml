@@ -1,8 +1,6 @@
-application: ultima-ratio-221014
-version: 6
-runtime: python27
-api_version: 1
-threadsafe: yes
+runtime: python37
+
+
 
 builtins:
 # Deferred is required to use google.appengine.ext.deferred.
