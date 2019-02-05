@@ -17,49 +17,41 @@
 
 import jinja2, os, json, datetime, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate
-from flask import Flask, render_template
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt
+from flask import Flask, render_template, send_from_directory, request
+
 
 app = Flask(__name__)
-
+root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
 
 
 
 @app.route('/')
 def main_handler():
     user_data = UserStatus()
-    template_values = {
-        'user_data': user_data,
-        'index': 1
-    }
-    self.response.write(template.render(template_values))
-    return
+    return render_template("index.html", 
+                user_data= user_data,
+                index= 1)
 
 @app.route('/about')
 def about():
     user_data = UserStatus()
-    template_values = {
-        'index': 2,
-        'user_data': user_data,
-    }
-    template = JINJA_ENVIRONMENT.get_template('about.html')
-    self.response.write(template.render(template_values))
-    return
+    return render_template('about.html',
+                           index= 2,
+                           user_data= user_data
+                           )
 
-app.route('/database')
+@app.route('/database')
 def database():
     user_data = UserStatus()
-    template_values = {
-        'user_data': user_data,
-        'gun_types': GUN_TYPES,
-        'index': 3
-    }
-    template = JINJA_ENVIRONMENT.get_template('database.html')
-    self.response.write(template.render(template_values))
-    return
+    return render_template("database.html",
+                           user_data= user_data,
+                           gun_types= GUN_TYPES,
+                           index= 3                           
+                           )
 
 
-app.route('/map_fetch')
+@app.route('/map_fetch', methods=['POST'])
 def fetch_map():
     map = {
         "defaultThumb" : "/img/70x70.png",
@@ -77,14 +69,13 @@ def fetch_map():
     map.update({
         "entries":entries
     })
-    self.response.write(json.dumps(map))
-    return
+    return json.dumps(map)
 
-app.route('/fetch_entry')
+@app.route('/database/entry')
 def fetch_entry():
     user_data = UserStatus()
     user = user_data['user']
-    gun_id = to_int(self.request.get('gun_id'))
+    gun_id = to_int(request.args.get('gun_id'))
     if gun_id:
         gun = Gun.get_id(gun_id)
         index = 3
@@ -95,7 +86,7 @@ def fetch_entry():
                 description="",
                 type=Gun.Types.NOT_KNOWN,
                 name=user.email(),
-                location= ndb.GeoPt(52,0),
+                location= GeoPt(52,0),
                 date= datetime.date.today()
             )
             index = 4
@@ -105,22 +96,20 @@ def fetch_entry():
                 description="",
                 type=Gun.Types.NOT_KNOWN,
                 name="",
-                location=ndb.GeoPt(52, 0),
+                location=GeoPt(52, 0),
                 date=datetime.date.today()
             )
             index = 4
-    template_values = {
-        'user_data':user_data,
-        'gun' : gun,
-        'gun_types' : GUN_TYPES,
-        'qualities_text': RECORD_QUALITIES,
-        'qualities': Gun.Quality,
-        'index' : index,
-    }
-    template = JINJA_ENVIRONMENT.get_template('detail.html')
-    self.response.write(template.render(template_values))
+    return render_template('detail.html',
+                           user_data=user_data,
+                           gun= gun,
+                           gun_types= GUN_TYPES,
+                           qualities_text= RECORD_QUALITIES,
+                           qualities= Gun.Quality,
+                           index= index                           
+                           )
 
-app.route('/set_entry')
+@app.route('/set_entry')
 def set_entry():
     user = user_data['user']
     if user:
@@ -167,7 +156,7 @@ def set_entry():
         template = JINJA_ENVIRONMENT.get_template('detail.html')
         self.response.write(template.render(template_values))
 
-app.route('/get_upload_key')
+@app.route('/get_upload_key')
 def GetKey():
     def post(self):
         user_data = UserStatus(self.request.uri)
@@ -184,7 +173,7 @@ def GetKey():
             self.response.write(response)
         return
 
-app.route('/add_photo')
+@app.route('/add_photo')
 def add_photo():
     def post(self):
         user_data = UserStatus(self.request.uri)
@@ -207,7 +196,7 @@ def add_photo():
             self.response.write(url)
         return
 
-app.route('/bng_convert')
+@app.route('/bng_convert')
 def bng_convert():
     def post(self):
         eastings = to_int(self.request.get('eastings'))
@@ -224,18 +213,22 @@ def bng_convert():
         self.response.write(response)
         return
 
-app.route('/ll_convert')
+@app.route('/ll_convert', methods=['POST'])
 def LlConvert():
-    def post(self):
-        lat = self.request.get('lat')
-        lon = self.request.get('lon')
-        convert = BNG.convert_from_LL(lat,lon)
-        response = json.dumps({
-            "EASTING" : convert["EASTING"],
-            "NORTHING" : convert["NORTHING"]
-        })
-        self.response.write(response)
-        return
+    lat = self.request.get('lat')
+    lon = self.request.get('lon')
+    convert = BNG.convert_from_LL(lat,lon)
+    response = json.dumps({
+        "EASTING" : convert["EASTING"],
+        "NORTHING" : convert["NORTHING"]
+    })
+    self.response.write(response)
+    return
+    
+@app.route('/img/<path:path>', methods=['GET'])
+def img(path):
+    return send_from_directory(root, path)
+    
 
 
 if __name__ == '__main__':
@@ -246,4 +239,4 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
-    app.run(host='127.0.0.1', port=8000, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True)
