@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import datetime, json, types, sys
-from protorpc import messages
+from enum import Enum
 from datetime import datetime
 import logging
 import googlemaps
@@ -40,38 +40,47 @@ class Query(datastore.Query):
         item_list = super().fetch(*args, **kwargs)
         response = []
         for item in item_list:
-            modules = sys.modules
-            this_name = __name__
-            this_module = modules[__name__]
-            mykind = item.kind
-            my_class = getattr(modules[this_name],mykind)
             item.__class__ = self._class_object
+            item.schema()
             response.append(item)
         return response
     
+class ndb(Enum):
+    IntegerProperty = 0
+    FloatProperty = 1
+    StringProperty = 2
+    TextProperty = 3
+    BooleanProperty = 4
+    DateTimeProperty = 5
+    GeoPtProperty = 6
+    KeyProperty = 7
+    JsonProperty = 8
+    EnumProperty = 9
+
 class Model(datastore.Entity):
+    
     _properties = {}
+    
+    def schema(self):
+        return
     
     def __init__(self):
         super().__init__()
-        for i in self :
-            pass
+        self.schema()
         return
     
     def __getattr__(self, name):
-        if name in self:
+        if name in self._properties:
+            return getattr(self, self._properties[name]['type'].name)(name)
+        
+        elif name in self:
             return self[name]
+        
         else:
-            raise AttributeError("No such attribute: " + name)
+            raise AttributeError("No such attribute: " + str(name))
     
-        def __setattr__(self, name, value):
-            self[name] = value
-    
-        def __delattr__(self, name):
-            if name in self:
-                del self[name]
-            else:
-                raise AttributeError("No such attribute: " + name)    
+    def __setattr__(self, name, value):
+            self[name] = value 
     
     @classmethod
     def query(cls, *args, **kwargs):
@@ -91,36 +100,45 @@ class Model(datastore.Entity):
         self.update(object.items())
         return
     
-    def IntegerProperty(cls, name, **kwargs):
-        self._properties.update({name:"IntegrerProperty"})
+    def Property(self, name, prop_type, **kwargs):
+        details =  {
+            'type': prop_type,
+            'kwargs': kwargs
+        }
+        self._properties.update({name:details})
         return
+        
     
-    @classmethod
-    def StringProperty(cls, **kwargs):
-        return
+    def IntegerProperty(self, name):
+        return self[name]
     
-    @classmethod
-    def GeoPtProperty(cls, **kwargs):
-        return
+ 
+    def StringProperty(self, name):
+        return self[name]
     
-    @classmethod
-    def EnumProperty(cls, type, **kwargs):
-        return
     
-    @classmethod
-    def DateProperty(cls, **kwargs):
-        return
+    def GeoPtProperty(self, name):
+        return self[name]
     
-    @classmethod
-    def BooleanProperty(cls, **kwargs):
-        return
+   
+    def EnumProperty(self, name):
+        enum = self._properties[name]['kwargs']['enum']
+        if not enum:
+            raise TypeError("EnumProperty must have enum")
+        return enum(self[name])
     
-    @classmethod
-    def TextProperty(cls, **kwargs):
-        return
-    @classmethod
-    def JsonProperty(cls, **kwargs):
-        return
+ 
+    def DateProperty(self, name):
+        return self[name]
+    
+    def BooleanProperty(self, name):
+        return self[name]
+    
+    def TextProperty(self, name):
+        return self[name]
+
+    def JsonProperty(self, name):
+        return self[name]
 
 class BNG():
     eastings = 0.0
@@ -158,35 +176,36 @@ class BNG():
 
 
 class Gun(Model):
-    class Types(messages.Enum):
+    class Types(Enum):
         CAST = 0
         WROUGHT = 1
         BRONZE = 2
         NOT_KNOWN = 3
-    class Quality(messages.Enum):
+    class Quality(Enum):
         GOLD = 2
         SILVER = 1
         BRONZE = 0
-        
-    id = "IntegerProperty(id)"
-    location = GeoPt(0, 0)
-    type = Model.EnumProperty(Types)
-    quality = Model.EnumProperty(Quality, default=Quality.BRONZE)
-    description = str()
-    name = str()
-    date = Model.DateProperty(auto_now = True)
-    site = Model.StringProperty()
-    context = Model.StringProperty()
-    collection = Model.BooleanProperty()
-    coll_name = Model.StringProperty()
-    coll_ref = Model.StringProperty()
-    images = Model.TextProperty(repeated=True)
-    markings = Model.BooleanProperty()
-    mark_details = Model.StringProperty()
-    interpretation = Model.BooleanProperty()
-    inter_details = Model.StringProperty()
-    country = Model.StringProperty(default="none")
-    geocode = Model.JsonProperty()
+    
+    def schema(self):     
+        self.Property("id", ndb.IntegerProperty)
+        self.Property("location", ndb.GeoPtProperty)
+        self.Property("type", ndb.EnumProperty, enum=Gun.Types)
+        self.Property("quality", ndb.EnumProperty, enum=Gun.Quality, default=Gun.Quality.BRONZE)
+        self.Property("description", ndb.StringProperty)
+        self.Property("name", ndb.StringProperty)
+        self.Property("date", ndb.DateTimeProperty, auto_now = True)
+        self.Property("site", ndb.StringProperty)
+        self.Property("context", ndb.StringProperty)
+        self.Property("collection", ndb.BooleanProperty)
+        self.Property("coll_name", ndb.StringProperty)
+        self.Property("coll_ref", ndb.StringProperty)
+        self.Property("images", ndb.TextProperty, repeated=True)
+        self.Property("markings", ndb.BooleanProperty)
+        self.Property("mark_details", ndb.StringProperty)
+        self.Property("interpretation", ndb.BooleanProperty)
+        self.Property("inter_details", ndb.StringProperty)
+        self.Property("country", ndb.StringProperty, default="none")
+        self.Property("geocode", ndb.JsonProperty)
     
     @classmethod
     def map_data(cls):
@@ -205,13 +224,13 @@ class Gun(Model):
                 map_data.append({
                     "anchor_id" : gun.id,
                     "description" : gun.description,
-                    "latitude" : gun.location.lat,
-                    "longitude" : gun.location.lon,
-                    "anchor_type" : GUN_TYPES[gun.type.number],
+                    "latitude" : gun.location.latitude,
+                    "longitude" : gun.location.longitude,
+                    "anchor_type" : GUN_TYPES[gun.type.value],
                     "location"  : gun.context,
                     "names" : gun.name,
                     'filename' : thumbnail,
-                    'quality' : RECORD_QUALITIES[gun.quality.number],
+                    'quality' : RECORD_QUALITIES[gun.quality.value],
                     'nationality': gun.country,
                     'site' : gun.site,
                 })
