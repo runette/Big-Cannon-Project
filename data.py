@@ -14,27 +14,63 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime, urllib, json
-from google.appengine.ext import ndb
-from google.appengine.ext.ndb import msgprop
+import datetime, json
 from protorpc import messages
-from google.appengine.api import users
-from google.appengine.api import app_identity
-from google.appengine.api import urlfetch
 from datetime import datetime
 import logging
 import googlemaps
-from requests_toolbelt.adapters import appengine
-appengine.monkeypatch()
+
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ('bronze', "silver", "gold")
 
-class BNG(ndb.Model):
-    eastings = ndb.IntegerProperty()
-    northings = ndb.IntegerProperty()
+class Model():
+    def __init__(self):
+        return
+
+    @classmethod
+    def get(cls):
+        return
+
+    def put(self):
+        return
+    
+    @classmethod
+    def IntegerProperty(cls, **kwargs):
+        return
+    
+    @classmethod
+    def StringProperty(cls, **kwargs):
+        return
+    
+    @classmethod
+    def GeoPtProperty(cls, **kwargs):
+        return
+    
+    @classmethod
+    def EnumProperty(cls, type, **kwargs):
+        return
+    
+    @classmethod
+    def DateProperty(cls, **kwargs):
+        return
+    
+    @classmethod
+    def BooleanProperty(cls, **kwargs):
+        return
+    
+    @classmethod
+    def TextProperty(cls, **kwargs):
+        return
+    @classmethod
+    def JsonProperty(cls, **kwargs):
+        return
+
+class BNG():
+    eastings = 0.0
+    northings = 0.0
 
     def convert_to_LL(self):
         url = 'http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc?method=BNGtoLatLng&easting=' + str(self.eastings) + "&northing=" + str(self.northings)
@@ -67,7 +103,7 @@ class BNG(ndb.Model):
             return
 
 
-class Gun(ndb.Model):
+class Gun(Model):
     class Types(messages.Enum):
         CAST = 0
         WROUGHT = 1
@@ -77,25 +113,26 @@ class Gun(ndb.Model):
         GOLD = 2
         SILVER = 1
         BRONZE = 0
-    id = ndb.IntegerProperty()
-    location = ndb.GeoPtProperty()
-    type = ndb.msgprop.EnumProperty(Types)
-    quality = ndb.msgprop.EnumProperty(Quality, default=Quality.BRONZE)
-    description = ndb.StringProperty()
-    name = ndb.StringProperty()
-    date = ndb.DateProperty(auto_now = True)
-    site = ndb.StringProperty()
-    context = ndb.StringProperty()
-    collection = ndb.BooleanProperty()
-    coll_name = ndb.StringProperty()
-    coll_ref = ndb.StringProperty()
-    images = ndb.TextProperty(repeated=True)
-    markings = ndb.BooleanProperty()
-    mark_details = ndb.StringProperty()
-    interpretation = ndb.BooleanProperty()
-    inter_details = ndb.StringProperty()
-    country = ndb.StringProperty(default="none")
-    geocode = ndb.JsonProperty()
+        
+    id = Model.IntegerProperty()
+    location = Model.GeoPtProperty()
+    type = Model.EnumProperty(Types)
+    quality = Model.EnumProperty(Quality, default=Quality.BRONZE)
+    description = Model.StringProperty()
+    name = Model.StringProperty()
+    date = Model.DateProperty(auto_now = True)
+    site = Model.StringProperty()
+    context = Model.StringProperty()
+    collection = Model.BooleanProperty()
+    coll_name = Model.StringProperty()
+    coll_ref = Model.StringProperty()
+    images = Model.TextProperty(repeated=True)
+    markings = Model.BooleanProperty()
+    mark_details = Model.StringProperty()
+    interpretation = Model.BooleanProperty()
+    inter_details = Model.StringProperty()
+    country = Model.StringProperty(default="none")
+    geocode = Model.JsonProperty()
 
     @classmethod
     def map_data(cls):
@@ -152,41 +189,17 @@ def to_int(int_string):
     except Exception :
         return 0
 
-def UserStatus(uri):
+def UserStatus():
     # set up the user context and links for the navbar
-    user = users.get_current_user()
-    uri = uri.split("?")[0]
+    user = "test"
+    #uri = uri.split("?")[0]
     if user:
-        url = users.create_logout_url(uri)
+        url = "test_url"
         url_linktext = 'Logout'
     else:
-        url = users.create_login_url(uri)
+        url = "users.create_login_url(uri)"
         url_linktext = 'Login'
     return {'user': user, 'url': url, 'url_linktext': url_linktext}
-
-class Auth:
-    def __init__(self, scope):
-        self.scope = scope
-        self.service_name = app_identity.get_application_id()
-        return
-
-    def get_token(self):
-        self.auth_token, _ = app_identity.get_access_token(
-            self.scope)
-        logging.info(
-            'Using token {} to represent identity {}'.format(
-                self.auth_token, app_identity.get_service_account_name()))
-        return self.auth_token
-
-    def get_signed_url(self, content_name, content_type):
-        now = datetime.utcnow()
-        delta = datetime.timedelta(hours=3)
-        expiry = now + delta
-        timestamp = expiry.timestamp()
-        signed_string= "PUT \n \n" + content_type + "\n" + str(timestamp) + "\n" + "/" + self.service_name + "/" + content_name
-
-    def get_url(self):
-        return "https://www.googleapis.com/upload/storage/v1/b/" + self.service_name + ".appspot.com/o?uploadType=resumable"
 
 
 def geolocate(location) :

@@ -16,10 +16,10 @@
 #
 
 
-import webapp2, jinja2, os, json, datetime, logging
-from google.appengine.ext import deferred
-from google.appengine.ext import ndb
+import jinja2, os, json, datetime, logging
+
 from data import Gun, BNG
+from flask import Flask
 
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -27,7 +27,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-class UpdateSchema(webapp2.RequestHandler):
+#app.route('/update_schema')
+class UpdateSchema():
     def get(self):
         # deferred.defer(update_schema_task)
         # self.response.write("started")

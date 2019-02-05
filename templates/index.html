@@ -1,0 +1,51 @@
+{% extends "header.html" %}
+
+{% block main_content %}
+
+<div class="jumbotron jumbotron-fluid text-center bg-ur" >
+    <div class="container">
+        <h1 class="display-4">Ultima Ratio Project</h1>
+        <p class="lead">The fun way to map the guns of the world</p>
+        <hr class="my-4">
+        <p>Help us record historic guns and learn about their place in our maritime history</p>
+        <div class="d-flex justify-content-center pt-3">
+            <div class="">
+                <a href="/about" class="btn btn-primary align-middle">Learn more</a>
+            </div>
+        </div>
+        <div class="d-flex flex-row justify-content-around pt-3">
+            <div class="">
+                <a href="http://armamentresearch.com/" target="_blank"><img class="rounded mx-auto d-block" src="/img/Ares_Logo-3.png" height="50px"> </a>
+            </div><div class="">
+                <a class="thin" href="https://www.nauticalarchaeologysociety.org/" target="_blank"><img src="/img/icons/nas.png" height=50px" alt="" /></a>
+            </div><div class="">
+                <a class="thin" href="" target="_blank"><img src="/img/basiliscoe.png" height=50px" alt="" /></a>
+            </div><div class="">
+                <a class="thin" href="h" target="_blank"><img src="/img/cismas.png" height=50px" alt="" /></a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+    <div class="card h-100" >
+      <img class="card-img-top" src="/img/gun-map-768.jpg" alt="Card image cap">
+      <div class="card-body">
+        <h3>Gun Database</h3>
+          <p>The database allows individual recorders to upload their gun records, to improve them over time and to view all the other guns that have been recorded around the world. The project database is linked to a world map so that gun records can be viewed in geographical context.</p>
+      </div>
+    </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100" >
+            <img class="card-img-top" src="/img/big-anchor-stone2-768.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h3>Recording</h3>
+                <p>Our recording system allows you to record as little or as much as you like. Just add a photograph and a location to achieve a Bronze record, identify features on your gun for a Silver record or measure your gun's dimensions to obtain a Gold anchor. Our world map of guns allows you to see where guns are and how much information about each one has been documented. Find out more about recording guns.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

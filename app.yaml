@@ -1,15 +1,7 @@
 runtime: python37
 
-
-
-builtins:
-# Deferred is required to use google.appengine.ext.deferred.
-- deferred: on
-
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
+
 
 - url: /static
   static_dir: static
@@ -17,21 +9,7 @@ handlers:
 - url: /img
   static_dir: img
 
-- url: /update_schema
-  script: main.app
-  login: admin
-  secure: always
-
 - url: .*
-  script: main.app
+  script: auto
   secure: always
 
-libraries:
-- name: webapp2
-  version: latest
-
-- name: jinja2
-  version: latest
-
-- name: ssl
-  version: latest

@@ -15,165 +15,160 @@
 # limitations under the License.
 #
 
-import  webapp2,jinja2, os, json, datetime, logging
+import jinja2, os, json, datetime, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, Auth, to_int, BNG, geolocate
-from google.appengine.ext import ndb
-from google.appengine.api import images
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate
+from flask import Flask, render_template
+
+app = Flask(__name__)
 
 
-JINJA_ENVIRONMENT = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
-    extensions=['jinja2.ext.autoescape'],
-    autoescape=True)
 
-class MainHandler(webapp2.RequestHandler):
-    def get(self):
-        user_data = UserStatus(self.request.uri)
-        template_values = {
-            'user_data': user_data,
-            'index': 1
-        }
-        template = JINJA_ENVIRONMENT.get_template('index.html')
-        self.response.write(template.render(template_values))
-        return
 
-class About(webapp2.RequestHandler):
-    def get(self):
-        user_data = UserStatus(self.request.uri)
-        template_values = {
-            'index': 2,
-            'user_data': user_data,
-        }
-        template = JINJA_ENVIRONMENT.get_template('about.html')
-        self.response.write(template.render(template_values))
-        return
+@app.route('/')
+def main_handler():
+    user_data = UserStatus()
+    template_values = {
+        'user_data': user_data,
+        'index': 1
+    }
+    self.response.write(template.render(template_values))
+    return
 
-class Database(webapp2.RequestHandler):
-    def get(self):
-        user_data = UserStatus(self.request.uri)
-        template_values = {
-            'user_data': user_data,
-            'gun_types': GUN_TYPES,
-            'index': 3
-        }
-        template = JINJA_ENVIRONMENT.get_template('database.html')
-        self.response.write(template.render(template_values))
-        return
+@app.route('/about')
+def about():
+    user_data = UserStatus()
+    template_values = {
+        'index': 2,
+        'user_data': user_data,
+    }
+    template = JINJA_ENVIRONMENT.get_template('about.html')
+    self.response.write(template.render(template_values))
+    return
 
-    def post(self):
-        return
+app.route('/database')
+def database():
+    user_data = UserStatus()
+    template_values = {
+        'user_data': user_data,
+        'gun_types': GUN_TYPES,
+        'index': 3
+    }
+    template = JINJA_ENVIRONMENT.get_template('database.html')
+    self.response.write(template.render(template_values))
+    return
 
-class FetchMap(webapp2.RequestHandler):
-    def post(self):
-        map = {
-            "defaultThumb" : "/img/70x70.png",
-            "icons" : {
-                "bronze" : '/img/cannon_bronze.png',
-                "silver" : "/img/cannon_silver.png",
-                'gold' : "/img/cannon_gold.png",
-                'none' : '/img/cannon_bronze.png',
-            },
-            "pageSize": 10,
-            "entryPath" : "/database/entry?gun_id=",
-            "sort":{"asc": 4, "desc": 3},
-        }
-        entries = Gun.map_data()
-        map.update({
-            "entries":entries
-        })
-        self.response.write(json.dumps(map))
-        return
 
-class FetchEntry(webapp2.RequestHandler):
-    def get(self):
-        user_data = UserStatus(self.request.uri)
-        user = user_data['user']
-        gun_id = to_int(self.request.get('gun_id'))
-        if gun_id:
-            gun = Gun.get_id(gun_id)
-            index = 3
-        else:
-            if user:
-                gun = Gun(
-                    id=Gun.get_next(),
-                    description="",
-                    type=Gun.Types.NOT_KNOWN,
-                    name=user.email(),
-                    location= ndb.GeoPt(52,0),
-                    date= datetime.date.today()
-                )
-                index = 4
-            else :
-                gun = Gun(
-                    id=Gun.get_next(),
-                    description="",
-                    type=Gun.Types.NOT_KNOWN,
-                    name="",
-                    location=ndb.GeoPt(52, 0),
-                    date=datetime.date.today()
-                )
-                index = 4
+app.route('/map_fetch')
+def fetch_map():
+    map = {
+        "defaultThumb" : "/img/70x70.png",
+        "icons" : {
+            "bronze" : '/img/cannon_bronze.png',
+            "silver" : "/img/cannon_silver.png",
+            'gold' : "/img/cannon_gold.png",
+            'none' : '/img/cannon_bronze.png',
+        },
+        "pageSize": 10,
+        "entryPath" : "/database/entry?gun_id=",
+        "sort":{"asc": 4, "desc": 3},
+    }
+    entries = Gun.map_data()
+    map.update({
+        "entries":entries
+    })
+    self.response.write(json.dumps(map))
+    return
+
+app.route('/fetch_entry')
+def fetch_entry():
+    user_data = UserStatus()
+    user = user_data['user']
+    gun_id = to_int(self.request.get('gun_id'))
+    if gun_id:
+        gun = Gun.get_id(gun_id)
+        index = 3
+    else:
+        if user:
+            gun = Gun(
+                id=Gun.get_next(),
+                description="",
+                type=Gun.Types.NOT_KNOWN,
+                name=user.email(),
+                location= ndb.GeoPt(52,0),
+                date= datetime.date.today()
+            )
+            index = 4
+        else :
+            gun = Gun(
+                id=Gun.get_next(),
+                description="",
+                type=Gun.Types.NOT_KNOWN,
+                name="",
+                location=ndb.GeoPt(52, 0),
+                date=datetime.date.today()
+            )
+            index = 4
+    template_values = {
+        'user_data':user_data,
+        'gun' : gun,
+        'gun_types' : GUN_TYPES,
+        'qualities_text': RECORD_QUALITIES,
+        'qualities': Gun.Quality,
+        'index' : index,
+    }
+    template = JINJA_ENVIRONMENT.get_template('detail.html')
+    self.response.write(template.render(template_values))
+
+app.route('/set_entry')
+def set_entry():
+    user = user_data['user']
+    if user:
+        id = to_int(self.request.get('id'))
+        new_location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
+        gun = Gun.get_id(id)
+        if not gun :
+            gun = Gun(
+                id=id,
+                name=user.email(),
+                images=[""]
+            )
+        gun.populate(
+            description= self.request.get('description'),
+            type= Gun.Types.lookup_by_name(self.request.get('type')),
+            name= self.request.get('name'),
+            site=self.request.get('site'),
+            context=self.request.get('context'),
+            collection=to_bool(self.request.get('collection')),
+            coll_name=self.request.get('coll_name'),
+            coll_ref=self.request.get('coll_ref'),
+            markings=to_bool(self.request.get('markings')),
+            mark_details=self.request.get('mark_details'),
+            interpretation=to_bool(self.request.get('interpretation')),
+            inter_details=self.request.get('inter_details'),
+            quality=Gun.Quality.lookup_by_name(self.request.get('quality'))
+        )
+        if  gun.country == 'none' or new_location != gun.location:
+            gun.location = new_location
+            address = geolocate(gun.location)
+            gun.geocode = json.dumps(address)
+            for location in address:
+                if "country" in location['types']:
+                    gun.country = location['formatted_address']
+        gun.put()
         template_values = {
             'user_data':user_data,
-            'gun' : gun,
-            'gun_types' : GUN_TYPES,
+            'gun': gun,
+            'gun_types': GUN_TYPES,
             'qualities_text': RECORD_QUALITIES,
             'qualities': Gun.Quality,
-            'index' : index,
+            'index': 4,
         }
         template = JINJA_ENVIRONMENT.get_template('detail.html')
         self.response.write(template.render(template_values))
 
-class SetEntry(webapp2.RequestHandler):
-    def post(self):
-        user_data = UserStatus(self.request.uri)
-        user = user_data['user']
-        if user:
-            id = to_int(self.request.get('id'))
-            new_location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
-            gun = Gun.get_id(id)
-            if not gun :
-                gun = Gun(
-                    id=id,
-                    name=user.email(),
-                    images=[""]
-                )
-            gun.populate(
-                description= self.request.get('description'),
-                type= Gun.Types.lookup_by_name(self.request.get('type')),
-                name= self.request.get('name'),
-                site=self.request.get('site'),
-                context=self.request.get('context'),
-                collection=to_bool(self.request.get('collection')),
-                coll_name=self.request.get('coll_name'),
-                coll_ref=self.request.get('coll_ref'),
-                markings=to_bool(self.request.get('markings')),
-                mark_details=self.request.get('mark_details'),
-                interpretation=to_bool(self.request.get('interpretation')),
-                inter_details=self.request.get('inter_details'),
-                quality=Gun.Quality.lookup_by_name(self.request.get('quality'))
-            )
-            if  gun.country == 'none' or new_location != gun.location:
-                gun.location = new_location
-                address = geolocate(gun.location)
-                gun.geocode = json.dumps(address)
-                for location in address:
-                    if "country" in location['types']:
-                        gun.country = location['formatted_address']
-            gun.put()
-            template_values = {
-                'user_data':user_data,
-                'gun': gun,
-                'gun_types': GUN_TYPES,
-                'qualities_text': RECORD_QUALITIES,
-                'qualities': Gun.Quality,
-                'index': 4,
-            }
-            template = JINJA_ENVIRONMENT.get_template('detail.html')
-            self.response.write(template.render(template_values))
-
-class GetKey(webapp2.RequestHandler):
+app.route('/get_upload_key')
+def GetKey():
     def post(self):
         user_data = UserStatus(self.request.uri)
         user = user_data['user']
@@ -189,7 +184,8 @@ class GetKey(webapp2.RequestHandler):
             self.response.write(response)
         return
 
-class AddPhoto(webapp2.RequestHandler):
+app.route('/add_photo')
+def add_photo():
     def post(self):
         user_data = UserStatus(self.request.uri)
         user = user_data['user']
@@ -211,7 +207,8 @@ class AddPhoto(webapp2.RequestHandler):
             self.response.write(url)
         return
 
-class BngConvert(webapp2.RequestHandler):
+app.route('/bng_convert')
+def bng_convert():
     def post(self):
         eastings = to_int(self.request.get('eastings'))
         northings = to_int(self.request.get('northings'))
@@ -227,7 +224,8 @@ class BngConvert(webapp2.RequestHandler):
         self.response.write(response)
         return
 
-class LlConvert(webapp2.RequestHandler):
+app.route('/ll_convert')
+def LlConvert():
     def post(self):
         lat = self.request.get('lat')
         lon = self.request.get('lon')
@@ -240,16 +238,12 @@ class LlConvert(webapp2.RequestHandler):
         return
 
 
-app = webapp2.WSGIApplication([
-    ('/', MainHandler),
-    ('/update_schema', UpdateSchema),
-    ('/database/entry', FetchEntry),
-    ('/database', Database),
-    ('/map_fetch', FetchMap),
-    ('/set_entry', SetEntry),
-    ('/about', About),
-    ('/get_upload_key', GetKey),
-    ('/add_photo', AddPhoto),
-    ('/bng_convert', BngConvert),
-    ('/ll_convert', LlConvert)
-], debug=True)
+if __name__ == '__main__':
+    # This is used when running locally only. When deploying to Google App
+    # Engine, a webserver process such as Gunicorn will serve the app. This
+    # can be configured by adding an `entrypoint` to app.yaml.
+    # Flask's development server will automatically serve static files in
+    # the "static" directory. See:
+    # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
+    # App Engine itself will serve those files as configured in app.yaml.
+    app.run(host='127.0.0.1', port=8000, debug=True)
