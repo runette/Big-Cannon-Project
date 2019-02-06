@@ -15,11 +15,11 @@
 # limitations under the License.
 #
 
-import jinja2, os, json, datetime, logging
+import jinja2, os, json, logging
 from update import UpdateSchema
 from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt
 from flask import Flask, render_template, send_from_directory, request
-
+from datetime import datetime
 
 app = Flask(__name__)
 root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
@@ -76,7 +76,7 @@ def fetch_entry():
     user_data = UserStatus()
     user = user_data['user']
     gun_id = to_int(request.args.get('gun_id'))
-    if gun_id:
+    if gun_id > 0:
         gun = Gun.get_id(gun_id)
         index = 3
     else:
@@ -87,7 +87,7 @@ def fetch_entry():
                 type=Gun.Types.NOT_KNOWN,
                 name=user.email(),
                 location= GeoPt(52,0),
-                date= datetime.date.today()
+                date= datetime.now()
             )
             index = 4
         else :
@@ -97,7 +97,7 @@ def fetch_entry():
                 type=Gun.Types.NOT_KNOWN,
                 name="",
                 location=GeoPt(52, 0),
-                date=datetime.date.today()
+                date=datetime.now()
             )
             index = 4
     return render_template('detail.html',

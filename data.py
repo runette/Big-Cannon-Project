@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime, json, types, sys
+import json, types, sys
 from enum import Enum
 from datetime import datetime
 import logging
@@ -29,9 +29,25 @@ GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ('bronze', "silver", "gold")
 
+class Client(datastore.Client):
+    def query(self, **kwargs):
+        if "client" in kwargs:
+            raise TypeError("Cannot pass client")
+        if "project" in kwargs:
+            raise TypeError("Cannot pass project")
+        kwargs["project"] = self.project
+        if "namespace" not in kwargs:
+            kwargs["namespace"] = self.namespace
+        return Query(self, **kwargs)
+
 class Key(datastore.Key):
-    def get(self, *args, **kwargs):
-        return
+    def get(self, key, **kwargs):
+        if not self.client:
+            self.client=datastore.Client()
+        
+        object = self.client.get(key, **kwargs)
+        self.update(object.items())
+        return    
 
 class Query(datastore.Query):
     _class_object = object
@@ -45,59 +61,90 @@ class Query(datastore.Query):
             response.append(item)
         return response
     
+    def get(self, *args, **kwargs):
+        #TODO make this more eficient by not calling the entire iterator
+        list = self.fetch(*args, **kwargs)
+        if len(list) > 0:
+            return list[0]
+        else:
+            return self._class_object()
+        
 class ndb(Enum):
-    IntegerProperty = 0
-    FloatProperty = 1
-    StringProperty = 2
-    TextProperty = 3
-    BooleanProperty = 4
-    DateTimeProperty = 5
-    GeoPtProperty = 6
-    KeyProperty = 7
-    JsonProperty = 8
-    EnumProperty = 9
+    IntegerProperty = (0, True, int)
+    FloatProperty = (1, False, float)
+    StringProperty = (2, True, str)
+    TextProperty = (3, False, str)
+    BooleanProperty = (4, True, bool)
+    DateTimeProperty = (5, True, datetime)
+    GeoPtProperty = (6, True, GeoPt)
+    KeyProperty = (7, True, Key)
+    JsonProperty = (8, False, str)
+    EnumProperty = (9, True, Enum)
 
 class Model(datastore.Entity):
-    
     _properties = {}
     
     def schema(self):
+        self['exclude_from_indexes']=[]
         return
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self.schema()
+        for name, value in self._properties.items():
+            kw = value.get('kwargs')
+            prop_type = value.get('type')
+            indexed = kw.get('indexed', False)
+            default = kw.get('default', False)
+            auto_now = kw.get('auto_now', False) or kw.get('auto_now_add', False)
+            repeated = kw.get('repeated', False)
+            if repeated:
+                self[name] = []
+            if not (prop_type.value[1] or indexed):
+                if name not in self['exclude_from_indexes']:
+                    self['exclude_from_indexes'].append(name)
+            if default:
+                setattr(self, name, default)
+            if auto_now and prop_type == ndb.DateTimeProperty:
+                setattr(self, name, datetime.now())        
+        if kwargs:
+            self.populate(**kwargs)
         return
     
     def __getattr__(self, name):
         if name in self._properties:
-            return getattr(self, self._properties[name]['type'].name)(name)
-        
-        elif name in self:
-            return self[name]
-        
+            try:
+                return getattr(self, self._properties[name]['type'].name)(name)
+            except:
+                return None
         else:
-            raise AttributeError("No such attribute: " + str(name))
+            try:
+                return self[name]
+            except:
+                return None
     
     def __setattr__(self, name, value):
-            self[name] = value 
+        if name in self._properties:
+            return getattr(self, "set_" + self._properties[name]['type'].name)(name, value)
+        else:
+            try:
+                self[name] = value
+            except:
+                raise AttributeError("No such attribute: " + str(name))
     
     @classmethod
     def query(cls, *args, **kwargs):
         my_class = cls.__name__
-        client = datastore.Client()
+        client = Client()
         kwargs.update(kind=my_class)
         response = client.query(*args, **kwargs)
         response.__class__ = Query
         response._class_object = cls
         return response
     
-    def get(self, key, **kwargs):
-        if not self.client:
-            self.client=datastore.Client()
-        
-        object = self.client.get(key, **kwargs)
-        self.update(object.items())
+    def populate(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
         return
     
     def Property(self, name, prop_type, **kwargs):
@@ -107,18 +154,39 @@ class Model(datastore.Entity):
         }
         self._properties.update({name:details})
         return
-        
+    
+    def setter(self, name, value):
+        typeof = self._properties[name]['type'].value[2]
+        repeated = to_bool(self._properties[name]['kwargs'].get('repeated', False))
+        if isinstance(value, typeof):
+            if repeated:
+                if self[name] and (type(self[name]) == "list"):
+                    self[name].append(value)
+                else:
+                    self[name] = [value]
+            else:
+                self[name] = value
+        else:
+            raise TypeError(name + " takes " + str(typeof) + " but received " + str(type(value)))
     
     def IntegerProperty(self, name):
         return self[name]
     
- 
+    def set_IntegerProperty(self, name, value):
+        return self.setter(name, value)
+    
     def StringProperty(self, name):
         return self[name]
+    
+    def set_StringProperty(self, name, value):
+        return self.setter(name, value)
     
     
     def GeoPtProperty(self, name):
         return self[name]
+    
+    def set_GeoPtProperty(self, name, value):
+        return self.setter(name, value)
     
    
     def EnumProperty(self, name):
@@ -127,18 +195,32 @@ class Model(datastore.Entity):
             raise TypeError("EnumProperty must have enum")
         return enum(self[name])
     
- 
-    def DateProperty(self, name):
+    def set_EnumProperty(self, name, value):
+        return self.setter(name, value) 
+    
+    def DateTimeProperty(self, name):
         return self[name]
+    
+    def set_DateTimeProperty(self, name, value):
+        return self.setter(name, value) 
     
     def BooleanProperty(self, name):
         return self[name]
     
+    def set_BooleanProperty(self, name, value):
+        return self.setter(name, value)  
+    
     def TextProperty(self, name):
         return self[name]
+    
+    def set_TextProperty(self, name, value):
+        return self.setter(name, value)    
 
     def JsonProperty(self, name):
         return self[name]
+    
+    def set_JsonProperty(self, name, value):
+        return self.setter(name, value)
 
 class BNG():
     eastings = 0.0
@@ -186,14 +268,15 @@ class Gun(Model):
         SILVER = 1
         BRONZE = 0
     
-    def schema(self):     
+    def schema(self):
+        super().schema()
         self.Property("id", ndb.IntegerProperty)
         self.Property("location", ndb.GeoPtProperty)
         self.Property("type", ndb.EnumProperty, enum=Gun.Types)
-        self.Property("quality", ndb.EnumProperty, enum=Gun.Quality, default=Gun.Quality.BRONZE)
+        self.Property("quality", ndb.EnumProperty, enum=Gun.Quality,  default=Gun.Quality.BRONZE)
         self.Property("description", ndb.StringProperty)
         self.Property("name", ndb.StringProperty)
-        self.Property("date", ndb.DateTimeProperty, auto_now = True)
+        self.Property("date", ndb.DateTimeProperty, auto_now=True)
         self.Property("site", ndb.StringProperty)
         self.Property("context", ndb.StringProperty)
         self.Property("collection", ndb.BooleanProperty)
@@ -240,7 +323,7 @@ class Gun(Model):
 
     @classmethod
     def get_next(cls):
-        all = cls.query().order(-Gun.id).fetch()
+        all = cls.query(order=["-id"]).fetch()
         if all :
             return all[0].id + 1
         else:
@@ -248,11 +331,11 @@ class Gun(Model):
 
     @classmethod
     def get_id(cls, id):
-        return cls.query(Gun.id == id).get()
+        return cls.query(filters=[("id","=", str(id))]).get()
 
 def to_bool(bool_str):
     """Parse the string and return the boolean value encoded or raise an exception"""
-    if isinstance(bool_str, basestring) and bool_str:
+    if isinstance(bool_str, str) and bool_str:
         if bool_str.lower() in ['true', 't', '1', 'on']: return True
         elif bool_str.lower() in ['false', 'f', '0', 'off']: return False
         else: raise TypeError
