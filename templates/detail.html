@@ -1,14 +1,14 @@
 {% extends "header.html" %}
 {% block main_content %}
 <form action="/set_entry" id="bronze" method="post">
-    <input type="hidden" id="id" name="id" value="{{ gun.id }}" read-only >
+    <input type="hidden" id="id" name="id" value="{{ gun.gunid }}" readonly >
         <div class="row p-3  bg-ur" >
             <div class="media">
                 <a class="align-self-center mr-3 fancybox" href="{{gun.images[0]}}"><img src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}}=s70 {% else %} /img/70x70.png {% endif %}" alt=""></a>
             </div>
 
             <div class="media-body display-1 p-2">
-                <h2>Gun ID : {{ gun.id }}
+                <h2>Gun ID : {{ gun.gunid }}
                 {% if user_data.user %}
 
                 {% else %}
@@ -44,11 +44,10 @@
                             <tr>
                                 <td>Material</td>
                                 <td> <select class="custom-select" name="type">
-                                      <option value="CAST" {% if gun.type.number == 0 %} selected {% endif %} >{{gun_types[0]}}</option>
-                                      <option value="WROUGHT" {% if gun.type.number == 1 %} selected {% endif %}>{{gun_types[1]}}</option>
-                                      <option value="BRONZE" {% if gun.type.number == 2 %} selected {% endif %}>{{gun_types[2]}}</option>
-                                      <option value="NOT_KNOWN" {% if gun.type.number == 3 %} selected {% endif %}>{{gun_types[3]}}</option>
-                                    </select>
+                                    {% for name,value in gun.Types.__members__.items() %}
+                                      <option value="{{name}}" {% if gun.type.value == loop.index0 %} selected {% endif %} >{{gun_types[loop.index0]}}</option>
+                                    {% endfor %}
+                                     </select>
                                 </td>
                             </tr>
                             <tr>
@@ -144,8 +143,8 @@
             SOME SILVER DATA
            <td>
                <select class="custom-select" name="quality">
-               {% for value in qualities %}
-                    <option value="{{value}}" {% if loop.index0 == 0 %} selected {% endif %} >{{qualities_text[loop.index0]}}</option>
+               {% for name,value in qualities.__members__.items() %}
+                    <option value="{{name}}" {% if loop.index0 == 0 %} selected {% endif %} >{{qualities_text[loop.index0]}}</option>
                {% endfor %}
                </select>
            </td>

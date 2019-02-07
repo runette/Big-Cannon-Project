@@ -105,13 +105,12 @@ class Model(datastore.Entity):
     _properties = {}
     
     def schema(self):
-        self['exclude_from_indexes']=[]
         return
     
     def __init__(self, **kwargs):
         client = Client()
-        super().__init__(key=client.key(type(self).__name__))
         self.schema()
+        exclude_from_indexes = []
         for name, value in self._properties.items():
             kw = value.get('kwargs')
             prop_type = value.get('type')
@@ -122,28 +121,29 @@ class Model(datastore.Entity):
             if repeated:
                 self[name] = []
             if not (prop_type.value[1] or indexed):
-                if name not in self['exclude_from_indexes']:
-                    self['exclude_from_indexes'].append(name)
+                if name not in self.get('exclude_from_indexes', []):
+                    exclude_from_indexes.append(name)
             if default:
                 setattr(self, name, default)
             if auto_now and prop_type == ndb.DateTimeProperty:
-                setattr(self, name, datetime.now())        
+                setattr(self, name, datetime.now())
+        super().__init__(key=client.key(type(self).__name__), exclude_from_indexes= exclude_from_indexes )
         if kwargs:
             self.populate(**kwargs)
         return
     
     def __getattr__(self, name):
-        if name in self._properties:
-            try:
-                return getattr(self, self._properties[name]['type'].name)(name)
-            except:
-                return None
-        else:
-            try:
-                return self[name]
-            except:
-                return None
-    
+            if name in self._properties:
+                try:
+                    return getattr(self, self._properties[name]['type'].name)(name)
+                except:
+                    return None
+            else:
+                try:
+                    return self[name]
+                except:
+                    return None
+        
     def __setattr__(self, name, value):
         if name in self._properties:
             return getattr(self, "set_" + self._properties[name]['type'].name)(name, value)
@@ -152,6 +152,14 @@ class Model(datastore.Entity):
                 self[name] = value
             except:
                 raise AttributeError("No such attribute: " + str(name))
+    
+    def items(self):
+        dummy = {}
+        for key in self._properties:
+            value = self.get(key, None)
+            if value != None:
+                dummy.update({key:value})
+        return dummy.items()    
     
     @classmethod
     def query(cls, *args, **kwargs):

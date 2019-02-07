@@ -82,7 +82,7 @@ def fetch_entry():
     else:
         if user:
             gun = Gun(
-                id=Gun.get_next(),
+                gunid=Gun.get_next(),
                 description="",
                 type=Gun.Types.NOT_KNOWN,
                 name=user.email(),
@@ -92,7 +92,7 @@ def fetch_entry():
             index = 4
         else :
             gun = Gun(
-                id=Gun.get_next(),
+                gunid=Gun.get_next(),
                 description="",
                 type=Gun.Types.NOT_KNOWN,
                 name="",
@@ -109,33 +109,34 @@ def fetch_entry():
                            index= index                           
                            )
 
-@app.route('/set_entry')
+@app.route('/set_entry', methods=['POST'])
 def set_entry():
+    user_data=UserStatus()
     user = user_data['user']
     if user:
-        id = to_int(self.request.get('id'))
-        new_location = ndb.GeoPt(self.request.get('lat') + "," + self.request.get('lon'))
-        gun = Gun.get_id(id)
+        gun_id = to_int(request.form.get('id'))
+        new_location = GeoPt(request.form.get('lat'), request.form.get('lon'))
+        gun = Gun.get_id(gun_id)
         if not gun :
             gun = Gun(
-                id=id,
+                gunid=gun_id,
                 name=user.email(),
-                images=[""]
+                images=""
             )
         gun.populate(
-            description= self.request.get('description'),
-            type= Gun.Types.lookup_by_name(self.request.get('type')),
-            name= self.request.get('name'),
-            site=self.request.get('site'),
-            context=self.request.get('context'),
-            collection=to_bool(self.request.get('collection')),
-            coll_name=self.request.get('coll_name'),
-            coll_ref=self.request.get('coll_ref'),
-            markings=to_bool(self.request.get('markings')),
-            mark_details=self.request.get('mark_details'),
-            interpretation=to_bool(self.request.get('interpretation')),
-            inter_details=self.request.get('inter_details'),
-            quality=Gun.Quality.lookup_by_name(self.request.get('quality'))
+            description= request.form.get('description'),
+            type= Gun.Types[request.form.get('type')],
+            name= request.form.get('name'),
+            site=request.form.get('site'),
+            context=request.form.get('context'),
+            collection=to_bool(request.form.get('collection')),
+            coll_name=request.form.get('coll_name'),
+            coll_ref=request.form.get('coll_ref'),
+            markings=to_bool(request.form.get('markings')),
+            mark_details=request.form.get('mark_details'),
+            interpretation=to_bool(request.form.get('interpretation')),
+            inter_details=request.form.get('inter_details'),
+            quality=Gun.Quality[request.form.get('quality')]
         )
         if  gun.country == 'none' or new_location != gun.location:
             gun.location = new_location
@@ -145,16 +146,14 @@ def set_entry():
                 if "country" in location['types']:
                     gun.country = location['formatted_address']
         gun.put()
-        template_values = {
-            'user_data':user_data,
-            'gun': gun,
-            'gun_types': GUN_TYPES,
-            'qualities_text': RECORD_QUALITIES,
-            'qualities': Gun.Quality,
-            'index': 4,
-        }
-        template = JINJA_ENVIRONMENT.get_template('detail.html')
-        self.response.write(template.render(template_values))
+        return render_template('detail.html',
+                               user_data= user_data,
+                               gun= gun,
+                               gun_types= GUN_TYPES,
+                               qualities_text= RECORD_QUALITIES,
+                               qualities= Gun.Quality,
+                               index= 4,                               
+                               )
 
 @app.route('/get_upload_key')
 def GetKey():
@@ -183,9 +182,9 @@ def add_photo():
             logging.info( user.email() + " added Object " + data['name'] + "." )
             name = data['name']
             bucket = data['bucket']
-            id = to_int(self.request.get('id'))
+            gun_id = to_int(self.request.get('id'))
             url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name), secure_url=True)
-            gun = Gun.get_id(id)
+            gun = Gun.get_id(gun_id)
             if gun :
                 image_list = gun.images
                 if len(image_list) == 1 and image_list[0] == "":
