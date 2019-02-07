@@ -34,8 +34,7 @@ class UpdateSchema(webapp2.RequestHandler):
         try:
             guns = Gun.query().fetch()
             for gun in guns:
-                for idx, image in enumerate(gun.images):
-                    gun.images[idx] = image.replace("https", "https:")
+                gun.gunid = gun.id
                 gun.put()
             self.response.write('done')
         except Exception as e:

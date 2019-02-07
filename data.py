@@ -78,6 +78,7 @@ class Gun(ndb.Model):
         SILVER = 1
         BRONZE = 0
     id = ndb.IntegerProperty()
+    gunid = ndb.IntegerProperty()
     location = ndb.GeoPtProperty()
     type = ndb.msgprop.EnumProperty(Types)
     quality = ndb.msgprop.EnumProperty(Quality, default=Quality.BRONZE)
