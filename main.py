@@ -21,6 +21,7 @@ from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, 
 from flask import Flask, render_template, send_from_directory, request
 from datetime import datetime
 
+
 app = Flask(__name__)
 root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
 
@@ -155,81 +156,72 @@ def set_entry():
                                index= 4,                               
                                )
 
-@app.route('/get_upload_key')
+@app.route('/get_upload_key', methods=['POST'])
 def GetKey():
-    def post(self):
-        user_data = UserStatus(self.request.uri)
-        user = user_data['user']
-        if user:
-            logging.info("Creating key for " + user.email() + (" to upload"))
-            auth = Auth('https://www.googleapis.com/auth/cloud-platform')
-            key = auth.get_token()
-            url = auth.get_url()
-            response = json.dumps({
-                'key': key,
-                'url': url
-            })
-            self.response.write(response)
-        return
-
-@app.route('/add_photo')
-def add_photo():
-    def post(self):
-        user_data = UserStatus(self.request.uri)
-        user = user_data['user']
-        if user:
-            data = json.loads(self.request.body)
-            logging.info( user.email() + " added Object " + data['name'] + "." )
-            name = data['name']
-            bucket = data['bucket']
-            gun_id = to_int(self.request.get('id'))
-            url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name), secure_url=True)
-            gun = Gun.get_id(gun_id)
-            if gun :
-                image_list = gun.images
-                if len(image_list) == 1 and image_list[0] == "":
-                    gun.images = [url]
-                else :
-                    gun.images.append(url)
-                gun.put()
-            self.response.write(url)
-        return
-
-@app.route('/bng_convert')
-def bng_convert():
-    def post(self):
-        eastings = to_int(self.request.get('eastings'))
-        northings = to_int(self.request.get('northings'))
-        bng = BNG(
-            eastings=eastings,
-            northings=northings
-        )
-        convert = bng.convert_to_LL()
+    user_data = UserStatus(self.request.uri)
+    user = user_data['user']
+    if user:
+        logging.info("Creating key for " + user.email() + (" to upload"))
+        auth = Auth('https://www.googleapis.com/auth/cloud-platform')
+        key = auth.get_token()
+        url = auth.get_url()
         response = json.dumps({
-            "LATITUDE" : convert["LATITUDE"],
-            "LONGITUDE" : convert["LONGITUDE"]
+            'key': key,
+            'url': url
         })
-        self.response.write(response)
-        return
+    return response
+
+@app.route('/add_photo', methods=['POST'])
+def add_photo():
+    user_data = UserStatus(self.request.uri)
+    user = user_data['user']
+    if user:
+        data = json.loads(self.request.body)
+        logging.info( user.email() + " added Object " + data['name'] + "." )
+        name = data['name']
+        bucket = data['bucket']
+        gun_id = to_int(request.form.get('id'))
+        url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name), secure_url=True)
+        gun = Gun.get_id(gun_id)
+        if gun :
+            image_list = gun.images
+            if len(image_list) == 1 and image_list[0] == "":
+                gun.images = [url]
+            else :
+                gun.images.append(url)
+            gun.put()
+    return url
+
+@app.route('/bng_convert', methods=['POST'])
+def bng_convert():
+    eastings = request.args.get('eastings')
+    northings = request.args.get('northings')
+    bng = BNG()
+    convert = bng.convert_to_LL(
+        eastings=eastings,
+        northings=northings
+    )
+    response = json.dumps({
+        "LATITUDE" : convert["LATITUDE"],
+        "LONGITUDE" : convert["LONGITUDE"]
+    })
+    return response
 
 @app.route('/ll_convert', methods=['POST'])
 def LlConvert():
-    lat = self.request.get('lat')
-    lon = self.request.get('lon')
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
     convert = BNG.convert_from_LL(lat,lon)
     response = json.dumps({
         "EASTING" : convert["EASTING"],
         "NORTHING" : convert["NORTHING"]
     })
-    self.response.write(response)
-    return
+    return response
     
 @app.route('/img/<path:path>', methods=['GET'])
 def img(path):
     return send_from_directory(root, path)
     
-
-
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
