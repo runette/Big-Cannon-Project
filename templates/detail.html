@@ -44,8 +44,8 @@
                             <tr>
                                 <td>Material</td>
                                 <td> <select class="custom-select" name="type">
-                                    {% for name,value in gun.Types.__members__.items() %}
-                                      <option value="{{name}}" {% if gun.type.value == loop.index0 %} selected {% endif %} >{{gun_types[loop.index0]}}</option>
+                                    {% for name,member in gun.Types.__members__.items() %}
+                                      <option value="{{name}}" {% if gun.type.value == member.value %} selected {% endif %} >{{gun_types[member.value]}}</option>
                                     {% endfor %}
                                      </select>
                                 </td>
@@ -143,8 +143,8 @@
             SOME SILVER DATA
            <td>
                <select class="custom-select" name="quality">
-               {% for name,value in qualities.__members__.items() %}
-                    <option value="{{name}}" {% if loop.index0 == gun.quality.value %} selected {% endif %} >{{qualities_text[loop.index0]}}</option>
+               {% for name,member in qualities.__members__.items() %}
+                    <option value="{{name}}" {% if member.value == gun.quality.value %} selected {% endif %} >{{qualities_text[member.value]}}</option>
                {% endfor %}
                </select>
            </td>
