@@ -21,6 +21,7 @@ import logging
 import googlemaps
 from google.cloud import datastore
 from google.cloud.datastore.helpers import GeoPoint
+import requests
 
 
 
@@ -260,33 +261,24 @@ class Model(datastore.Entity):
         return self.setter(name, value)
 
 class BNG():
-    eastings = 0.0
-    northings = 0.0
-
-    def convert_to_LL(self):
-        url = 'http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc?method=BNGtoLatLng&easting=' + str(self.eastings) + "&northing=" + str(self.northings)
-        return self.BGS_api(url)
+    @staticmethod
+    def convert_to_LL( eastings, northings):
+        return BNG.BGS_api({'method':'BNGtoLatLng','easting':eastings,"northing":northings})
 
     @staticmethod
     def convert_from_LL( lat, lon):
-        url = "http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc?method=LatLongToBNG&lat=" + lat + "&lon=" + lon
-        return BNG.BGS_api(url)
+        return BNG.BGS_api({'method':'LatLongToBNG','lat':str(lat),'lon':str(lon)})
 
     @staticmethod
-    def BGS_api(url):
+    def BGS_api(params):
+        URL = "http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc"
         try:
-            result = urlfetch.fetch(
-                url= url,
-                method='GET',
-                headers={"content-type": "application/json"},
-                deadline=2000)
-            if result.status_code == 200:
+            result = requests.get(URL, params=params)
+            if result.status_code == requests.codes.ok:
                 try:
-                    payload = result.content
-                    response = json.loads(payload)
-                    return response
+                    return result.json()
                 except:
-                    raise Exception('ParseError' + payload)
+                    raise Exception('ParseError' + result.text())
             else:
                 raise Exception('ApiError' + str(result.status_code))
         except Exception as e:
@@ -366,7 +358,7 @@ class Gun(Model):
 
     @classmethod
     def get_id(cls, id):
-        return cls.query(filters=[("gunid","=", str(id))]).get()
+        return cls.query(filters=[("gunid","=", id)]).get()
 
 def to_bool(bool_str):
     """Parse the string and return the boolean value encoded or raise an exception"""
