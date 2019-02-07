@@ -144,7 +144,7 @@
            <td>
                <select class="custom-select" name="quality">
                {% for name,value in qualities.__members__.items() %}
-                    <option value="{{name}}" {% if loop.index0 == 0 %} selected {% endif %} >{{qualities_text[loop.index0]}}</option>
+                    <option value="{{name}}" {% if loop.index0 == gun.quality.value %} selected {% endif %} >{{qualities_text[loop.index0]}}</option>
                {% endfor %}
                </select>
            </td>
@@ -213,11 +213,11 @@
                     <div class="col-md-2">
                         Lat
                     </div> <div class="col-md-3">
-                        <input class="form-control" type="text" id="lat" name="lat" value="{{ gun.location.lat }}" >
+                        <input class="form-control" type="text" id="lat" name="lat" value="{{ gun.location.latitude }}" >
                     </div> <div class="col-md-2">
                         Long
                     </div> <div class="col-md-3">
-                        <input class="form-control" type="text" id="lon" name="lon" value="{{ gun.location.lon }}" >
+                        <input class="form-control" type="text" id="lon" name="lon" value="{{ gun.location.longitude }}" >
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-primary" type="button" onclick="reset_map()">Map</button>
