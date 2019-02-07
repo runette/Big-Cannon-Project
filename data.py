@@ -20,7 +20,7 @@ from datetime import datetime
 import logging
 import googlemaps
 from google.cloud import datastore
-from google.cloud.datastore.helpers import GeoPoint as GeoPt
+from google.cloud.datastore.helpers import GeoPoint
 
 
 
@@ -28,6 +28,28 @@ from google.cloud.datastore.helpers import GeoPoint as GeoPt
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ('bronze', "silver", "gold")
+
+class GeoPt(datastore.helpers.GeoPoint):
+    def __init__(self, lat, long):
+        if isinstance(lat, float) and isinstance(long, float):
+            return super().__init__(lat, long)
+        else:
+            try:
+                if lat == "" or 0:
+                    lat = 0.0
+                else:
+                    lat = float(lat)
+                if long == "" or 0:
+                    long = 0.0
+                else:
+                    long = float(long)
+                if isinstance(lat, float) and isinstance(long, float):
+                    return super().__init__(lat, long)  
+                else:
+                    raise TypeError("GeoPt - input paramaters cannot be converted to float")
+            except Exception as e:
+                raise TypeError("GeoPt - input paramaters cannot be converted to float :  " + str(e))
+            
 
 class Client(datastore.Client):
     def query(self, **kwargs):
@@ -44,9 +66,7 @@ class Key(datastore.Key):
     def get(self, key, **kwargs):
         if not self.client:
             self.client=datastore.Client()
-        
         object = self.client.get(key, **kwargs)
-        self.update(object.items())
         return    
 
 class Query(datastore.Query):
@@ -67,7 +87,7 @@ class Query(datastore.Query):
         if len(list) > 0:
             return list[0]
         else:
-            return self._class_object()
+            return None
         
 class ndb(Enum):
     IntegerProperty = (0, True, int)
@@ -79,7 +99,7 @@ class ndb(Enum):
     GeoPtProperty = (6, True, GeoPt)
     KeyProperty = (7, True, Key)
     JsonProperty = (8, False, str)
-    EnumProperty = (9, True, Enum)
+    EnumProperty = (9, True, int)
 
 class Model(datastore.Entity):
     _properties = {}
@@ -89,7 +109,8 @@ class Model(datastore.Entity):
         return
     
     def __init__(self, **kwargs):
-        super().__init__()
+        client = Client()
+        super().__init__(key=client.key(type(self).__name__))
         self.schema()
         for name, value in self._properties.items():
             kw = value.get('kwargs')
@@ -141,6 +162,11 @@ class Model(datastore.Entity):
         response.__class__ = Query
         response._class_object = cls
         return response
+    
+    def put(self):
+        client = Client()
+        client.put(self)
+        return
     
     def populate(self, **kwargs):
         for key, value in kwargs.items():
@@ -196,7 +222,10 @@ class Model(datastore.Entity):
         return enum(self[name])
     
     def set_EnumProperty(self, name, value):
-        return self.setter(name, value) 
+        if isinstance(value, Enum):
+            return self.setter(name, value.value)
+        else:
+            raise TypeError("EnumProperty must have enum - received - " + str(type(value)))
     
     def DateTimeProperty(self, name):
         return self[name]
@@ -270,7 +299,7 @@ class Gun(Model):
     
     def schema(self):
         super().schema()
-        self.Property("id", ndb.IntegerProperty)
+        self.Property("gunid", ndb.IntegerProperty)
         self.Property("location", ndb.GeoPtProperty)
         self.Property("type", ndb.EnumProperty, enum=Gun.Types)
         self.Property("quality", ndb.EnumProperty, enum=Gun.Quality,  default=Gun.Quality.BRONZE)
@@ -292,9 +321,7 @@ class Gun(Model):
     
     @classmethod
     def map_data(cls):
-        result = cls.query()
-        #result.order("gun.id")
-        result = result.fetch()
+        result = cls.query(order=['gunid']).fetch()
         map_data = []
         for gun in result :
             if gun.quality is None:
@@ -305,7 +332,7 @@ class Gun(Model):
                 thumbnail = gun.images[0] + "=s32"
             try:
                 map_data.append({
-                    "anchor_id" : gun.id,
+                    "anchor_id" : gun.gunid,
                     "description" : gun.description,
                     "latitude" : gun.location.latitude,
                     "longitude" : gun.location.longitude,
@@ -323,15 +350,15 @@ class Gun(Model):
 
     @classmethod
     def get_next(cls):
-        all = cls.query(order=["-id"]).fetch()
+        all = cls.query(order=["-gunid"]).fetch()
         if all :
-            return all[0].id + 1
+            return all[0].gunid + 1
         else:
             return 1
 
     @classmethod
     def get_id(cls, id):
-        return cls.query(filters=[("id","=", str(id))]).get()
+        return cls.query(filters=[("gunid","=", str(id))]).get()
 
 def to_bool(bool_str):
     """Parse the string and return the boolean value encoded or raise an exception"""
@@ -339,6 +366,12 @@ def to_bool(bool_str):
         if bool_str.lower() in ['true', 't', '1', 'on']: return True
         elif bool_str.lower() in ['false', 'f', '0', 'off']: return False
         else: raise TypeError
+    elif isinstance(bool_str, bool):
+        return bool_str
+    elif bool_str is None:
+        return False
+    else:
+        raise TypeError("to_bool requires a str or bool, received :" + str(type(bool_str)))
 
 def to_int(int_string):
     try:
@@ -372,5 +405,5 @@ def UserStatus():
 
 def geolocate(location) :
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
-    reverse_geocode_result = gmaps.reverse_geocode((location.lat, location.lon))
+    reverse_geocode_result = gmaps.reverse_geocode((location.latitude, location.longitude))
     return reverse_geocode_result
