@@ -156,41 +156,24 @@ def set_entry():
                                index= 4,                               
                                )
 
-@app.route('/get_upload_key', methods=['POST'])
-def GetKey():
-    user_data = UserStatus(request.cookies.get("token"))
-    user = user_data['user']
-    if user:
-        logging.info("Creating key for " + user.email + (" to upload"))
-        auth = Auth('https://www.googleapis.com/auth/cloud-platform')
-        key = auth.get_token()
-        url = auth.get_url()
-        response = json.dumps({
-            'key': key,
-            'url': url
-        })
-    return response
 
 @app.route('/add_photo', methods=['POST'])
 def add_photo():
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     if user:
-        data = json.loads(self.request.body)
-        logging.info( user.email + " added Object " + data['name'] + "." )
-        name = data['name']
-        bucket = data['bucket']
-        gun_id = to_int(request.form.get('id'))
-        url = images.get_serving_url(None, filename='/gs/{}/{}'.format(bucket, name), secure_url=True)
+        data = request.json
+        gun_id = to_int(request.args.get('id'))
+        
         gun = Gun.get_id(gun_id)
         if gun :
             image_list = gun.images
             if len(image_list) == 1 and image_list[0] == "":
-                gun.images = [url]
+                pass
             else :
-                gun.images.append(url)
+                pass
             gun.put()
-    return url
+    return "test"
 
 @app.route('/bng_convert', methods=['POST'])
 def bng_convert():

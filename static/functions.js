@@ -16,13 +16,15 @@
 	var config = {
 	  apiKey: "AIzaSyCtkhYNFASY1jLhLg0mJ1gVfBkiyWczzUE",
 	  authDomain: "ultima-ratio-221014.firebaseapp.com",
-	  //databaseURL: "https://ultima-ratio-221014.firebaseio.com",
+	  databaseURL: "https://ultima-ratio-221014.firebaseio.com",
 	  projectId: "ultima-ratio-221014",
 	  storageBucket: "ultima-ratio-221014.appspot.com",
-	  //messagingSenderId: "927628257279"
+	  messagingSenderId: "927628257279"
 	};
 	firebase.initializeApp(config);
 	let ui = new firebaseui.auth.AuthUI(firebase.auth());
+	
+	
 	// FirebaseUI config.
 		let uiConfig = {
 		  callbacks:{
@@ -95,6 +97,15 @@
                 select_button(element.id,)
             }
         }
+	$('.custom-file-input').on('change',function(){
+		let fileName = ""
+		let files = this.files;
+		for (file of files) { 
+		    if ( fileName.length > 0){ fileName += ","}
+		    fileName += file.name
+		}
+		$(this).next('.custom-file-label').addClass("selected").html(fileName); 
+	})
     }
     $(initialize);
 });
@@ -146,80 +157,36 @@ function select_button ( cl) {
 
     //from https://stackoverflow.com/a/16808048/9652221
     async function send_file() {
-            let files = await selectFile("image/*", false);
-            let json_data = await new Promise( function(resolve){
-                $.post(
-            "/get_upload_key",
-            function (data, status) {
-                let json_data = JSON.parse(data);
-                resolve(json_data)
-            })
-            });
-            let url = json_data.url;
-            let request_body = JSON.stringify({
-                "name": "/" + $('#id').val() + "/" +  files.name
-            });
-            let reader = new FileReader();
-            reader.onload = function (event) {
-                let payload = event.target.result;
-                let length = payload.length;
-                let request_headers = {
-                    "Authorization": "Bearer " + json_data.key,
-                    "Content-Type": "application/json; charset=UTF-8",
-                    "X-Upload-Content-Length": length,
-                };
-                request = $.ajax({
-                    url: url,
-                    method: "POST",
-                    data: request_body,
-                    headers: request_headers
-                });
-                request.done(function (data, textStatus, jqXHR) {
-                    let location = jqXHR.getResponseHeader("location");
-                    upload = $.ajax({
-                        url: location,
-                        method: "PUT",
-                        data: payload,
-                        processData: false,
-                        contentType: false,
-                    });
-                    upload.done(function (data, textStatus, jqXHR) {
-                        let json_data = JSON.stringify(data);
-                        addphoto = $.post({
-                            url: "/add_photo?id=" + $('#id').val(),
-                            method: "POST",
-                            data: json_data
-                        });
-                        addphoto.done(function (data, textStatus, jqXHR) {
-                            $("#image_container").attr("src", data);
-                        })
-                    });
-                    upload.fail(function (jqXHR, textStatus) {
-                        alert("upload failed" + textStatus)
-                    });
-                });
-                request.fail(function (jqXHR, textStatus) {
-                    alert("upload request failed" + textStatus)
-                });
-                };
-            reader.readAsArrayBuffer(files);
-        }
-// from https://stackoverflow.com/questions/16215771/how-open-select-file-dialog-via-js
-    function selectFile (contentType, multiple){
-        return new Promise(function (resolve, reject){
-            let input = document.createElement('input');
-            input.type = 'file';
-            input.multiple = multiple;
-            input.accept = contentType;
-            input.onchange = _ => {
-                let files = Array.from(input.files);
-			if (multiple)
-				resolve(files);
-			else
-				resolve(files[0]);
-            };
-            input.click();
-        })}
+    let imageRef
+	    let storage = firebase.storage();
+	    let files = $('.custom-file-input')[0].files;
+	    if (! files) {return}
+	    for (let file of files) {
+		let file_name = file.name;
+		let folder = $('#id').val().toString();
+		imageRef = storage.ref().child('dev').child(folder).child(file_name);
+		console.log ("uploading " + imageRef.fullPath);
+		$('.progress').show();
+		let uploadTask = imageRef.put(file);
+		uploadTask.then(function(snapshot) {
+		    console.log('Uploaded a blob or file!');
+		    let payload = JSON.stringify(snapshot.metadata)
+		    let response = $.ajax({
+			    url: "/add_photo?id=" + folder,
+			    contentType: "application/json",
+			    method: "POST",
+			    data: payload
+			});
+		    $('.custom-file-label').removeClass("selected").html("");
+		    $('.progress').hide();
+		    })
+		uploadTask.on('state_changed', function(snapshot){
+			let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+			$('.proegress-bar').css('width', progress + '%')
+			})
+	    }
+	}
+
 
     function BNG_convert(form) {
         let data = $('form').serializeArray();
