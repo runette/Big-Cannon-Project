@@ -166,7 +166,7 @@ function select_button ( cl) {
 		let folder = $('#id').val().toString();
 		imageRef = storage.ref().child('dev').child(folder).child(file_name);
 		console.log ("uploading " + imageRef.fullPath);
-		$('.progress').show();
+		$('.progress').removeClass('hidden');
 		let uploadTask = imageRef.put(file);
 		uploadTask.then(function(snapshot) {
 		    console.log('Uploaded a blob or file!');
@@ -178,11 +178,11 @@ function select_button ( cl) {
 			    data: payload
 			});
 		    $('.custom-file-label').removeClass("selected").html("");
-		    $('.progress').hide();
+		    $('.progress').addClass('hidden');
 		    })
 		uploadTask.on('state_changed', function(snapshot){
-			let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-			$('.proegress-bar').css('width', progress + '%')
+			let progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 10) * 10;
+			$('.progress-bar').css('width', progress + '%')
 			})
 	    }
 	}
