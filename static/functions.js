@@ -96,7 +96,7 @@
                 let element = update_list[i];
                 select_button(element.id,)
             }
-        }
+        };
 	$('.custom-file-input').on('change',function(){
 		let fileName = ""
 		let files = this.files;
@@ -105,7 +105,8 @@
 		    fileName += file.name
 		}
 		$(this).next('.custom-file-label').addClass("selected").html(fileName); 
-	})
+	});
+	dev = window.location.hostname == ('localhost')
     }
     $(initialize);
 });
@@ -157,14 +158,20 @@ function select_button ( cl) {
 
     //from https://stackoverflow.com/a/16808048/9652221
     async function send_file() {
-    let imageRef
+	    let imageRef, root
 	    let storage = firebase.storage();
+	    if (dev) {
+		root="dev"
+	    }
+	    else {
+		root="/"
+	    }
 	    let files = $('.custom-file-input')[0].files;
 	    if (! files) {return}
 	    for (let file of files) {
 		let file_name = file.name;
 		let folder = $('#id').val().toString();
-		imageRef = storage.ref().child('dev').child(folder).child(file_name);
+		imageRef = storage.ref().child(root).child(folder).child(file_name);
 		console.log ("uploading " + imageRef.fullPath);
 		$('.progress').removeClass('hidden');
 		let uploadTask = imageRef.put(file);
