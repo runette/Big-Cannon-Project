@@ -309,7 +309,7 @@ function select_button ( cl) {
                 break;
         }
     }
-    
+    //from https://www.quirksmode.org/js/cookies.html
     function setCookie(name,value){
 	createCookie(name, value, 1)
 	}
