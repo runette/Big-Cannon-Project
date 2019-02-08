@@ -22,7 +22,8 @@ import googlemaps
 from google.cloud import datastore
 from google.cloud.datastore.helpers import GeoPoint
 import requests
-
+import google.oauth2.id_token
+from attrdict import AttrDict
 
 
 
@@ -390,11 +391,29 @@ class User:
     def email(self):
         return self.e 
 
-def UserStatus():
+def UserStatus(id_token):
     # set up the user context and links for the navbar
-    user = User()
-    #uri = uri.split("?")[0]
-    if user:
+    user = None
+    if id_token:
+        try:
+            # Verify the token against the Firebase Auth API. This example
+            # verifies the token on each page load. For improved performance,
+            # some applications may wish to cache results in an encrypted
+            # session store (see for instance
+            # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
+            claims = google.oauth2.id_token.verify_firebase_token(
+                    id_token, google.auth.transport.requests.Request())
+            user = AttrDict({'email':claims.get('email', ""), 'name': claims.get('name', "anon"), 'photo':claims.get('photo', "")})
+        except ValueError as exc:
+            # This will be raised if the token is expired or any other
+            # verification checks fail.
+            error_message = str(exc)
+    
+        # Record and fetch the recent times a logged-in user has accessed
+        # the site. This is currently shared amongst all users, but will be
+        # individualized in a following step.   
+    
+    if  user:
         url = "test_url"
         url_linktext = 'Logout'
     else:

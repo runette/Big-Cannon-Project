@@ -29,14 +29,14 @@ root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
 
 @app.route('/')
 def main_handler():
-    user_data = UserStatus()
+    user_data = UserStatus(request.cookies.get("token"))
     return render_template("index.html", 
                 user_data= user_data,
                 index= 1)
 
 @app.route('/about')
 def about():
-    user_data = UserStatus()
+    user_data = UserStatus(request.cookies.get("token"))
     return render_template('about.html',
                            index= 2,
                            user_data= user_data
@@ -44,7 +44,7 @@ def about():
 
 @app.route('/database')
 def database():
-    user_data = UserStatus()
+    user_data = UserStatus(request.cookies.get("token"))
     return render_template("database.html",
                            user_data= user_data,
                            gun_types= GUN_TYPES,
@@ -74,7 +74,7 @@ def fetch_map():
 
 @app.route('/database/entry')
 def fetch_entry():
-    user_data = UserStatus()
+    user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     gun_id = to_int(request.args.get('gun_id'))
     if gun_id > 0:
@@ -86,7 +86,7 @@ def fetch_entry():
                 gunid=Gun.get_next(),
                 description="",
                 type=Gun.Types.NOT_KNOWN,
-                name=user.email(),
+                name=user.email,
                 location= GeoPt(52,0),
                 date= datetime.now()
             )
@@ -112,7 +112,7 @@ def fetch_entry():
 
 @app.route('/set_entry', methods=['POST'])
 def set_entry():
-    user_data=UserStatus()
+    user_data=UserStatus(request.cookies.get("token"))
     user = user_data['user']
     if user:
         gun_id = to_int(request.form.get('id'))
@@ -121,7 +121,7 @@ def set_entry():
         if not gun :
             gun = Gun(
                 gunid=gun_id,
-                name=user.email(),
+                name=user.email,
                 images=""
             )
         gun.populate(
@@ -158,10 +158,10 @@ def set_entry():
 
 @app.route('/get_upload_key', methods=['POST'])
 def GetKey():
-    user_data = UserStatus(self.request.uri)
+    user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     if user:
-        logging.info("Creating key for " + user.email() + (" to upload"))
+        logging.info("Creating key for " + user.email + (" to upload"))
         auth = Auth('https://www.googleapis.com/auth/cloud-platform')
         key = auth.get_token()
         url = auth.get_url()
@@ -173,11 +173,11 @@ def GetKey():
 
 @app.route('/add_photo', methods=['POST'])
 def add_photo():
-    user_data = UserStatus(self.request.uri)
+    user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     if user:
         data = json.loads(self.request.body)
-        logging.info( user.email() + " added Object " + data['name'] + "." )
+        logging.info( user.email + " added Object " + data['name'] + "." )
         name = data['name']
         bucket = data['bucket']
         gun_id = to_int(request.form.get('id'))
@@ -230,4 +230,7 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    if 'WINGDB_ACTIVE' in os.environ:
+        app.debug = False
+        app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+        app.run(host='127.0.0.1', port=8080, use_reloader=True)

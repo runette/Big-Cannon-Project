@@ -4,12 +4,83 @@
     }
 })(window.jQuery, function ($) {
     var $win = $(window);
+    
+     // Initialize fancybox
     function initFancybox(){
         $('[data-fancybox]').fancybox({
 	    protect: true
         })}
 
+	// Initialize Firebase
+    function initFirebase(){
+	var config = {
+	  apiKey: "AIzaSyCtkhYNFASY1jLhLg0mJ1gVfBkiyWczzUE",
+	  authDomain: "ultima-ratio-221014.firebaseapp.com",
+	  //databaseURL: "https://ultima-ratio-221014.firebaseio.com",
+	  projectId: "ultima-ratio-221014",
+	  storageBucket: "ultima-ratio-221014.appspot.com",
+	  //messagingSenderId: "927628257279"
+	};
+	firebase.initializeApp(config);
+	let ui = new firebaseui.auth.AuthUI(firebase.auth());
+	// FirebaseUI config.
+		let uiConfig = {
+		  callbacks:{
+		  signInSuccessWithAuthResult: function(authResult, redirectUrl){
+			user=authResult.user;
+			user.getIdToken().then(function (token) {
+			    document.cookie = "token=" + token
+			    })
+			return false
+		    }},
+		    
+		  signInOptions: [
+		    // Comment out any lines corresponding to providers you did not check in
+		    // the Firebase console.
+		    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+		    //firebase.auth.EmailAuthProvider.PROVIDER_ID,
+		    //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+		    //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+		    //firebase.auth.GithubAuthProvider.PROVIDER_ID,
+		    //firebase.auth.PhoneAuthProvider.PROVIDER_ID
+	      
+		  ],
+		  // Terms of service url.
+		  tosUrl: '/static/tos.html',
+		  privacyPolicyUrl: '/static/privacy.html'
+		};
+	if (ui.isPendingRedirect()){
+	    ui.start('#firebaseui-auth-container', uiConfig);
+	    $('#login').text("Logout")
+	    }
+	$('#login').click(function(){
+	    if ($('#login').text().includes("Logout")){
+		firebase.auth().signOut()
+		document.cookie = "token=";
+		$('#firebaseui-auth-container').text("You are now logged out")
+		$('[data-dismiss="modal"]').click(function(){location.reload(true)})
+		}
+	    else {
+		firebase.auth().onAuthStateChanged(function (user) {
+		    if (user) {
+		      // User is signed in, so display the "sign out" button and login info.
+		      $('#login').text("Logout")
+		      console.log(`Signed in as ${user.displayName} (${user.email})`);
+		    } else {
+		      document.cookie = "token=";
+		      ;
+		    }
+		  }, function (error) {
+		    console.log(error);
+		    alert('Unable to log in: ' + error)
+		  });
+		ui.start('#firebaseui-auth-container', uiConfig);
+	    }
+	    });
+      }
+
     function initialize() {
+	initFirebase();
         initFancybox();
         let update_list = $('.update-field');
         if (update_list) {
