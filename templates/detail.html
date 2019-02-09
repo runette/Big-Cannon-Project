@@ -1,10 +1,12 @@
 {% extends "header.html" %}
+{% set images = gun.get_images() %}
 {% block main_content %}
-<form action="/set_entry" id="bronze" method="post">
+
+ <form action="/set_entry" id="bronze" method="post">
     <input type="hidden" id="id" name="id" value="{{ gun.gunid }}" readonly >
         <div class="row p-3  bg-ur" >
             <div class="media">
-                <a class="align-self-center mr-3 fancybox" href="{{gun.images[0]}}"><img src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}} {% else %} /img/70x70.png {% endif %}" height="70px" alt=""></a>
+                <a class="align-self-center mr-3 fancybox" href="{{images[0].original}}"><img src="{{images[0].s200}}" height="70px" alt=""></a>
             </div>
 
             <div class="media-body display-1 p-2">
@@ -261,33 +263,22 @@
                 </div></div><div class="row">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <button type="button" class="btn btn-primary" id="inputGroupFileAddon01" onclick="send_file()">Upload</span>
+                        <button type="button" class="btn btn-primary" id="inputGroupFileAddon01" >Upload</span>
                     </div>
                     
                 <div class="custom-file">
-                    <input type="file" multiple class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                    <input type="file" multiple accept="image/*" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
                     <label class="custom-file-label text-truncate" for="inputGroupFile01">Choose file</label>
                 </div>
             </div>
             </div>
-
-                <a class="max-width:100%" href="{% if gun.images[0]|length > 0 %} {{gun.images[0]}} {% endif %}" data-fancybox="gun_images" data-caption="My caption">
-                    <img class=" mx-auto d-block" id="image_container" src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}} {% endif %}" width="300px"   alt="" />
-                </a>
-
-
-            <div class="hidden">
-                {% for i in gun.images %}
-                    <a href="{{i}}" data-fancybox="gun_images" data-caption="My caption">
-                              <img src="{{i}}=s100" alt="" />
-                          </a>
-                {% endfor %}
+            <div class="" id="imgs">
             </div>
-                 </div>
+        </div>
         </div>
 
 </form>
-<a href="#top" id="top-link"><span>Test</span></a>
+
 
 {% endblock %}
 
@@ -303,12 +294,20 @@
                     if (user !== "None") {
                         $('#top-button').html(
                             '<ul class="nav-bar nav px-1"><Button type="submit" form="bronze" class="btn btn-primary"  href="#">Save</Button></ul>' + $('#top-button').html()
-                        )}
+                        )
+                        $('#inputGroupFileAddon01').click(function(){send_file()})
+                        }
                     else {
                         $('input').prop("readonly", true);
                         $('select').prop("disabled", true);
 
                     }
+                    $('#imgs').imagesGrid({
+                        images: [ {% for image in images %}{src:"{{image.original|safe}}", thumbnail: "{{image.s200|safe}}" },{% endfor %} ],
+                        cells: 4,
+                        align: true,
+                        showViewAl: "always"
+                    });
 
 </script>
 {% endblock %}

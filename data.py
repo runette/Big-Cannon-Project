@@ -333,10 +333,11 @@ class Gun(Model):
         for gun in result :
             if gun.quality is None:
                 gun.quality = Gun.Quality.BRONZE
-            if gun.images[0] == "":
-                thumbnail = "/img/32x32.png"
             else:
-                thumbnail = gun.images[0]
+                try:
+                    thumbnail = gun.get_images()[0].get("s32")
+                except:
+                    thumbnail = "/img/32x32.png"
             try:
                 map_data.append({
                     "anchor_id" : gun.gunid,
@@ -366,6 +367,20 @@ class Gun(Model):
     @classmethod
     def get_id(cls, id):
         return cls.query(filters=[("gunid","=", id)]).get()
+    
+    def get_images(self):
+        IMAGE_DEFAULTS = [{"s200":"/img/70x70.png", "original":""}]
+        images= []
+        try:
+            test = self.images[0]
+            for image in self.images:
+                try:
+                    images.append(json.loads(image))
+                except:
+                    images.append({"original":image, "s32": image + '=s32', "s200": image + "=s200"})
+            return images
+        except:
+            return IMAGE_DEFAULTS
 
 def to_bool(bool_str):
     """Parse the string and return the boolean value encoded or raise an exception"""
@@ -443,7 +458,7 @@ def get_serving_url(upload_metadata):
     thumb_32.put()
     thumb_200 = original.resize((200,200), folder + "/200x200")
     thumb_200.put()    
-    mediaLink = {"original": original.blob.media_link, "32x32": thumb_32.blob.media_link, "200x200": thumb_200.blob.media_link}
+    mediaLink = {"original": original.blob.media_link, "s32": thumb_32.blob.media_link, "s200": thumb_200.blob.media_link}
     return mediaLink
 
 

@@ -25,8 +25,6 @@ from datetime import datetime
 app = Flask(__name__)
 root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
 
-
-
 @app.route('/')
 def main_handler():
     user_data = UserStatus(request.cookies.get("token"))
@@ -122,7 +120,6 @@ def set_entry():
             gun = Gun(
                 gunid=gun_id,
                 name=user.email,
-                images=""
             )
         gun.populate(
             description= request.form.get('description'),
@@ -169,9 +166,9 @@ def add_photo():
         if gun :
             image_list = gun.images
             if len(image_list) == 1 and image_list[0] == "":
-                gun.images = [url]
+                gun.images = [json.dumps(url)]
             else :
-                gun.images = url
+                gun.images = json.dumps(url)
             gun.put()
         return url.get("original", '')
     return "No User"

@@ -32,8 +32,11 @@
 			user=authResult.user;
 			user.getIdToken().then(function (token) {
 			    setCookie("token", token)
+			    $('#login').text("Logout");
+			    $('#login-modal').modal('hide')
 			    if (window.location.pathname.includes('/database/entry')) {location.reload(true)}
 			    })
+			    
 			return false
 		    },
 		    signInFailure(error){
@@ -57,9 +60,8 @@
 		  privacyPolicyUrl: '/static/privacy.html'
 		};
 	if (ui.isPendingRedirect()){
+	    $('#login-modal').modal('show')
 	    ui.start('#firebaseui-auth-container', uiConfig);
-	    $('#login').text("Logout");
-	    
 	    }
 	$('#login').click(function(){
 	    if ($('#login').text().includes("Logout")){
@@ -185,7 +187,7 @@ function select_button ( cl) {
 			    data: payload
 			});
 		    addphoto.done(function (data, textStatus, jqXHR) {
-			    $("#image_container").attr("src", data);
+			    $("#imgs").attr("src", data);
 			    console.log(data);
 			    $('.custom-file-label').removeClass("selected").html("");
 			    $('.progress').addClass('hidden');
