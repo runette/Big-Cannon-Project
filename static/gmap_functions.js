@@ -251,7 +251,7 @@
         return [
             '<tr class="clickable-row" data-href="' + href + '">',
             '<td >',
-            '<span><img class="img-thumbnail" src="' + filename + '" alt /></span>',
+            '<span><img class="img-thumbnail" src="' + filename + '" width="32px" alt /></span>',
             '</td>',
             '<td>' + entry["anchor_id"] + '</td>',
             '<td>' + entry["anchor_type"] + '</td>',

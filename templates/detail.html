@@ -4,7 +4,7 @@
     <input type="hidden" id="id" name="id" value="{{ gun.gunid }}" readonly >
         <div class="row p-3  bg-ur" >
             <div class="media">
-                <a class="align-self-center mr-3 fancybox" href="{{gun.images[0]}}"><img src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}}=s70 {% else %} /img/70x70.png {% endif %}" alt=""></a>
+                <a class="align-self-center mr-3 fancybox" href="{{gun.images[0]}}"><img src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}} {% else %} /img/70x70.png {% endif %}" height="70px" alt=""></a>
             </div>
 
             <div class="media-body display-1 p-2">
@@ -256,7 +256,7 @@
                 <h3 class="bold">Photos</h3></div>
                 <div class=col-9>
                 <div class="progress hidden" >
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 </div></div><div class="row">
                 <div class="input-group mb-3">
@@ -272,7 +272,7 @@
             </div>
 
                 <a class="max-width:100%" href="{% if gun.images[0]|length > 0 %} {{gun.images[0]}} {% endif %}" data-fancybox="gun_images" data-caption="My caption">
-                    <img class=" mx-auto d-block" id="image_container" src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}}=s200 {% endif %}" width="300px"   alt="" />
+                    <img class=" mx-auto d-block" id="image_container" src="{% if gun.images[0]|length > 0 %} {{gun.images[0]}} {% endif %}" width="300px"   alt="" />
                 </a>
 
 

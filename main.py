@@ -17,7 +17,7 @@
 
 import jinja2, os, json, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url
 from flask import Flask, render_template, send_from_directory, request
 from datetime import datetime
 
@@ -163,17 +163,18 @@ def add_photo():
     user = user_data['user']
     if user:
         data = request.json
+        url = get_serving_url(data)
         gun_id = to_int(request.args.get('id'))
-        
         gun = Gun.get_id(gun_id)
         if gun :
             image_list = gun.images
             if len(image_list) == 1 and image_list[0] == "":
-                pass
+                gun.images = [url]
             else :
-                pass
+                gun.images = url
             gun.put()
-    return "test"
+        return url.get("original", '')
+    return "No User"
 
 @app.route('/bng_convert', methods=['POST'])
 def bng_convert():

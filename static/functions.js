@@ -164,28 +164,34 @@ function select_button ( cl) {
 		root="dev"
 	    }
 	    else {
-		root="/"
+		root="prod"
 	    }
 	    let files = $('.custom-file-input')[0].files;
 	    if (! files) {return}
 	    for (let file of files) {
 		let file_name = file.name;
 		let folder = $('#id').val().toString();
-		imageRef = storage.ref().child(root).child(folder).child(file_name);
+		imageRef = storage.ref().child(root).child(folder).child(file_name + "/original");
 		console.log ("uploading " + imageRef.fullPath);
 		$('.progress').removeClass('hidden');
 		let uploadTask = imageRef.put(file);
 		uploadTask.then(function(snapshot) {
 		    console.log('Uploaded a blob or file!');
 		    let payload = JSON.stringify(snapshot.metadata)
-		    let response = $.ajax({
+		    let addphoto = $.ajax({
 			    url: "/add_photo?id=" + folder,
 			    contentType: "application/json",
 			    method: "POST",
 			    data: payload
 			});
-		    $('.custom-file-label').removeClass("selected").html("");
-		    $('.progress').addClass('hidden');
+		    addphoto.done(function (data, textStatus, jqXHR) {
+			    $("#image_container").attr("src", data);
+			    console.log(data);
+			    $('.custom-file-label').removeClass("selected").html("");
+			    $('.progress').addClass('hidden');
+			    $('.progress-bar').css('width', '0%')
+			})
+		    
 		    })
 		uploadTask.on('state_changed', function(snapshot){
 			let progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 10) * 10;

@@ -19,11 +19,13 @@ from enum import Enum
 from datetime import datetime
 import logging
 import googlemaps
-from google.cloud import datastore
+from google.cloud import datastore, storage
 from google.cloud.datastore.helpers import GeoPoint
 import requests
 import google.oauth2.id_token
 from attrdict import AttrDict
+from PIL import Image
+import io
 
 
 
@@ -194,13 +196,17 @@ class Model(datastore.Entity):
     def setter(self, name, value):
         typeof = self._properties[name]['type'].value[2]
         repeated = to_bool(self._properties[name]['kwargs'].get('repeated', False))
-        if isinstance(value, typeof):
-            if repeated:
-                if self[name] and (type(self[name]) == "list"):
-                    self[name].append(value)
-                else:
-                    self[name] = [value]
-            else:
+        if repeated:
+            if self[name] and (type(self[name]) == list) and type(value) == typeof:
+                self[name].append(value)
+            elif type(value) == list:
+                for item in value:
+                    if type(item) != typeof:
+                        raise TypeError(name + " takes " + str(typeof) + " but received " + str(type(item)))
+                self[name] = value
+            elif type(value) == typeof:
+                self[name] = [value]
+        elif isinstance(value, typeof): 
                 self[name] = value
         else:
             raise TypeError(name + " takes " + str(typeof) + " but received " + str(type(value)))
@@ -330,7 +336,7 @@ class Gun(Model):
             if gun.images[0] == "":
                 thumbnail = "/img/32x32.png"
             else:
-                thumbnail = gun.images[0] + "=s32"
+                thumbnail = gun.images[0]
             try:
                 map_data.append({
                     "anchor_id" : gun.gunid,
@@ -426,3 +432,67 @@ def geolocate(location) :
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
     reverse_geocode_result = gmaps.reverse_geocode((location.latitude, location.longitude))
     return reverse_geocode_result
+
+def get_serving_url(upload_metadata):
+    bucket_name = upload_metadata.get('bucket')
+    full_path = upload_metadata.get('fullPath')
+    folder = full_path.replace('/original', '')
+    original = ndbImage(full_path, bucket_name)
+    original.get()
+    thumb_32 = original.resize((32,32), folder + "/32x32")
+    thumb_32.put()
+    thumb_200 = original.resize((200,200), folder + "/200x200")
+    thumb_200.put()    
+    mediaLink = {"original": original.blob.media_link, "32x32": thumb_32.blob.media_link, "200x200": thumb_200.blob.media_link}
+    return mediaLink
+
+
+
+class ndbImage(object): 
+    
+    content_type = "image/jpeg"
+    content_format = "JPEG"
+    
+    def __init__(self, full_path, bucket_name):
+        self.client = storage.Client()
+        self.bucket = self.client.get_bucket(bucket_name)
+        self.full_path = full_path
+        
+    def get(self):
+        self.blob = self.bucket.get_blob(self.full_path)
+        self.content_type = self.blob.content_type
+        buffer = io.BytesIO(self.blob.download_as_string())
+        buffer.seek(0)
+        self.image = Image.open(buffer)
+        
+    def put(self, content_type=None, content_format=None):
+        if (content_format == None and self.content_format == None) or (content_type == None and self.content_type == None):
+            raise ValueError("ndbImage must have content_type and format for a put")
+        if content_format :
+            self.content_format = content_format
+        if content_type:
+            self.content_type = content_type
+        if not hasattr(self, 'image'):
+            raise ValueError("no Image to put")
+        buffer = io.BytesIO()
+        self.image.save(buffer, self.content_format)
+        blob = getattr(self, 'blob', self.bucket.blob(self.full_path))
+        blob.upload_from_file(file_obj=buffer, content_type=self.content_type, rewind=True)
+        self.blob = blob
+        
+    def resize(self, size, target_path, bucket=None):
+        if not hasattr(self, 'image'):
+            raise ValueError("No Image to resize")
+        if not bucket:
+            bucket = self.bucket
+        resize = ndbImage(target_path, bucket.name)
+        resize.content_format = self.content_format
+        resize.content_type = self.content_type
+        resize.image = self.image.resize(size)
+        return resize
+        
+   
+    
+    
+    
+    
