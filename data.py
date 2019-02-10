@@ -25,16 +25,17 @@ from enum import Enum
 from datetime import datetime
 import logging
 import googlemaps
-from ndb import Model, Query, Key, GeoPt, ndb
-from users import UserStatus
-from images import ndbImage
-from helpers import to_bool, to_int
+from simplendb.ndb import Model, Query, Key, GeoPt, ndb
+from simplendb.users import UserStatus
+from simplendb.images import ndbImage
+from simplendb.helpers import to_bool, to_int
 import requests
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
 RECORD_QUALITIES = ('bronze', "silver", "gold")
+
 
 
 class BNG():
