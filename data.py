@@ -27,7 +27,7 @@ import logging
 import googlemaps
 from simplendb.ndb import Model, Query, Key, GeoPt, ndb
 from simplendb.users import UserStatus
-from simplendb.images import ndbImage
+from simplendb.images import ndbImage, Blob
 from simplendb.helpers import to_bool, to_int
 import requests
 
@@ -169,7 +169,7 @@ def get_serving_url(upload_metadata):
     thumb_32.put()
     thumb_200 = original.resize((200,200), folder + "/200x200")
     thumb_200.put()    
-    mediaLink = {"original": original.blob.media_link, "s32": thumb_32.blob.media_link, "s200": thumb_200.blob.media_link}
+    mediaLink = {"original": original.get_media_link(), "s32": thumb_32.get_media_link(), "s200": thumb_200.get_media_link()}
     return mediaLink
 
 

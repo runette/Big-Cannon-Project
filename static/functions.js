@@ -70,8 +70,14 @@
 		    // Comment out any lines corresponding to providers you did not check in
 		    // the Firebase console.
 		    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-		    //firebase.auth.EmailAuthProvider.PROVIDER_ID,
-		    //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+		    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+		    {
+			provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+			scopes: [
+			    'public_profile',
+			    'email',
+			],
+		    }
 		    //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
 		    //firebase.auth.GithubAuthProvider.PROVIDER_ID,
 		    //firebase.auth.PhoneAuthProvider.PROVIDER_ID
@@ -81,6 +87,7 @@
 		  tosUrl: '/static/tos.html',
 		  privacyPolicyUrl: '/static/privacy.html'
 		};
+	
 	if (ui.isPendingRedirect()){
 	    $('#login-modal').modal('show')
 	    ui.start('#firebaseui-auth-container', uiConfig);
