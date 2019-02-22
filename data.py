@@ -34,7 +34,7 @@ import requests
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 
-RECORD_QUALITIES = ('bronze', "silver", "gold")
+RECORD_QUALITIES = ('Observer', "Recorder", "Surveyor")
 
 
 
@@ -119,7 +119,7 @@ class Gun(Model):
                     "location"  : gun.context,
                     "names" : gun.name,
                     'filename' : thumbnail,
-                    'quality' : RECORD_QUALITIES[gun.quality.value],
+                    'quality' : gun.quality.value,
                     'nationality': gun.country,
                     'site' : gun.site,
                 })

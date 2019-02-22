@@ -68,6 +68,6 @@ table td.status span {
   border-radius: 100px; -webkit-border-radius: 100px;
 }
 
-table td.status span.gold { background: #ffcc00; }
-table td.status span.silver { background: #CCC; }
-table td.status span.bronze { background: #ae7a3c; }
+table td.status span.quality2 { background: #ffcc00; }
+table td.status span.quality1 { background: #CCC; }
+table td.status span.quality0 { background: #ae7a3c; }

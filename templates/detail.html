@@ -23,13 +23,13 @@
     <div class="mx-auto d-block">
         <ul class="nav nav-tabs bg-ur" data-toggle="" title="">
             <li class="nav-item">
-                <a class="nav-link text-center list-group-item-action active" id="list-bronze-list" data-toggle="list"  href="#list-bronze" role="tab" aria-controls="list-bronze">Bronze</a>
+                <a class="nav-link text-center list-group-item-action active" id="list-bronze-list" data-toggle="list"  href="#list-bronze" role="tab" aria-controls="list-bronze">Observer</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-center list-group-item-action " id="list-silver-list" data-toggle="list"  href="#list-silver" role="tab" aria-controls="list-silver">Silver</a>
+                <a class="nav-link text-center list-group-item-action " id="list-silver-list" data-toggle="list"  href="#list-silver" role="tab" aria-controls="list-silver">Reporter</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-center list-group-item-action " id="list-gold-list" data-toggle="list"  href="#list-gold" role="tab" aria-controls="list-gold">Gold</a>
+                <a class="nav-link text-center list-group-item-action " id="list-gold-list" data-toggle="list"  href="#list-gold" role="tab" aria-controls="list-gold">Surveyor</a>
             </li>
         </ul>
     </div>
@@ -54,11 +54,11 @@
                             </tr>
                             <tr>
                                 <td>Short Desc</td>
-                                <td><input class="form-control" type="text" name="description" value="{{ gun.description }}" > </td>
+                                <td><input class="form-control" type="text" name="description" value="{% if gun.description%}{{ gun.description }}{%endif%}" placeholder="Description" > </td>
                             </tr>
                             <tr>
                                 <td>Author</td>
-                                <td><input class="form-control" type="text" name="name" value="{{ gun.name }}" readonly ></td>
+                                <td><input class="form-control" type="text" name="name" value="{% if gun.name %}{{ gun.name }} {% endif %}" placeholder="Name" readonly ></td>
                             </tr>
                             <tr>
                                 <td>Date Recorded</td>
@@ -93,7 +93,7 @@
                                         Describe the Markings
                                     </td>
                                     <td>
-                                        <input class="form-control" type="text" name="mark_details" value="{{gun.mark_details}}">
+                                        <input class="form-control" type="text" name="mark_details" value="{%if gun.mark_details %} {{gun.mark_details}} {% endif %}" placeholder="Details">
                                     </td>
                                 </tr>
                                 <tr class="hidden inter" >
@@ -101,7 +101,7 @@
                                         Describe the Interpretations
                                     </td>
                                     <td>
-                                        <input class="form-control" type="text" name="inter_details" value="{{gun.inter_details}}">
+                                        <input class="form-control" type="text" name="inter_details" value="{%if gun.inter_details%}{{gun.inter_details}}{%endif%}" placeholder="Details">
                                     </td>
                                 </tr>
                         </table>
@@ -113,11 +113,11 @@
                             </thead>
                             <tr>
                                 <td>Description of Location</td>
-                                <td><input class="form-control" type="text" name="context" value="{{gun.context}}"></td>
+                                <td><input class="form-control" type="text" name="context" value="{%if gun.context%}{{gun.context}}{%endif%}" placeholder="Describe context"></td>
                             </tr>
                             <tr>
                                 <td>Site Name</td>
-                                <td><input class="form-control" type="text" name="site" value="{{gun.site}}"></td>
+                                <td><input class="form-control" type="text" name="site" value="{%if gun.site%}{{gun.site}}{%endif%}" placeholder="Site name"></td>
                             </tr>
                             <tr>
                                 <td>Museum / Collection</td>
@@ -130,12 +130,12 @@
                             </tr>
                             <tr class="hidden collection">
                                 <td>Collection Name</td>
-                                <td><input class="form-control" type="text" name="coll_name" value="{{gun.coll_name}}"></td>
+                                <td><input class="form-control" type="text" name="coll_name" value="{%if gun.coll_name %}{{gun.coll_name}}{%endif%}" placeholder="Collection name"></td>
 
                             </tr>
                             <tr class="hidden collection">
                                 <td>Collection Ref</td>
-                                <td><input class="form-control" type="text" name="coll_ref" value="{{gun.coll_ref}}"></td>
+                                <td><input class="form-control" type="text" name="coll_ref" value="{%if gun.coll_ref%}{{gun.coll_ref}}{%endif%}" placeholder="Collection reference"></td>
                             </tr>
                         </tbody></table>
                     </div>

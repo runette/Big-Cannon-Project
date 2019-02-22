@@ -259,7 +259,7 @@
             '<td>' + entry["nationality"] + '</td>',
             '<td>' + entry["names"] + '</td>',
             '<td class="status">',
-            '<span class="' + entry["quality"] + '"></span>',
+            '<span class="quality' + entry["quality"] + '"></span>',
             '</td>',
             '</tr>'
         ].join('');
