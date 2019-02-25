@@ -203,6 +203,57 @@ def LlConvert():
         "NORTHING" : convert["NORTHING"]
     })
     return response
+
+@app.route('/new_record', methods=['GET'])
+def new_record():
+    user_data = UserStatus(request.cookies.get("token"))
+    user = user_data['user']
+    if user:
+        return render_template('addrecord.html',
+                               user_data= user_data,
+                               index= 4,                               
+                               )
+    else:
+        return render_template('header.html',
+                               user_data= user_data,
+                               index= 4,                               
+                               )
+    
+@app.route("/get_location", methods=['POST'])    
+def get_locations():
+    user_data = UserStatus(request.cookies.get("token"))
+    user = user_data['user']
+    if user:
+        lat = request.args.get('lat')
+        lon = request.args.get('lon')
+        location = GeoPt(lat, lon)
+        return json.dumps({"location":[lat,lon], "geolocation":geolocate(location), "gunid": Gun.get_next()})
+        
+@app.route("/add_record", methods=['POST'])
+def add_record():
+    user_data = UserStatus(request.cookies.get("token"))
+    user = user_data['user']
+    if user:
+        data = request.get_json()
+        gunid = data['gunid']
+        location = data['location']
+        gun = Gun(
+            gunid=gunid,
+            name=user.email,
+            type=Gun.Types.NOT_KNOWN,
+            date= datetime.now()
+        )
+        gun.location = GeoPt(location[0], location[1])
+        gun.geocode = json.dumps(data['geolocation'])
+        gun.site = data['current_site']['formatted_address']
+        url = get_serving_url(data['metadata'])
+        gun.images = [json.dumps(url)]
+        for location in data['geolocation']:
+            if "country" in location['types']:
+                gun.country = location['formatted_address']        
+        gun.put()
+        return url.get("original", '')
+
     
 @app.route('/img/<path:path>', methods=['GET'])
 def img(path):

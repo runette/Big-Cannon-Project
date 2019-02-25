@@ -1,0 +1,164 @@
+{% extends "header.html" %}
+{% block main_content %}
+
+<div style="display: none;" id="location_dialog">
+<form action="#" id="location-entry" >
+        <h3 class="bold">Enter the location of the gun</h3>
+        <small class="text-muted"> Enter co-ordinates, drop a pin on the map or use your current location</small>
+        <div class="row">
+                    <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="geolocation" class="custom-control-input" id="latlon" checked onchange="radio_button('geolocation','latlon')" >
+                            <label class="custom-control-label" for="latlon">Lat/Lon</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="geolocation" class="custom-control-input" id="bng"  onchange="LL_convert('#location-entry')" >
+                            <label class="custom-control-label" for="bng">Grid Ref</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="geolocation" class="custom-control-input" id="locate"  onchange="radio_button('geolocation',  'locate')" >
+                            <label class="custom-control-label" for="locate">Device Location</label>
+                        </div>
+                    </div>
+                </div>
+        
+                <div id="map_canvas" class="map-container inline" > </div>
+                <script>
+                    window.initMap = function () {
+                    
+                        map_icons = {
+                                'BRONZE': "/img/cannon_bronze.png",
+                                'GOLD': "/img/cannon_gold.png",
+                                'SILVER': "/img/cannon_silver.png"
+                            };
+
+                        marker_quality = "BRONZE"
+
+
+                        let location = {
+                            lat: 52.0,
+                            lng: 0.0
+                        };
+                        map = new google.maps.Map(document.getElementById('map_canvas'), {
+                            zoom: 12,
+                            center: location,
+                            mapTypeId: google.maps.MapTypeId.ROADMAP,
+                            zoomControl: true,
+                            mapTypeControl: false,
+                            scaleControl: true,
+                            streetViewControl: false,
+                            rotateControl: true,
+                            fullscreenControl: true
+                        });
+                        marker = null;
+                        //reset_map()
+                    };
+                </script>
+
+                
+
+
+
+                <div class=" row latlon">
+                    <div class="col-md-2">
+                        Lat
+                    </div> <div class="col-md-3">
+                        <input class="form-control" type="text" id="lat" name="lat" value="52.0" >
+                    </div> <div class="col-md-2">
+                        Long
+                    </div> <div class="col-md-3">
+                        <input class="form-control" type="text" id="lon" name="lon" value="0.0" >
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" type="button" onclick="reset_map()">Map</button>
+                    </div>
+                </div>
+                <div class="row latlon">
+                    <small class="text-muted mx-auto">All Lat/lon coordinates must be in WGS84</small>
+                </div>
+                <div class="row bng" style="display: none;">
+                    <div class="col-md-2">
+                        East
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" name="eastings" id="eastings" value="" >
+                    </div>
+                    <div class="col-md-2">
+                        North
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" name="northings" id="northings" value="">
+                   </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-small btn-primary" type="button" onclick="BNG_convert('bronze')">Map</button>
+                    </div>
+                </div>
+                <div class="row bng"style="display: none;">
+                    <small class="text-muted mx-auto">Conversion provided by British Geological Survey <a href="https://www.bgs.ac.uk/data/webservices/convertForm.cfm#bngToLatLng">link</a></small>
+                </div>
+                <div class="row locate" style="display: none;">
+                    <button class="btn btn-primary mx-auto d-block" type="button" onclick="getLocation()">Current Location</button>
+                </div>
+                <div class="d-block row">
+                    <button data-value="1" data-fancybox-close="" class="btn btn-primary mx-auto d-block">Accept</button>
+                </div>
+</form>
+</div>
+
+<div style="display: none;" id="site_dialog">
+
+<h3 class="bold">Enter the correct Site Name for the lcoation of the gun</h3>
+        <small class="text-muted"> Choose a site that is correct or leave as "Not Known"</small>
+        <div class="input-group">
+        <div class="dropdown">
+            <select class="custom-select" name="sietSelect" id="siteSelect">
+              <option selected>Choose...</option>
+              <option value="1">Not KNown</option>
+            </select>
+        </div>
+        </div>
+<div class="d-block row">
+    <button data-value="1" data-fancybox-close="" class="btn btn-primary mx-auto d-block">Accept</button>
+</div>
+</div>
+
+<div style="display: none;" id="file_dialog">
+            <div class="row">
+                <h3 class="bold">Add  a photo of the gun</h3>
+            </div>
+            <div class="progress hidden" >
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn btn-primary" id="file_upload" >Upload</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" multiple accept="image/*" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                    <label class="custom-file-label text-truncate" for="inputGroupFile01">Choose file</label>
+                    </div>
+                </div>
+            </div>
+            <div class="" id="imgs">
+            </div>
+            <div class="d-block row">
+                 <button data-value="1" data-fancybox-close="" class="btn btn-primary mx-auto d-block">Close</button>
+            </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
+<script src='/static/dialog.js' ></script>
+
+
+{% endblock %}

@@ -104,11 +104,15 @@ class Gun(Model):
         for gun in result :
             if gun.quality is None:
                 gun.quality = Gun.Quality.BRONZE
+                gun.put()
             else:
                 try:
                     thumbnail = gun.get_images()[0].get("s32")
                 except:
                     thumbnail = "/img/32x32.png"
+            if gun.type is None:
+                gun.type = Gun.Types.NOT_KNOWN
+                gun.put()
             try:
                 map_data.append({
                     "anchor_id" : gun.gunid,

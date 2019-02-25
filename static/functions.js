@@ -188,7 +188,7 @@ function select_button ( cl) {
 
 
     //from https://stackoverflow.com/a/16808048/9652221
-    async function send_file() {
+    async function send_file_worker(folder, then_function) {
 	    let imageRef, root
 	    let storage = firebase.storage();
 	    if (dev) {
@@ -201,12 +201,21 @@ function select_button ( cl) {
 	    if (! files) {return}
 	    for (let file of files) {
 		let file_name = file.name;
-		let folder = $('#id').val().toString();
 		imageRef = storage.ref().child(root).child(folder).child(file_name + "/original");
 		console.log ("uploading " + imageRef.fullPath);
 		$('.progress').removeClass('hidden');
 		let uploadTask = imageRef.put(file);
-		uploadTask.then(function(snapshot) {
+		uploadTask.then(snapshot => then_function(snapshot));
+		uploadTask.on('state_changed', function(snapshot){
+			let progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 10) * 10;
+			$('.progress-bar').css('width', progress + '%')
+			})
+	    }
+	}
+	
+    function send_file() {
+	let folder = $('#id').val().toString();
+	send_file_worker(folder, function(snapshot) {
 		    console.log('Uploaded a blob or file!');
 		    let payload = JSON.stringify(snapshot.metadata)
 		    let addphoto = $.ajax({
@@ -215,7 +224,7 @@ function select_button ( cl) {
 			    method: "POST",
 			    data: payload
 			});
-		    addphoto.done(function (data, textStatus, jqXHR) {
+			addphoto.done(function (data, textStatus, jqXHR) {
 			    $("#imgs").attr("src", data);
 			    console.log(data);
 			    $('.custom-file-label').removeClass("selected").html("");
@@ -224,12 +233,9 @@ function select_button ( cl) {
 			})
 		    
 		    })
-		uploadTask.on('state_changed', function(snapshot){
-			let progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 10) * 10;
-			$('.progress-bar').css('width', progress + '%')
-			})
-	    }
-	}
+    };
+    
+    
 
 
     function BNG_convert(form) {
@@ -251,7 +257,7 @@ function select_button ( cl) {
 
     }
     function LL_convert(form) {
-        let data = $('form').serializeArray();
+        let data = $(form).serializeArray();
         let index = jQuery.grep(data, function(n,i) { return n['name'] === "lat" });
         let lat = index[0]['value'];
         index = jQuery.grep(data, function(n,i) { return n['name'] === "lon" });
