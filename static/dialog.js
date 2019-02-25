@@ -6,21 +6,31 @@ $.fancybox.open({
                 clickOutside: false,
                 dblclickOutside: false,
                 clickSlide:false,
+                afterShow: function () {
+                        // bind a click event to fancybox close button
+                        // set the value of the currentTarget to the eTarget variable
+                        dialog_cancel=false; // reset variable
+                        $(".fancybox-close-small").on("click", function (event) {
+                        dialog_cancel=true;
+            })},
                 beforeClose : function(instance, current ) {
-                        let data = $('#location-entry').serializeArray();
-                        let index = jQuery.grep(data, function(n,i) { return n['name'] === "lat" });
-                        let lat = index[0]['value'];
-                        index = jQuery.grep(data, function(n,i) { return n['name'] === "lon" });
-                        let lon = index[0]['value'];
-                        let convert = $.post("/get_location?lat=" + lat + "&lon=" + lon);
-                        convert.done(function (data, textStatus, jqXHR) {
-                                let json_data = JSON.parse(data);
-                                sites_dialog(json_data);
-                                return true;
-                        });
-                        convert.fail (function (jqXHR, textStatus) {
-                                alert('conversion failed : ' + textStatus)}
-                        );
+                        if (!dialog_cancel) {
+                                let data = $('#location-entry').serializeArray();
+                                let index = jQuery.grep(data, function(n,i) { return n['name'] === "lat" });
+                                let lat = index[0]['value'];
+                                index = jQuery.grep(data, function(n,i) { return n['name'] === "lon" });
+                                let lon = index[0]['value'];
+                                let convert = $.post("/get_location?lat=" + lat + "&lon=" + lon);
+                                convert.done(function (data, textStatus, jqXHR) {
+                                        let json_data = JSON.parse(data);
+                                        sites_dialog(json_data);
+                                        return true;
+                                });
+                                convert.fail (function (jqXHR, textStatus) {
+                                        alert('conversion failed : ' + textStatus)});
+                                } else {
+                                return true
+                                };
                 }
         }
 });
@@ -35,15 +45,43 @@ function sites_dialog(json_data) {
                 dblclickOutside: false,
                 clickSlide:false,
                 afterLoad: function(current){
+                        const interest=["street_address","park", "natural_feature", "museum", "train_station", "hospital", "fire_station", "embassy", "local_goverment_office","library", "courthouse", "city_hall", "church", "art_gallery"]
                         let geolocation = json_data.geolocation;
+                        let location = new google.maps.LatLng(json_data.location[0],json_data.location[1]);
+                        let request = {
+                                location: location,
+                                radius: 500
+                        }
+                        let service = new google.maps.places.PlacesService(map);
+                        service.nearbySearch(request, function(places, status){
+                                json_data.places = places;
+                                for (let key in places){
+                                        if (places.hasOwnProperty(key)) {
+                                                let location =  places[key];
+                                                let index = key + 1;
+                                                if (location.types.some(r=> interest.includes(r))) {
+                                                        $('#siteSelect').append('<option value="' + index + '">' + location.name + '</option> ');
+                                                };
+                                        }};
+                                        });
                         for (let key in geolocation){
-                                if (geolocation.hasOwnProperty(key)) {
-                                        let location =  geolocation[key];
+                                if (geolocation.hasOwnProperty(key)){
+                                        let location = geolocation[key];
                                         let index = key + 2;
-                                        $('#siteSelect').append('<option value="' + index + '">' + location.formatted_address + '</option> ');
-                                }};
+                                        if (location.types.some(r=> interest.includes(r))) {
+                                              $('#siteSelect').append('<option value="' + index + '">' + location.formatted_address + '</option> ');  
+                                        }
+                                };
+                        };
                         },
+                afterShow: function() {
+                        // from https://stackoverflow.com/questions/22062722/fancybox-get-id-of-clicked-anchor-element-in-afterclose-function
+                        dialog_cancel=false; // reset variable
+                        $(".fancybox-close-small").on("click", function (event) {
+                        dialog_cancel = true;
+                })},
                 beforeClose : function(instance, current ) {
+                        if (!dialog_cancel) {
                                 let data = json_data;
                                 let element = $('#siteSelect');
                                 let key = element[0].selectedOptions[0].value.charAt(0);
@@ -51,9 +89,12 @@ function sites_dialog(json_data) {
                                 data['current_site'] = location;
                                 file_dialog(data);
                                 return true
-                        }
+                        }else {
+                                return true
+                                };
+                        
                 }
-        })};
+        }})};
         
 function file_dialog(data) {
         $.fancybox.open({
@@ -67,9 +108,18 @@ function file_dialog(data) {
                 afterLoad: function(current){
                         $('#file_upload').click(function(){send_first_file(data)})
                  },
+                 afterShow: function() {
+                        // from https://stackoverflow.com/questions/22062722/fancybox-get-id-of-clicked-anchor-element-in-afterclose-function
+                        dialog_cancel=false; // reset variable
+                        $(".fancybox-close-small").on("click", function (event) {
+                        dialog_cancel = true;
+                })},
                 afterClose: function() {
-                window.location.href = "/database/entry?id=" + data.gunid.toString() ;
-                }
+                if (!dialog_cancel){
+                        window.location.href = "/database/entry?id=" + data.gunid.toString() ;
+                } else {
+                        return true
+                }}
 }
 })
 }
