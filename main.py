@@ -220,7 +220,7 @@ def new_record():
                                )
     
 @app.route("/get_location", methods=['POST'])    
-def get_locations():
+def get_location():
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     if user:
@@ -244,8 +244,13 @@ def add_record():
             date= datetime.now()
         )
         gun.location = GeoPt(location[0], location[1])
-        gun.geocode = json.dumps(data['geolocation'])
-        gun.site = data['current_site']['formatted_address']
+        geo = {"geolocation": data['geolocation']}
+        geo.update({"places":data['places']})
+        gun.geocode = json.dumps(geo)
+        try:
+            gun.site = data['current_site']['formatted_address']
+        except:
+            gun.site = data['current_site']['name']
         url = get_serving_url(data['metadata'])
         gun.images = [json.dumps(url)]
         for location in data['geolocation']:
