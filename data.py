@@ -108,17 +108,25 @@ class Gun(Model):
         result = cls.query(order=['gunid']).fetch()
         map_data = []
         for gun in result :
-            if gun.quality is None:
-                gun.quality = Gun.Quality.BRONZE
-                gun.put()
-            else:
-                try:
-                    thumbnail = gun.get_images()[0].get("s32")
-                except:
-                    thumbnail = "/img/32x32.png"
-            if gun.type is None:
-                gun.type = Gun.Types.NOT_KNOWN
-                gun.put()
+            try:
+                thumbnail = gun.get_images()[0].get("s32")
+            except:
+                thumbnail = "/img/32x32.png"
+            try:
+                name = json.loads(User.get_by_id(gun.user_id).fire_user)['name']
+            except Exception as e:
+                users = User.query().fetch()
+                id = ""
+                for user in users:
+                    fu = json.loads(user.fire_user)
+                    if fu['email'] in gun.name :
+                        id = fu['user_id']
+                if id != "" :
+                    gun.user_id = id
+                    gun.put()
+                    name = json.loads(User.get_by_id(gun.user_id).fire_user)['name']
+                else :
+                    name = gun.name
             try:
                 map_data.append({
                     "anchor_id" : gun.gunid,
@@ -127,7 +135,7 @@ class Gun(Model):
                     "longitude" : gun.location.longitude,
                     "anchor_type" : GUN_TYPES[gun.type.value],
                     "location"  : gun.context,
-                    "names" : gun.name,
+                    "names" : name,
                     'filename' : thumbnail,
                     'quality' : gun.quality.value,
                     'nationality': gun.country,
@@ -164,17 +172,23 @@ class Gun(Model):
             return IMAGE_DEFAULTS
 
 class User(Model):
-    class Types(Enum):
-        RECORDER = 0
-        SURVEYOR = 1
-        ADMIN = 2
+    class Standing(Enum):
+        OBSERVER = 0
+        RECORDER = 1
+        SURVEYOR = 2
+        ADMIN = 3
 
     def schema(self):
         super().schema()
         self.Property("user_id", ndb.StringProperty)
-        self.Property("type", ndb.EnumProperty, enum=User.Types, default=User.Types.RECORDER)
+        self.Property("standing", ndb.EnumProperty, enum=User.Standing, default=User.Standing.RECORDER)
         self.Property('created', ndb.DateTimeProperty, auto_now=True)
         self.Property("fire_user", ndb.JsonProperty)
+
+        
+    @classmethod
+    def get_by_id(cls, id):
+        return User.query(filters=[('user_id','=',id)]).get()
             
 
 
@@ -200,10 +214,11 @@ def get_serving_url(upload_metadata):
 def UserStatus (id_token):
     result = simplendb.users.UserStatus(id_token)
     if result['user'] :
-        user = User.query(filters=[('user_id','=',result['user'].user_id)]).get()
+        user = User.get_by_id(result['user'].user_id)
         if user is None:
             user = User(
                 user_id=result['user'].user_id,
-                fireuser= result['user'])
+                fire_user= json.dumps(result['user'])
+            )
             user.put()
     return result

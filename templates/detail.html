@@ -4,6 +4,7 @@
 
  <form action="/set_entry" id="bronze" method="post">
     <input type="hidden" id="id" name="id" value="{{ gun.gunid }}" readonly >
+    <input type="hidden" id="user_id" name="user_id" value="{{gun.user_id}}" readonly >
         <div class="row p-3  bg-ur" >
             <div class="media">
                 <a class="align-self-center mr-3 fancybox" href="{{images[0].original}}"><img src="{{images[0].s200}}" height="70px" alt=""></a>
@@ -288,10 +289,10 @@
 <script src="/static/markerclusterer.js"></script>
 <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
 <script type="application/javascript" >
-                    let user = "{{user_data.user}}";
+                    let edit = "{{edit}}";
                     $('.bng').hide();
                     $('.locate').hide();
-                    if (user !== "None") {
+                    if (edit === "True") {
                         $('#top-button').html(
                             '<ul class="nav-bar nav px-1"><Button type="submit" form="bronze" class="btn btn-primary"  href="#">Save</Button></ul>' + $('#top-button').html()
                         )

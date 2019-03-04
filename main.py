@@ -22,7 +22,7 @@
 
 import jinja2, os, json, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User
 from flask import Flask, render_template, send_from_directory, request
 from datetime import datetime
 
@@ -82,38 +82,26 @@ def fetch_entry():
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     gun_id = to_int(request.args.get('gun_id'))
-    if gun_id > 0:
+    try:
         gun = Gun.get_id(gun_id)
+        if user and user.user_id == gun.user_id:
+            edit = True
+        elif User.get_by_id(user.user_id).standing != User.Standing.OBSERVER:
+            edit=True
+        else:
+            edit=False
         index = 3
-    else:
-        if user:
-            gun = Gun(
-                gunid=Gun.get_next(),
-                description="",
-                type=Gun.Types.NOT_KNOWN,
-                name=user.email,
-                location= GeoPt(52,0),
-                date= datetime.now()
-            )
-            index = 4
-        else :
-            gun = Gun(
-                gunid=Gun.get_next(),
-                description="",
-                type=Gun.Types.NOT_KNOWN,
-                name="",
-                location=GeoPt(52, 0),
-                date=datetime.now()
-            )
-            index = 4
-    return render_template('detail.html',
+        return render_template('detail.html',
                            user_data=user_data,
                            gun= gun,
                            gun_types= GUN_TYPES,
                            qualities_text= RECORD_QUALITIES,
                            qualities= Gun.Quality,
-                           index= index                           
+                           index= index,
+                           edit=edit
                            )
+    except:
+        return ""
 
 @app.route('/set_entry', methods=['POST'])
 def set_entry():
@@ -131,7 +119,7 @@ def set_entry():
         gun.populate(
             description= request.form.get('description'),
             type= Gun.Types[request.form.get('type')],
-            name= request.form.get('name'),
+            user_id= request.form.get('user_id'),
             site=request.form.get('site'),
             context=request.form.get('context'),
             collection=to_bool(request.form.get('collection')),
@@ -157,7 +145,8 @@ def set_entry():
                                gun_types= GUN_TYPES,
                                qualities_text= RECORD_QUALITIES,
                                qualities= Gun.Quality,
-                               index= 4,                               
+                               index= 4,
+                               edit=True
                                )
 
 
@@ -241,7 +230,7 @@ def add_record():
         location = data['location']
         gun = Gun(
             gunid=gunid,
-            name=user.email,
+            user_id=user.user_id,
             type=Gun.Types.NOT_KNOWN,
             date= datetime.now()
         )
