@@ -26,7 +26,7 @@ from datetime import datetime
 import logging
 import googlemaps
 from simplendb.ndb import Model, Query, Key, GeoPt, ndb
-from simplendb.users import UserStatus
+import simplendb.users 
 from simplendb.images import ndbImage, Blob
 from simplendb.helpers import to_bool, to_int
 import requests
@@ -74,6 +74,10 @@ class Gun(Model):
         GOLD = 2
         SILVER = 1
         BRONZE = 0
+    class Status(Enum):
+        UNVERIFIED = 0
+        AUTO = 1
+        VERIFIED = 2
     
     def schema(self):
         super().schema()
@@ -96,6 +100,8 @@ class Gun(Model):
         self.Property("inter_details", ndb.StringProperty)
         self.Property("country", ndb.StringProperty, default="none")
         self.Property("geocode", ndb.JsonProperty)
+        self.Property("user_id", ndb.StringProperty)
+        self.Property("status", ndb.EnumProperty, enum=Gun.Status, default=Gun.Status.UNVERIFIED)
     
     @classmethod
     def map_data(cls):
@@ -157,6 +163,20 @@ class Gun(Model):
         except:
             return IMAGE_DEFAULTS
 
+class User(Model):
+    class Types(Enum):
+        RECORDER = 0
+        SURVEYOR = 1
+        ADMIN = 2
+
+    def schema(self):
+        super().schema()
+        self.Property("user_id", ndb.StringProperty)
+        self.Property("type", ndb.EnumProperty, enum=User.Types, default=User.Types.RECORDER)
+        self.Property('created', ndb.DateTimeProperty, auto_now=True)
+        self.Property("fire_user", ndb.JsonProperty)
+            
+
 
 def geolocate(location) :
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
@@ -177,10 +197,13 @@ def get_serving_url(upload_metadata):
     return mediaLink
 
 
-
-
-   
-    
-    
-    
-    
+def UserStatus (id_token):
+    result = simplendb.users.UserStatus(id_token)
+    if result['user'] :
+        user = User.query(filters=[('user_id','=',result['user'].user_id)]).get()
+        if user is None:
+            user = User(
+                user_id=result['user'].user_id,
+                fireuser= result['user'])
+            user.put()
+    return result
