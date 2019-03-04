@@ -33,8 +33,10 @@ root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
 @app.route('/')
 def main_handler():
     user_data = UserStatus(request.cookies.get("token"))
+    images = ["Cannon measuring.jpg", "Colosuss.JPG", "Diver recording cannon on Normans Bay_credit_Martin Davies.jpg", "Normans Bay cannon_credit Martin Davies.jpg", "IMG_4512.jpg","St Martins.JPG", "Sunset Porthleven.JPG"]
     return render_template("index.html", 
                 user_data= user_data,
+                images= images,
                 index= 1)
 
 @app.route('/about')
