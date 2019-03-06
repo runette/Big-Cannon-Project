@@ -12,7 +12,7 @@
 
             <div class="media-body display-1 p-2">
                 <h2>Gun ID : {{ gun.gunid }}
-                {% if user_data.user %}
+                {% if user_data.user.user_id == gun.user_id %} 
 
                 {% else %}
                     <small class="text-muted float-right align-middle"> Read-only </small>

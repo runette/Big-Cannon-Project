@@ -84,8 +84,8 @@
 	      
 		  ],
 		  // Terms of service url.
-		  tosUrl: '/static/tos.html',
-		  privacyPolicyUrl: '/static/privacy.html'
+		  tosUrl: 'https://app.termly.io/document/terms-and-conditions/39c09e25-344b-49a8-95d2-d817738d36aa',
+		  privacyPolicyUrl: 'https://www.iubenda.com/privacy-policy/19391456'
 		};
 	
 	if (ui.isPendingRedirect()){

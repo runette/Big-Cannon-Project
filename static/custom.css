@@ -79,7 +79,7 @@ canvas {background-color: #e3f2fd;
 @media (min-width: 1000px) {
 .overlap {
           position:absolute;
-          top: 60%;
+          top: 55%;
           width:10% !important;
 }}
 
