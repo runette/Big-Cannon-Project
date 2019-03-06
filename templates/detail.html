@@ -5,7 +5,7 @@
  <form action="/set_entry" id="bronze" method="post">
     <input type="hidden" id="id" name="id" value="{{ gun.gunid }}" readonly >
     <input type="hidden" id="user_id" name="user_id" value="{{gun.user_id}}" readonly >
-        <div class="row p-3  bg-ur" >
+    <div class="row p-3  bg-ur" >
             <div class="media">
                 <a class="align-self-center mr-3 fancybox" href="{{images[0].original}}"><img src="{{images[0].s200}}" height="70px" alt=""></a>
             </div>
@@ -141,20 +141,8 @@
                         </tbody></table>
                     </div>
             </div>
-        </div>
-        <div div class='tab-pane fade' id="list-silver" role="tabpanel" aria-labelledby='list-silver-list'>
-            SOME SILVER DATA
-           <td>
-               <select class="custom-select" name="quality">
-               {% for name,member in qualities.__members__.items() %}
-                    <option value="{{name}}" {% if member.value == gun.quality.value %} selected {% endif %} >{{qualities_text[member.value]}}</option>
-               {% endfor %}
-               </select>
-           </td>
-        </div>
-        <div div class='tab-pane fade' id="list-gold" role="tabpanel" aria-labelledby='list-gold-list'>
-            SOME GOLD DATA
-        </div>
+        
+        
     <div class="row bg-light pt-3">
             <div class="col-md-6">
                 <h3 class="bold">Location</h3>
@@ -277,8 +265,69 @@
             </div>
         </div>
         </div>
-
+    </div>    
+    <div div class='tab-pane fade' id="list-silver" role="tabpanel" aria-labelledby='list-silver-list'>
+            <div class="position-relative">
+            <canvas id="cannon_chart" height="1030" width="1370">
+                <img class='img' src='/img/cannon_chart.svg' width="100%">
+            </canvas>
+            
+            <div class="overlap" >
+            <table  class="table table-sm table-dark table-striped">
+                <thead class="thead-dark">
+                    <th scope="row">Measurements</th>
+                    <th scope="row"></th>
+                </thead>
+                <tbody class="small">
+                <tr>
+                    <td >Length</td>
+                    <td><input class="form-control-sm" type="text" name="length" value="" placeholder="Length"></td>
+                    </tr>
+                    <tr>
+                    <td>Base Ring Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="base-ring" value="" placeholder="Base Ring"></td>
+                    </tr>
+                    <tr>
+                    <td>Muzzle Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="muzzle" value="" placeholder="Muzzle"></td>
+                    </tr>
+                    <tr>
+                    <td>Bore Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="bore" value="" placeholder="Bore"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Position</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion-position" value="" placeholder="Trunnion to BR"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Width</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion-width" value="" placeholder="Trunnion Width"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion-diameter" value="" placeholder="Trunnion Dia"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Offset</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion-offset" value="" placeholder="Trunnion Offset"></td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            </div>
+           
+        </div>
+    <div div class='tab-pane fade' id="list-gold" role="tabpanel" aria-labelledby='list-gold-list'>
+            <>td style="position: static">
+               <select class="custom-select" name="quality">
+               {% for name,member in qualities.__members__.items() %}
+                    <option value="{{name}}" {% if member.value == gun.quality.value %} selected {% endif %} >{{qualities_text[member.value]}}</option>
+               {% endfor %}
+               </select>
+           </td>
+        </div>
 </form>
+
 
 
 {% endblock %}
@@ -309,6 +358,10 @@
                         align: true,
                         showViewAl: "always"
                     });
+                    let cannon_chart = new Image();
+                    cannon_chart.src = '/img/cannon_chart.svg';
+                    let cnvs = $('#cannon_chart')[0].getContext("2d");
+                    cnvs.drawImage(cannon_chart,2,2);
 
 </script>
 {% endblock %}

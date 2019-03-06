@@ -181,7 +181,7 @@ class User(Model):
     def schema(self):
         super().schema()
         self.Property("user_id", ndb.StringProperty)
-        self.Property("standing", ndb.EnumProperty, enum=User.Standing, default=User.Standing.RECORDER)
+        self.Property("standing", ndb.EnumProperty, enum=User.Standing, default=User.Standing.OBSERVER)
         self.Property('created', ndb.DateTimeProperty, auto_now=True)
         self.Property("fire_user", ndb.JsonProperty)
 

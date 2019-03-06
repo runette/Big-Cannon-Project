@@ -30,6 +30,12 @@ from datetime import datetime
 app = Flask(__name__)
 root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
 
+try:
+    import googleclouddebugger
+    googleclouddebugger.enable()
+except ImportError:
+    pass
+
 @app.route('/')
 def main_handler():
     user_data = UserStatus(request.cookies.get("token"))
