@@ -88,6 +88,7 @@ def fetch_entry():
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     gun_id = to_int(request.args.get('gun_id'))
+    index = 3
     try:
         gun = Gun.get_id(gun_id)
         if user and user.user_id == gun.user_id:
@@ -96,7 +97,6 @@ def fetch_entry():
             edit=True
         else:
             edit=False
-        index = 3
         return render_template('detail.html',
                            user_data=user_data,
                            gun= gun,
@@ -107,7 +107,11 @@ def fetch_entry():
                            edit=edit
                            )
     except:
-        return ""
+        return render_template('no_login.html',
+                           user_data=user_data,
+                           index=index,
+                           edit=False
+                               )
 
 @app.route('/set_entry', methods=['POST'])
 def set_entry():
@@ -208,12 +212,14 @@ def new_record():
     if user:
         return render_template('addrecord.html',
                                user_data= user_data,
-                               index= 4,                               
+                               index= 4,
+                               edit=True
                                )
     else:
-        return render_template('header.html',
+        return render_template('no_login.html',
                                user_data= user_data,
-                               index= 4,                               
+                               index= 4,
+                               edit=False
                                )
     
 @app.route("/get_location", methods=['POST'])    
