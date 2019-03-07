@@ -8,7 +8,7 @@
         <div class="row">
                     <div class="col-4">
                         <div class="custom-control custom-radio">
-                            <input type="radio" name="geolocation" class="custom-control-input" id="latlon" checked onchange="radio_button('geolocation','latlon')" >
+                            <input type="radio" name="geolocation" class="custom-control-input" id="latlon" checked onchange="radio_button('geolocation')" >
                             <label class="custom-control-label" for="latlon">Lat/Lon</label>
                         </div>
                     </div>
@@ -20,8 +20,8 @@
                     </div>
                     <div class="col-4">
                         <div class="custom-control custom-radio">
-                            <input type="radio" name="geolocation" class="custom-control-input" id="locate"  onchange="radio_button('geolocation',  'locate')" >
-                            <label class="custom-control-label" for="locate">Device Location</label>
+                            <input type="radio" name="geolocation" class="custom-control-input" id="locate"  onchange="locate_action('geolocation')" >
+                            <label class="custom-control-label" for="locate">Get Location</label>
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                     <small class="text-muted mx-auto">Conversion provided by British Geological Survey <a href="https://www.bgs.ac.uk/data/webservices/convertForm.cfm#bngToLatLng">link</a></small>
                 </div>
                 <div class="row locate" style="display: none;">
-                    <button class="btn btn-primary mx-auto d-block" type="button" onclick="getLocation()">Current Location</button>
+                    
                 </div>
                 <button data-value="1" data-fancybox-close="" class="btn btn-primary mx-auto d-block">Accept</button>
                 

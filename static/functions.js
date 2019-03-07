@@ -326,6 +326,11 @@ function select_button ( cl) {
                 break;
         }
     }
+    
+    function locate_action(name) {
+	getLocation();
+	radio_button(name);
+    }
     //from https://www.quirksmode.org/js/cookies.html
     function setCookie(name,value){
 	createCookie(name, value, 1)

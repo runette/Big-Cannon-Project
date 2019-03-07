@@ -10,6 +10,7 @@ $.fancybox.open({
                         // bind a click event to fancybox close button
                         // set the value of the currentTarget to the eTarget variable
                         dialog_cancel=false; // reset variable
+                        reset_map();
                         $(".fancybox-close-small").on("click", function (event) {
                         dialog_cancel=true;
             })},
