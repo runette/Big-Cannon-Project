@@ -141,10 +141,14 @@ def set_entry():
             inter_details=request.form.get('inter_details'),
             quality=Gun.Quality[request.form.get('quality')]
         )
+        gun.measurements = {}
+        MEASUREMENTS = ['length', 'base-ring', 'muzzle', 'bore', 'trunning-postion', 'trunnion-width', 'trunnion-position', 'trunnion-offset']
+        for item in MEASUREMENTS :
+            gun.measurements.update({item:to_int(request.form.get(item))})
         if  gun.country == 'none' or new_location != gun.location:
             gun.location = new_location
             address = geolocate(gun.location)
-            gun.geocode = json.dumps(address)
+            gun.geocode = address
             for location in address:
                 if "country" in location['types']:
                     gun.country = location['formatted_address']
@@ -244,12 +248,13 @@ def add_record():
             gunid=gunid,
             user_id=user.user_id,
             type=Gun.Types.NOT_KNOWN,
-            date= datetime.now()
+            date= datetime.now(),
+            measurements={}
         )
         gun.location = GeoPt(location[0], location[1])
         geo = {"geolocation": data['geolocation']}
         geo.update({"places":data['places']})
-        gun.geocode = json.dumps(geo)
+        gun.geocode = geo
         try:
             gun.site = data['current_site']['formatted_address']
         except:
