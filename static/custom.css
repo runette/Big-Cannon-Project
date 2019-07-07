@@ -71,10 +71,6 @@ table td.status span {
 table td.status span.quality2 { background: #ffcc00; }
 table td.status span.quality1 { background: #CCC; }
 table td.status span.quality0 { background: #ae7a3c; }
-canvas {background-color: #e3f2fd;
-        width: 100%;
-        height: auto;
-        }
         
 @media (min-width: 1000px) {
 .overlap {

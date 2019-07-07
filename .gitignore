@@ -1,0 +1,6 @@
+
+venv
+*.pyc
+*.json
+*.wpu
+*.wpu

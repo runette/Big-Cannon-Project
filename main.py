@@ -100,6 +100,7 @@ def fetch_entry():
         return render_template('detail.html',
                            user_data=user_data,
                            gun= gun,
+                           user_name= User.get_by_id(gun.user_id).fire_user['name'],
                            gun_types= GUN_TYPES,
                            qualities_text= RECORD_QUALITIES,
                            qualities= Gun.Quality,
@@ -142,7 +143,7 @@ def set_entry():
             quality=Gun.Quality[request.form.get('quality')]
         )
         gun.measurements = {}
-        MEASUREMENTS = ['length', 'base-ring', 'muzzle', 'bore', 'trunning-postion', 'trunnion-width', 'trunnion-position', 'trunnion-offset']
+        MEASUREMENTS = ['length', 'base_ring', 'muzzle', 'bore', 'trunnion_position', 'trunnion_width', 'trunnion_diameter', 'trunnion_offset']
         for item in MEASUREMENTS:
             m = gun.measurements
             m.update({item: to_int(request.form.get(item))})
