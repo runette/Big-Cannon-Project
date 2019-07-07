@@ -102,6 +102,7 @@ class Gun(Model):
         self.Property("geocode", ndb.JsonProperty)
         self.Property("user_id", ndb.StringProperty)
         self.Property("status", ndb.EnumProperty, enum=Gun.Status, default=Gun.Status.UNVERIFIED)
+        self.Property("measurements", ndb.DictProperty)
     
     @classmethod
     def map_data(cls):
@@ -113,18 +114,18 @@ class Gun(Model):
             except:
                 thumbnail = "/img/32x32.png"
             try:
-                name = json.loads(User.get_by_id(gun.user_id).fire_user)['name']
+                name = User.get_by_id(gun.user_id).fire_user['name']
             except Exception as e:
                 users = User.query().fetch()
                 id = ""
                 for user in users:
-                    fu = json.loads(user.fire_user)
+                    fu = user.fire_user
                     if fu['email'] in gun.name :
                         id = fu['user_id']
                 if id != "" :
                     gun.user_id = id
                     gun.put()
-                    name = json.loads(User.get_by_id(gun.user_id).fire_user)['name']
+                    name = User.get_by_id(gun.user_id).fire_user['name']
                 else :
                     name = gun.name
             try:

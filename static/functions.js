@@ -56,7 +56,7 @@
 			    setCookie("token", token)
 			    $('#login').text("Logout");
 			    $('#login-modal').modal('hide')
-			    if (window.location.pathname.includes('/database/entry')) {location.reload(true)}
+			    if (window.location.pathname.includes('/database/entry')) {location.reload(true)} else {window.location.href ="/database"}
 			    })
 			    
 			return false

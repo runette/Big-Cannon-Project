@@ -80,7 +80,6 @@ canvas {background-color: #e3f2fd;
 .overlap {
           position:absolute;
           top: 55%;
-          width:10% !important;
 }}
 
 @media (max-width: 999.98px) {

@@ -143,8 +143,10 @@ def set_entry():
         )
         gun.measurements = {}
         MEASUREMENTS = ['length', 'base-ring', 'muzzle', 'bore', 'trunning-postion', 'trunnion-width', 'trunnion-position', 'trunnion-offset']
-        for item in MEASUREMENTS :
-            gun.measurements.update({item:to_int(request.form.get(item))})
+        for item in MEASUREMENTS:
+            m = gun.measurements
+            m.update({item: to_int(request.form.get(item))})
+            gun.measurements = m
         if  gun.country == 'none' or new_location != gun.location:
             gun.location = new_location
             address = geolocate(gun.location)

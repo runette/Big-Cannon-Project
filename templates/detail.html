@@ -269,19 +269,23 @@
     <div div class='tab-pane fade' id="list-silver" role="tabpanel" aria-labelledby='list-silver-list'>
             <div class="position-relative">
             <canvas id="cannon_chart" height="1030" width="1370">
-                <img class='img' src='/img/cannon_chart.svg' width="100%">
+                This Browser does not support this function
             </canvas>
             
             <div class="overlap" >
             <table  class="table table-sm table-dark table-striped">
                 <thead class="thead-dark">
                     <th scope="row">Measurements</th>
-                    <th scope="row"></th>
+                    <th scope="row"><div class="row">
+                        <div class="col-6 text-right">meters </div><div class="col-6 custom-control custom-switch">
+                        <input type="checkbox" name="unites" class="custom-control-input update-field" id="units" checked >
+                        <label class="custom-control-label" for="units">mm</label>
+                    </div></div></th>
                 </thead>
                 <tbody class="small">
                 <tr>
                     <td >Length</td>
-                    <td><input class="form-control-sm" type="text" name="length" value="" placeholder="Length"></td>
+                    <td><input class="form-control-sm" type="text" name="length" value="{{gun.measurements.length}}" placeholder="Length"></td>
                     </tr>
                     <tr>
                     <td>Base Ring Diameter</td>
@@ -359,9 +363,12 @@
                         showViewAl: "always"
                     });
                     let cannon_chart = new Image();
+                    cannon_chart.onload = function() {
+                        let cnvs = $('#cannon_chart')[0].getContext("2d");
+                        cnvs.drawImage(cannon_chart,2,2)
+                        };
                     cannon_chart.src = '/img/cannon_chart.svg';
-                    let cnvs = $('#cannon_chart')[0].getContext("2d");
-                    cnvs.drawImage(cannon_chart,2,2);
-
+                    
+    
 </script>
 {% endblock %}
