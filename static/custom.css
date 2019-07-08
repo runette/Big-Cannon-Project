@@ -82,3 +82,23 @@ table td.status span.quality0 { background: #ae7a3c; }
 .overlap {
           position: initial;
 }}
+
+.paral {
+min-height: 500px;
+background-attachment: fixed;
+background-size: cover;
+background-position: 50% 50%;
+
+}
+
+.para01 {
+background-image: url("/img/gun-map-768.jpg");
+}
+
+.para02 {
+background-image: url("/img/cannon_measuring.jpg");
+}
+
+.jumbotron {
+margin-bottom: 0;
+}

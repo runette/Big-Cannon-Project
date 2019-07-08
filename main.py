@@ -39,8 +39,16 @@ except ImportError:
 @app.route('/')
 def main_handler():
     user_data = UserStatus(request.cookies.get("token"))
-    images = ["Sunset Porthleven.JPG", "Cannon measuring.jpg", "Colosuss.JPG", "Diver recording cannon on Normans Bay_credit_Martin Davies.jpg", "Normans Bay cannon_credit Martin Davies.jpg", "IMG_4512.jpg","St Martins.JPG"]
-    return render_template("index.html", 
+    user = user_data['user']
+    if user:
+        return render_template("database.html",
+                               user_data= user_data,
+                               gun_types= GUN_TYPES,
+                               index= 3                           
+                               )        
+    else:
+        images = ["Sunset Porthleven.JPG", "Cannon measuring.jpg", "Colosuss.JPG", "Diver recording cannon on Normans Bay_credit_Martin Davies.jpg", "Normans Bay cannon_credit Martin Davies.jpg", "IMG_4512.jpg", "St Martins.JPG"]
+        return render_template("index.html", 
                 user_data= user_data,
                 images= images,
                 index= 1)
@@ -99,14 +107,14 @@ def fetch_entry():
             edit=False
         return render_template('detail.html',
                            user_data=user_data,
-                           gun= gun,
-                           user_name= User.get_by_id(gun.user_id).fire_user['name'],
-                           gun_types= GUN_TYPES,
-                           qualities_text= RECORD_QUALITIES,
-                           qualities= Gun.Quality,
-                           index= index,
+                           gun=gun,
+                           user_name=User.get_by_id(gun.user_id).fire_user['name'],
+                           gun_types=GUN_TYPES,
+                           qualities_text=RECORD_QUALITIES,
+                           qualities=Gun.Quality,
+                           index=index,
                            edit=edit
-                           )
+                               )
     except:
         return render_template('no_login.html',
                            user_data=user_data,
