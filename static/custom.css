@@ -2,11 +2,22 @@
 
 .full-width.map { top: 0; padding: 0 !important; margin-top: 50px; position: relative; }
 
+@media (min-width: 1000px) {
+.map-container {
+    width:100%;
+    height:100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}}
+
+@media (max-width: 999.98px) {
 .map-container {width: 100%;height: 80vh !important;display: block;overflow: hidden;}
+}
 .map-container iframe { width: 100%; height:100vh !important; }
 
-.map-container.inline { height: 30vh !important; border: 1px solid #CCC;overflow: hidden }
-.map-container.inline iframe { width: 100%; height: 100% !important; }
+.map-container-inline { height: 30vh !important; border: 1px solid #CCC;overflow: hidden }
+.map-container-inline iframe { width: 100%; height: 100% !important; }
 
 /* Map Filter */
 
@@ -61,16 +72,16 @@ background-color: #e3f2fd;
 }
 
 
-table td.status { width: 1%; white-space:nowrap; padding: 5px; }
-table td.status span {
+.status { width: 1%; white-space:nowrap; padding: 5px; }
+.status span {
   width: 15px; height: 15px;  background: #CCC;
   color: #FFF; display: block; margin: 0 auto;
   border-radius: 100px; -webkit-border-radius: 100px;
 }
 
-table td.status span.quality2 { background: #ffcc00; }
-table td.status span.quality1 { background: #CCC; }
-table td.status span.quality0 { background: #ae7a3c; }
+.quality2 { background: #ffcc00; }
+.quality1 { background: #CCC; }
+.quality0 { background: #ae7a3c; }
         
 @media (min-width: 1000px) {
 .overlap {
@@ -102,3 +113,63 @@ background-image: url("/img/cannon_measuring.jpg");
 .jumbotron {
 margin-bottom: 0;
 }
+
+
+@media (min-width: 1000px) {
+.float-table {
+          position:absolute;
+          top: 15%;
+          left: 65%;
+          min-width: 25%;
+          max-width: 30%;
+          max-height: 80%;
+          overflow-y: scroll;
+          background-color: #e3f2fd;
+}}
+
+@media (max-width: 999.98px) {
+.float-table {
+          position: initial;
+}}
+
+.fab {
+   width: 50px;
+   height: 50px;
+   background-color: #e3f2fd;
+   border-radius: 50%;
+   box-shadow: 0 6px 10px 0 #666;
+   
+   font-size: 50px;
+   line-height: 45px;
+   color: blue;
+   text-align: center;
+   
+   position: fixed;
+   right: 50px;
+   bottom: 50px;
+   
+  transition: all 0.1s ease-in-out;
+}
+
+.fab:hover {
+   box-shadow: 0 6px 14px 0 #666;
+   transform: scale(1.05);
+}
+
+@media (min-width: 1000px) {
+.map-nav {
+  max-width: 60%;
+  }}
+  
+@media (max-width: 999.98px) {
+.map-nav {}}
+
+@media (min-width: 1000px) {
+.pagination {
+  position:absolute;
+          top: 90%;
+          left: 72.5%;
+  }}
+  
+@media (max-width: 999.98px) {
+.pagination {}}

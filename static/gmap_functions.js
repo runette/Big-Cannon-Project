@@ -7,6 +7,8 @@
             callback($,response)
         }
     });
+    
+    
     window.initMap = function () {
         location_uk = {lat: 52, lng: 0};
         mapOptions = {
@@ -14,16 +16,19 @@
             center: location_uk,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             zoomControl: true,
+            zoomControlOptions:{
+                position: google.maps.ControlPosition.TOP_LEFT},
             mapTypeControl: false,
             scaleControl: true,
             streetViewControl: false,
             rotateControl: true,
-            fullscreenControl: true
+            fullscreenControl: false
         };
 
         window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
 
         window.infoWindow = new google.maps.InfoWindow();
+        
 
     };
 })(window.jQuery, function ($, AnchorGmap) {
@@ -47,7 +52,6 @@
 
         $tableEntries = $('#table-entries'),
         $noData = $('.no-data'),
-        $location = $('#location'),
         $anchorType = $('#anchor-type'),
         $quality = $('#quality'),
         $order = $('#order'),
@@ -184,19 +188,14 @@
     }
 
     function applyFilter(entries) {
-        var location = $location.val().trim().toLowerCase(),
-            anchorType = $anchorType.val(),
+        var anchorType = $anchorType.val(),
             quality = $quality.val(),
             order = $order.val(),
-            isSearchLocation = location != '',
             isSearchAnchorType = anchorType != '',
             isSearchQuality = quality != '',
             fiterredEntries;
 
         fiterredEntries = entries.filter(function (entry) {
-            if (isSearchLocation && entry.location.toLowerCase().indexOf(location) == -1){
-                return false;
-            }
             if (isSearchAnchorType && entry.anchor_type !== anchorType) {
                 return false;
             }
@@ -249,19 +248,14 @@
         }
 
         return [
-            '<tr class="clickable-row" data-href="' + href + '">',
-            '<td >',
-            '<span><img class="img-thumbnail" src="' + filename + '" width="32px" alt /></span>',
-            '</td>',
-            '<td>' + entry["anchor_id"] + '</td>',
-            '<td>' + entry["anchor_type"] + '</td>',
-            '<td>' + entry["location"] + '</td>',
-            '<td>' + entry["nationality"] + '</td>',
-            '<td>' + entry["names"] + '</td>',
-            '<td class="status">',
+            '<div class="card" onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">',
+            '<img class="card-img" src="' + filename + '"  width="32px"/></div>',
+            '<div class="col-8"><div class="card-body"><div class="h5 card-title">' + entry["site"] + '</div>',
+            '<div class="card-text">' + entry["anchor_type"] + '</div>',
+            '<div class="card-text"><small class=text-muted>' + entry["names"] + '</small></div></div></div>', 
+            '<div class="col-2 status">',
             '<span class="quality' + entry["quality"] + '"></span>',
-            '</td>',
-            '</tr>'
+            '</div></div></div>',
         ].join('');
     }
 
@@ -274,7 +268,7 @@
         var $pagination = $('.pagination');
 
         if (!$pagination.length) {
-            $pagination = $('<ul class="pagination"></ul>').insertAfter($tableEntries);
+            $pagination = $('<ul class="pagination pagination-sm"></ul>').insertAfter($tableEntries);
         }
 
         if (AnchorGmap.pageSize && entries.length && entries.length > AnchorGmap.pageSize) {
@@ -346,12 +340,12 @@
                 }
             }
 
-            $tableEntries.children('tbody').html(html);
+            $tableEntries.html(html);
             $noData.addClass('hide');
             $tableEntries.removeClass('hide');
         }
         else {
-            $tableEntries.children('tbody').empty();
+            $tableEntries.empty();
             $noData.removeClass('hide');
             $tableEntries.addClass('hide');
         }

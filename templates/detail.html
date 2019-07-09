@@ -118,7 +118,16 @@
                             </tr>
                             <tr>
                                 <td>Site Name</td>
-                                <td><input class="form-control" type="text" name="site" value="{%if gun.site%}{{gun.site}}{%endif%}" placeholder="Site name"></td>
+                                <td>
+                                <select class="custom-select" name="site">
+                                    {% for site in gun.geocode.places %}
+                                      <option value="{{site.name}}" {% if gun.site == site.name %} selected {% endif %} >{{site.name}}</option>
+                                    {% endfor %}
+                                    {% for site in gun.geocode.geolocation %}
+                                      <option value="{{site.formatted_address}}" {% if gun.site == site.formatted_address %} selected {% endif %} >{{site.formatted_address}}</option>
+                                    {% endfor %}
+                                     </select>
+                                </td>
                             </tr>
                             <tr>
                                 <td>Museum / Collection</td>
@@ -146,7 +155,7 @@
     <div class="row bg-light pt-3">
             <div class="col-md-6">
                 <h3 class="bold">Location</h3>
-                <div id="map_canvas" class="map-container inline" > </div>
+                <div id="map_canvas" class="map-container-inline" > </div>
                 <script>
                     window.initMap = function () {
                         map_icons = {

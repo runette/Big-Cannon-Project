@@ -104,7 +104,7 @@ def fetch_entry():
         elif User.get_by_id(user.user_id).standing != User.Standing.OBSERVER:
             edit=True
         else:
-            edit=False
+            edit = False
         return render_template('detail.html',
                            user_data=user_data,
                            gun=gun,
@@ -113,9 +113,9 @@ def fetch_entry():
                            qualities_text=RECORD_QUALITIES,
                            qualities=Gun.Quality,
                            index=index,
-                           edit=edit
+                           edit=edit,
                                )
-    except:
+    except Exception as e:
         return render_template('no_login.html',
                            user_data=user_data,
                            index=index,
