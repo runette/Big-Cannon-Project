@@ -1,0 +1,53 @@
+<div class="position-relative">
+            <div class="embed-responsive embed-responsive-16by9">
+                <object class="embed-responsive-item" id="cannon" data='/img/cannon_chart.svg' type="image/svg+xml"></object>
+           </div>
+            
+            <div class="overlap" >
+            <table  class="table table-sm table-dark table-striped">
+                <thead class="thead-dark">
+                    <th scope="row">Measurements</th>
+                    <th scope="row"><div class="row">
+                        <div class="col-6 text-right">meters </div><div class="col-6 custom-control custom-switch">
+                        <input type="checkbox" name="unites" class="custom-control-input update-field" id="units" checked >
+                        <label class="custom-control-label" for="units">mm</label>
+                    </div></div></th>
+                </thead>
+                <tbody class="small">
+                <tr>
+                    <td >Length</td>
+                    <td><input class="form-control-sm" type="text" name="length" value="{{gun.measurements.length}}" placeholder="Length"></td>
+                    </tr>
+                    <tr>
+                    <td>Base Ring Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="base_ring" value="{{gun.measurements.base_ring}}" placeholder="Base Ring"></td>
+                    </tr>
+                    <tr>
+                    <td>Muzzle Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="muzzle" value="{{gun.measurements.muzzle}}" placeholder="Muzzle"></td>
+                    </tr>
+                    <tr>
+                    <td>Bore Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="bore" value="{{gun.measurements.bore}}" placeholder="Bore"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Position</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion_position" value="{{gun.measurements.trunnion_position}}" placeholder="Trunnion to BR"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Width</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion_width" value="{{gun.measurements.trunnion_width}}" placeholder="Trunnion Width"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Diameter</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion_diameter" value="{{gun.measurements.trunnion_diameter}}" placeholder="Trunnion Dia"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Offset</td>
+                    <td><input class="form-control-sm" type="text" name="trunnion_offset" value="{{gun.measurements.trunnion_offset}}" placeholder="Trunnion Offset"></td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            </div>
+           
