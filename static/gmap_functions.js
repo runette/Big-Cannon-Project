@@ -17,7 +17,7 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             zoomControl: true,
             zoomControlOptions:{
-                position: google.maps.ControlPosition.TOP_LEFT},
+                position: google.maps.ControlPosition.LEFT_BOTTOM},
             mapTypeControl: false,
             scaleControl: true,
             streetViewControl: false,

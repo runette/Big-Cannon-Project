@@ -95,11 +95,13 @@
 	firebase.auth().onAuthStateChanged(function (user) {
 	    if (user) {
 		      // User is signed in, so display the "sign out" button and login info.
-		    $('#login').text("Logout")
 		    user.getIdToken().then(function (token) {
 			    setCookie("token", token)
 			    });
 		    console.log(`Signed in as ${user.displayName} (${user.email})`);
+		    if ($('#login')[0].innerText === "Login") {
+			window.location.href ="/" 
+		    }
 		    $('#login').click(function(){
 		     firebase.auth().signOut()
 		     clearCookie('token');
