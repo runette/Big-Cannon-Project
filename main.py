@@ -105,6 +105,8 @@ def fetch_entry():
             edit=True
         else:
             edit = False
+        if gun.moulding_code is None:
+            gun.moulding_code = []
         return render_template('detail.html',
                            user_data=user_data,
                            gun=gun,
