@@ -43,7 +43,7 @@
             {% include 'recorder.html'  %}
         </div>
         <div div class='tab-pane fade' id="list-gold" role="tabpanel" aria-labelledby='list-gold-list'>
-
+            {%  include 'surveyor.html'  %}
         </div>
      </div>   
 </form>
@@ -81,17 +81,50 @@
                     $(function(){
                         let cannon = $("#cannon")[0];
                         cannon.addEventListener('load', function() {
-                        let cannonSvg = cannon.contentDocument;
-                        cannonSvg.getElementById('length-text').firstElementChild.innerHTML = "{{gun.measurements.length}}";
-                        cannonSvg.getElementById('br-text').firstElementChild.innerHTML = "{{gun.measurements.base_ring}}";
-                        cannonSvg.getElementById('muzzle-text').firstElementChild.innerHTML = "{{gun.measurements.muzzle}}";
-                        cannonSvg.getElementById('bore-text').firstElementChild.innerHTML = "{{gun.measurements.bore}}";
-                        cannonSvg.getElementById('tp-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_position}}";
-                        cannonSvg.getElementById('tw-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_width}}";
-                        cannonSvg.getElementById('td-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_diameter}}";
-                        cannonSvg.getElementById('to-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_offset}}";
-                        });
+                            let cannonSvg = cannon.contentDocument;
+                            cannonSvg.getElementById('length-text').firstElementChild.innerHTML = "{{gun.measurements.length}}";
+                            cannonSvg.getElementById('br-text').firstElementChild.innerHTML = "{{gun.measurements.base_ring}}";
+                            cannonSvg.getElementById('muzzle-text').firstElementChild.innerHTML = "{{gun.measurements.muzzle}}";
+                            cannonSvg.getElementById('bore-text').firstElementChild.innerHTML = "{{gun.measurements.bore}}";
+                            cannonSvg.getElementById('tp-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_position}}";
+                            cannonSvg.getElementById('tw-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_width}}";
+                            cannonSvg.getElementById('td-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_diameter}}";
+                            cannonSvg.getElementById('to-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_offset}}";
+                            });
+                        $(".image-checkbox").each(function () {
+                            if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
+                                $(this).addClass('image-checkbox-checked');
+                                }
+                            else {
+                                $(this).removeClass('image-checkbox-checked');
+                                }
+                            });
+                        $(".icheck  ").on("click", function (e) {
+                            if ($(this).hasClass('image-checkbox-checked')) {
+                                $(this).removeClass('image-checkbox-checked');
+                                $(this).find('input[type="checkbox"]').first().removeAttr("checked");
+                                }
+                            else {
+                                $(this).addClass('image-checkbox-checked');
+                                $(this).find('input').first().attr("checked", "checked");
+                            }
+
+                            e.preventDefault();
+                            });
+                            
+                        $("[type='radio']").on("change", function (e) {
+                            $("[name='" + this.name + "']").each(function(index){                        
+                                let parent = this.parentElement
+                                if ($(parent).hasClass('image-checkbox-checked')) {
+                                    $(parent).removeClass('image-checkbox-checked');
+                                }
+                            })
+                            $(this.parentElement).addClass('image-checkbox-checked')
+                            e.preventDefault();
+                            });
                     })
+                    
+                    
                     
     
 </script>

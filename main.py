@@ -128,6 +128,10 @@ def set_entry():
     user = user_data['user']
     if user:
         gun_id = to_int(request.form.get('id'))
+        moulding_code = request.form.getlist('moulding[]')
+        muzzle_code = request.form.get('muzzle_code', "")
+        cas_code = request.form.get('cas_code', "")
+        button_code = request.form.get('button_code', "")
         new_location = GeoPt(request.form.get('lat'), request.form.get('lon'))
         gun = Gun.get_id(gun_id)
         if not gun :
@@ -136,10 +140,10 @@ def set_entry():
                 name=user.email,
             )
         gun.populate(
-            description= request.form.get('description'),
-            type= Gun.Types[request.form.get('type')],
-            user_id= request.form.get('user_id'),
-            site=request.form.get('site'),
+            description=request.form.get('description'),
+            type=Gun.Types[request.form.get('type')],
+            user_id=request.form.get('user_id'),
+            site=request.form.get('site', ""),
             context=request.form.get('context'),
             collection=to_bool(request.form.get('collection')),
             coll_name=request.form.get('coll_name'),
@@ -148,7 +152,6 @@ def set_entry():
             mark_details=request.form.get('mark_details'),
             interpretation=to_bool(request.form.get('interpretation')),
             inter_details=request.form.get('inter_details'),
-            quality=Gun.Quality[request.form.get('quality')]
         )
         gun.measurements = {}
         MEASUREMENTS = ['length', 'base_ring', 'muzzle', 'bore', 'trunnion_position', 'trunnion_width', 'trunnion_diameter', 'trunnion_offset']
