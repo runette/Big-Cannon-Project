@@ -103,7 +103,11 @@ class Gun(Model):
         self.Property("user_id", ndb.StringProperty)
         self.Property("status", ndb.EnumProperty, enum=Gun.Status, default=Gun.Status.UNVERIFIED)
         self.Property("measurements", ndb.DictProperty)
-    
+        self.Property("moulding_code", ndb.StringProperty, repeated=True)
+        self.Property("muzzle_code", ndb.StringProperty)
+        self.Property("cas_code", ndb.StringProperty)
+        self.Property("button_code", ndb.StringProperty)
+
     @classmethod
     def map_data(cls):
         result = cls.query(order=['gunid']).fetch()

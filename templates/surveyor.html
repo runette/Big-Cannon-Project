@@ -1,23 +1,23 @@
 <div class="container">
-    <div class="row h3"> MOULDING CODES </div>
+    <div class="row h3 bg-primary text-white p-1"> MOULDING CODE - {% for code in gun.moulding_code %}{{code}}{% endfor %}</div>
     <div class="row">
         <label class="image-checkbox icheck col-4 nopad text-center " for="A">
             <span class="imagecheck_text"><h1>A</h1><small>Astragal</small></span>
             <img class="img-fluid"  width="400px" src="/img/A.png">
-            <input type="checkbox" name="moulding[]" id="A" value="A" />
+            <input type="checkbox" name="moulding[]" id="A" value="A" {% if 'A' in gun.moulding_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox icheck col-4 nopad text-center " for="B">
             <span class="imagecheck_text"><h1>B</h1><small>Band</small></span>
             <img class="img-fluid"  width="400px" src="/img/B.png">
-            <input type="checkbox" name="moulding[]" id="B" value="B" />
+            <input type="checkbox" name="moulding[]" id="B" value="B" {% if 'B' in gun.moulding_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         
          <label class="image-checkbox icheck col-4 nopad text-center " for="S">
             <span class="imagecheck_text"><h1>S</h1><small>Slope</small></span>
             <img class="img-fluid"  width="400px" src="/img/S.png">
-            <input type="checkbox" name="moulding[]" id="S" value="S" />
+            <input type="checkbox" name="moulding[]" id="S" value="S" {% if 'S' in gun.moulding_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         
@@ -26,19 +26,19 @@
         <label class="image-checkbox icheck col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>F</h1><small>Fillet</small></span>
             <img class="img-fluid"  width="400px" src="/img/Fil.png">
-            <input type="checkbox" name="moulding[]" value="F" />
+            <input type="checkbox" name="moulding[]" value="F" {% if 'F' in gun.moulding_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox icheck col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>O</h1><small>Ogee</small></span>
             <img class="img-fluid"  width="400px" src="/img/O.png">
-            <input type="checkbox" name="moulding[]" value="O" />
+            <input type="checkbox" name="moulding[]" value="O" {% if 'O' in gun.moulding_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox icheck col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>Q</h1><small>Quadrant</small></span>
             <img class="img-fluid"  width="400px" src="/img/Q.png">
-            <input type="checkbox" name="moulding[]" value="Q" />
+            <input type="checkbox" name="moulding[]" value="Q" {% if 'Q' in gun.moulding_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
     </div>
@@ -46,12 +46,12 @@
         <label class="image-checkbox icheck col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>C</h1><small>Concave</small></span>
             <img class="img-fluid"  width="400px" src="/img/C.png">
-            <input type="checkbox" name="moulding[]" value="C" />
+            <input type="checkbox" name="moulding[]" value="C" {% if 'C' in gun.moulding_code %} checked {% endif %} />
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox icheck ol-4 nopad text-center ">
             Illegible or Missing
-            <input type="checkbox" name="moulding[]" value="X" />
+            <input type="checkbox" name="moulding[]" value="X" {% if 'X' in gun.moulding_code %} checked {% endif %} />
             <i class="fa fa-check hidden"></i>
         </label>
         <div class=" col-4 nopad text-center ">
@@ -60,24 +60,24 @@
     </div>
 </div>
 <div class="container">
-    <div class="row h3"> MUZZLE CODES </div>
+    <div class="row h3 bg-primary text-white p-1"> MUZZLE CODE - {{gun.muzzle_code}}</div>
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>R</h1><small>Tulip</small></span>
             <img class="img-fluid"  width="400px" src="/img/R.png">
-            <input type="radio" name="muzzle_code" id="R" value="R" />
+            <input type="radio" name="muzzle_code" id="R" value="R" {% if 'R' == gun.muzzle_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>F</h1><small>Flared Cone</small></span>
             <img class="img-fluid"  width="400px" src="/img/F.png">
-            <input type="radio" name="muzzle_code" id="F" value="F" />
+            <input type="radio" name="muzzle_code" id="F" value="F" {% if 'F' == gun.muzzle_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
          <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>T</h1><small>Tapered Cone</small></span>
             <img class="img-fluid"  width="400px" src="/img/T.png">
-            <input type="radio" name="muzzle_code" id="T" value="T" />
+            <input type="radio" name="muzzle_code" id="T" value="T" {% if 'T' == gun.muzzle_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
     </div>
@@ -85,18 +85,18 @@
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>P</h1><small>Cylinder</small></span>
             <img class="img-fluid"  width="400px" src="/img/P.png">
-            <input type="radio" name="muzzle_code" id="P" value="P" />
+            <input type="radio" name="muzzle_code" id="P" value="P" {% if 'P' == gun.muzzle_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>E</h1><small>Coronice</small></span>
             <img class="img-fluid"  width="400px" src="/img/E.png">
-            <input type="radio" name="muzzle_code" id="E" value="E" />
+            <input type="radio" name="muzzle_code" id="E" value="E" {% if 'E' == gun.muzzle_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             Illegible or Missing
-            <input type="radio" name="muzzle_code" id="mX" value="X" />
+            <input type="radio" name="muzzle_code" id="mX" value="X" {% if 'X' == gun.muzzle_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <div class=" col-4 nopad text-center ">
@@ -105,24 +105,24 @@
     </div>
 </div>
 <div class="container">
-    <div class="row h3"> CASCABLE CODES </div>
+    <div class="row h3 bg-primary text-white p-1"> CASCABLE CODE - {{gun.cas_code}}</div>
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>K</h1><small>Conical</small></span>
             <img class="img-fluid"  width="400px" src="/img/K.png">
-            <input type="radio" name="cas_code" id="K" value="K" />
+            <input type="radio" name="cas_code" id="K" value="K" {% if 'K' == gun.cas_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>O</h1><small>Spherical</small></span>
             <img class="img-fluid"  width="400px" src="/img/Sph.png">
-            <input type="radio" name="cas_code" id="O" value="O" />
+            <input type="radio" name="cas_code" id="O" value="O" {% if 'O' == gun.cas_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
          <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>U</h1><small>Concave</small></span>
             <img class="img-fluid"  width="400px" src="/img/U.png">
-            <input type="radio" name="cas_code" id="U" value="U" />
+            <input type="radio" name="cas_code" id="U" value="U" {% if 'U' == gun.cas_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
     </div>
@@ -130,12 +130,12 @@
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>D</h1><small>Flat</small></span>
             <img class="img-fluid"  width="400px" src="/img/Flat.png">
-            <input type="radio" name="cas_code" id="D" value="D" />
+            <input type="radio" name="cas_code" id="D" value="D" {% if 'D' == gun.cas_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             Illegible or Missing
-            <input type="radio" name="cas_code" id="cX" value="X" />
+            <input type="radio" name="cas_code" id="cX" value="X" {% if 'X' == gun.cas_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <div class=" col-4 nopad text-center ">
@@ -147,24 +147,24 @@
     </div>
 </div>
 <div class="container">
-    <div class="row h3"> BUTTON CODES </div>
+    <div class="row h3 bg-primary text-white p-1"> BUTTON CODE - {{gun.button_code}}</div>
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>N</h1><small>Knob</small></span>
             <img class="img-fluid"  width="400px" src="/img/N.png">
-            <input type="radio" name="button_code" id="N" value="N" />
+            <input type="radio" name="button_code" id="N" value="N" {% if 'N' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>L</h1><small>Knob with Loop</small></span>
             <img class="img-fluid"  width="400px" src="/img/L.png">
-            <input type="radio" name="button_code" id="L" value="L" />
+            <input type="radio" name="button_code" id="L" value="L" {% if 'L' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
          <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>G</h1><small>Spherical</small></span>
             <img class="img-fluid"  width="400px" src="/img/G.png">
-            <input type="radio" name="button_code" id="G" value="G" />
+            <input type="radio" name="button_code" id="G" value="G" {% if 'G' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
     </div>
@@ -172,31 +172,31 @@
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>C</h1><small>Cylinder</small></span>
             <img class="img-fluid"  width="400px" src="/img/Cyl.png">
-            <input type="radio" name="button_code" id="C" value="C" />
+            <input type="radio" name="button_code" id="C" value="C" {% if 'C' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>H</h1><small>Horizontal Ring</small></span>
             <img class="img-fluid"  width="400px" src="/img/H.png">
-            <input type="radio" name="button_code" id="H" value="H" />
+            <input type="radio" name="button_code" id="H" value="H" {% if 'H' == gun.button_code %} checked {% endif %} />
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>V</h1><small>Vertical Ring</small></span>
             <img class="img-fluid"  width="400px" src="/img/V.png">
-            <input type="radio" name="button_code" id="V" value="V" />
+            <input type="radio" name="button_code" id="V" value="V" {% if 'V' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
     </div><div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>E</h1><small>Exended Knob</small></span>
             <img class="img-fluid"  width="400px" src="/img/Ext.png">
-            <input type="radio" name="button_code" id="E" value="E" />
+            <input type="radio" name="button_code" id="E" value="E" {% if 'E' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <label class="image-checkbox iradio col-4 nopad text-center ">
             Illegible or Missing
-            <input type="radio" name="button_code" id="bX" value="X" />
+            <input type="radio" name="button_code" id="bX" value="X" {% if 'X' == gun.button_code %} checked {% endif %}/>
             <i class="fa fa-check hidden"></i>
         </label>
         <div class=" col-4 nopad text-center ">
