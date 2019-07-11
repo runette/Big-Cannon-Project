@@ -3,5 +3,5 @@ googlemaps
 Jinja2
 simplejson
 urllib3
-simpleNDB
+simpleNDB >=1.0.4
 google-python-cloud-debugger
