@@ -200,7 +200,8 @@ class User(Model):
 def geolocate(location) :
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
     reverse_geocode_result = gmaps.reverse_geocode((location.latitude, location.longitude))
-    return reverse_geocode_result
+    places_result = gmaps.places_nearby(location=(location.latitude, location.longitude), radius=500)
+    return {"geolocation": reverse_geocode_result, "places": places_result["results"]}
 
 def get_serving_url(upload_metadata):
     bucket_name = upload_metadata.get('bucket')

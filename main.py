@@ -165,7 +165,7 @@ def set_entry():
             gun.location = new_location
             address = geolocate(gun.location)
             gun.geocode = address
-            for location in address:
+            for location in address["geolocation"]:
                 if "country" in location['types']:
                     gun.country = location['formatted_address']
         gun.put()
@@ -250,7 +250,8 @@ def get_location():
         lat = request.args.get('lat')
         lon = request.args.get('lon')
         location = GeoPt(lat, lon)
-        return json.dumps({"location":[lat,lon], "geolocation":geolocate(location), "gunid": Gun.get_next()})
+        geo = geolocate(location)
+        return json.dumps({"location": [lat, lon], "geolocation": geo["geolocation"], 'places': geo["places"], "gunid": Gun.get_next()})
         
 @app.route("/add_record", methods=['POST'])
 def add_record():

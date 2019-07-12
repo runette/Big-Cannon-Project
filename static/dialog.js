@@ -46,41 +46,30 @@ function sites_dialog(json_data) {
                 dblclickOutside: false,
                 clickSlide:false,
                 afterLoad: function(current){
-                        const interest=["street_address","park", "natural_feature", "museum", "train_station", "hospital", "fire_station", "embassy", "local_goverment_office","library", "courthouse", "city_hall", "church", "art_gallery"]
                         let geolocation = json_data.geolocation;
+                        let places = json_data.places
                         let location = new google.maps.LatLng(json_data.location[0],json_data.location[1]);
-                        let request = {
-                                location: location,
-                                radius: 500
-                        }
-                        let service = new google.maps.places.PlacesService(map);
-                        service.nearbySearch(request, function(places, status){
-                                json_data.places = [];
-                                for (let key in places){
-                                        if (places.hasOwnProperty(key)) {
-                                                let location =  places[key];
-                                                if (location.types.some(r=> interest.includes(r))) {
-                                                        json_data.places.push(location);
-                                                };
+                        let places_list = [];
+                        for (let key in places){
+                                if (places.hasOwnProperty(key)) {
+                                        let location =  places[key];
+                                        places_list.push(location);
+                                }};
+                        for (let key in geolocation){
+                                if (geolocation.hasOwnProperty(key)){
+                                        let location = geolocation[key];
+                                        places_list.push(location);
                                         }};
-                                for (let key in geolocation){
-                                        if (geolocation.hasOwnProperty(key)){
-                                                let location = geolocation[key];
-                                                if (location.types.some(r=> interest.includes(r))) {
-                                                        json_data.places.push(location);
-                                                }}};
-                                for (let key in json_data.places){
-                                        if (json_data.places.hasOwnProperty(key)){
-                                                let location = json_data.places[key];
-                                                let index = key + 1;
-                                                if (location.hasOwnProperty("formatted_address")){
-                                                        $('#siteSelect').append('<option value="' + index + '">' + location.formatted_address + '</option> ');
-                                                } else {
-                                                        $('#siteSelect').append('<option value="' + index + '">' + location.name + '</option> ');
-                                                }
-                                                
-                                        }};       
-                                });
+                        for (let key in places_list) {
+                                if (places_list.hasOwnProperty(key)){
+                                        let location = places_list[key];
+                                        let index = key + 1;
+                                        if (location.hasOwnProperty("formatted_address")){
+                                                $('#siteSelect').append('<option value="' + index + '">' + location.formatted_address + '</option> ');
+                                        } else {
+                                                $('#siteSelect').append('<option value="' + index + '">' + location.name + '</option> ');
+                                        }
+                                }};       
                         },
                 afterShow: function() {
                         // from https://stackoverflow.com/questions/22062722/fancybox-get-id-of-clicked-anchor-element-in-afterclose-function
