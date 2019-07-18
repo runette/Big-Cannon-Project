@@ -38,6 +38,11 @@ except ImportError:
 
 @app.route('/')
 def main_handler():
+    base_url = request.host
+    if base_url == "www.biggun.site":
+        response = "index2.html"
+    else:
+        response = "index.html"
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
     if user:
@@ -48,10 +53,10 @@ def main_handler():
                                )        
     else:
         images = ["Sunset Porthleven.JPG", "Cannon measuring.jpg", "Colosuss.JPG", "Diver recording cannon on Normans Bay_credit_Martin Davies.jpg", "Normans Bay cannon_credit Martin Davies.jpg", "IMG_4512.jpg", "St Martins.JPG"]
-        return render_template("index.html", 
-                user_data= user_data,
-                images= images,
-                index= 1)
+        return render_template(response,
+                user_data=user_data,
+                images=images,
+                index=1)
 
 @app.route('/about')
 def about():
