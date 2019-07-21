@@ -1,5 +1,6 @@
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1"> MOULDING CODE - {% for code in gun.moulding_code %}{{code}}{% endfor %} </div>
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#mouldings')"> MOULDING CODE - {% for code in gun.moulding_code %}{{code}}{% endfor %} </div>
+    <div class="collapse" id="mouldings">
     <div class="row">
         <label class="image-checkbox icheck col-4 nopad text-center " for="A">
             <span class="imagecheck_text"><h1>A</h1><small>Astragal</small></span>
@@ -57,10 +58,12 @@
         <div class=" col-4 nopad text-center ">
             
         </div>
+        </div>
     </div>
 </div>
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1"> MUZZLE CODE - {{gun.muzzle_code}}</div>
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#muzzle')"> MUZZLE CODE - {{gun.muzzle_code}}</div>
+    <div class="collapse" id="muzzle">
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>R</h1><small>Tulip</small></span>
@@ -102,10 +105,11 @@
         <div class=" col-4 nopad text-center ">
             
         </div>
-    </div>
+    </div></div>
 </div>
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1"> CASCABLE CODE - {{gun.cas_code}}</div>
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#cascable')"> CASCABLE CODE - {{gun.cas_code}}</div>
+    <div class="collapse" id="cascable">
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>K</h1><small>Conical</small></span>
@@ -144,10 +148,11 @@
         <div class=" col-4 nopad text-center ">
             
         </div>
-    </div>
+    </div></div>
 </div>
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1"> BUTTON CODE - {{gun.button_code}}</div>
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#button')"> BUTTON CODE - {{gun.button_code}}</div>
+    <div class="collapse show" id="button">
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>N</h1><small>Knob</small></span>
@@ -202,5 +207,5 @@
         <div class=" col-4 nopad text-center ">
             
         </div>
-    </div>
+    </div></div>
 </div>

@@ -17,8 +17,9 @@
 <div class="jumbotron jumbotron-fluid text-center bg-white">
      <div class="container">
         <h3 >Gun Database</h3>
-          <p >The database allows individual recorders to upload their gun records, to improve them over time and to view all the other guns that have been recorded around the world. The project database is linked to a world map so that gun records can be viewed in geographical context.</p>
-      <a href="/database" class="btn btn-primary align-middle">Explore the Guns</a>
+        <p >The database allows individual recorders to upload their gun records, to improve them over time and to view all the other guns that have been recorded around the world. The project database is linked to a world map so that gun records can be viewed in geographical context.</p>
+        <a href="/database" class="btn btn-primary align-middle">Explore the Guns</a>
+        
       </div>
 </div>
     
@@ -34,6 +35,27 @@
 <div class="jumbotron jumbotron-fluid text-center bg-white" id="about">
      <div class="container">
 <h1>About the Project</h1>
+        <div id="picture-carousel" class="container pictures d-none d-md-flex">
+            {% for post in posts.posts %}
+                    <div class="card" onClick="location.href='{{post.URL|safe}}'">
+                        <div class="h5 card-header">
+                            {{post.title|safe}}
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-4">
+                                <img class="card-img" src="{{post.post_thumbnail.URL|safe}}" alt="picture">
+                            </div>
+                            <div class="col-8">
+                                <div class="card-body">
+                                    <div class="card-text">
+                                        {{post.excerpt|safe}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            {% endfor %}
+        </div>
     <p>
 The Ultima Ratio Project aims to develop a centralised database of historical muzzle-loading artillery guns.
     </p><p>
@@ -86,8 +108,8 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
       infinite: true,
       speed: 300,
       slidesToShow: 1,
-      centerMode: true,
-      variableWidth: true
+      centerMode: false,
+      variableWidth: false
       });
     });
 </script>

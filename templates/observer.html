@@ -231,7 +231,12 @@
                 </div>
             </div>
             </div>
-            <div class="" id="imgs">
+            <div class="imglist" id="imgs1">
+            {% for image in images %}
+                <a href="{{image.original|safe}}" data-fancybox="image-gallery" data-caption="cannon photo">
+                    <img src="{{image.s200|safe}}" alt="" />
+                </a>
+            {% endfor %}
             </div>
         </div>
 </div>

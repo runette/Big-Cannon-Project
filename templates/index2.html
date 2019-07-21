@@ -35,17 +35,27 @@
         </div>
 
 </div>
-<div id="picture-carousel" class="container pictures pb-3 d-none d-md-flex">
-    {% for image in images %}
-            <div class="h-200">
-            <picture>
-                <source media="(min-width: 768px)" srcset="https://storage.googleapis.com/ultima-ratio-221014.appspot.com/images/{{image|urlencode}}">
-                <source media="(max-width: 767px)" srcset="/img/32x32.png">
-                <img class="img d-block" src="https://storage.googleapis.com/ultima-ratio-221014.appspot.com/images/{{image|urlencode}}" alt="picture">
-            </picture>
+<div id="picture-carousel" class="container pictures d-none d-md-flex">
+    {% for post in posts.posts %}
+            <div class="card" onClick="location.href='{{post.URL|safe}}'">
+                <div class="h5 card-header">
+                    {{post.title|safe}}
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-4">
+                        <img class="card-img" src="{{post.post_thumbnail.URL|safe}}" alt="picture">
+                    </div>
+                    <div class="col-8">
+                        <div class="card-body">
+                            <div class="card-text">
+                                {{post.excerpt|safe}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
     {% endfor %}
-    </div>
+</div>
 <div class="row">
     <div class="col-md-6">
     <div class="card h-100" >
@@ -82,8 +92,8 @@
       infinite: true,
       speed: 300,
       slidesToShow: 1,
-      centerMode: true,
-      variableWidth: true
+      centerMode: false,
+      variableWidth: false
       });
     });
 </script>

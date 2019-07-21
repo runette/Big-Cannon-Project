@@ -22,7 +22,7 @@
 
 import jinja2, os, json, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
 from flask import Flask, render_template, send_from_directory, request
 from datetime import datetime
 
@@ -39,24 +39,18 @@ except ImportError:
 @app.route('/')
 def main_handler():
     base_url = request.host
+    posts = get_posts()
     if base_url == "www.biggun.site":
         response = "index2.html"
     else:
         response = "index.html"
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
-    if user:
-        return render_template("database.html",
-                               user_data= user_data,
-                               gun_types= GUN_TYPES,
-                               index= 3                           
-                               )        
-    else:
-        images = ["Sunset Porthleven.JPG", "Cannon measuring.jpg", "Colosuss.JPG", "Diver recording cannon on Normans Bay_credit_Martin Davies.jpg", "Normans Bay cannon_credit Martin Davies.jpg", "IMG_4512.jpg", "St Martins.JPG"]
-        return render_template(response,
-                user_data=user_data,
-                images=images,
-                index=1)
+    return render_template(response,
+            user_data=user_data,
+            index=1,
+            posts=posts,
+            )
 
 @app.route('/about')
 def about():

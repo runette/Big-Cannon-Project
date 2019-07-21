@@ -228,3 +228,19 @@ def UserStatus (id_token):
             )
             user.put()
     return result
+
+def get_posts():
+    URL = "https://public-api.wordpress.com/rest/v1.2/sites/ultimaproject.org/posts"
+    params = {'number': 5}
+    try:
+        result = requests.get(URL, params=params)
+        if result.status_code == requests.codes.ok:
+            try:
+                return result.json()
+            except:
+                raise Exception('ParseError' + result.text())
+        else:
+            raise Exception('ApiError' + str(result.status_code))
+    except Exception as e:
+        logging.error(str(e))
+        return    

@@ -56,6 +56,7 @@
 .slick-next:focus:before
 {
     opacity: 1;
+    color: blue;
 }
 .slick-prev.slick-disabled:before,
 .slick-next.slick-disabled:before
@@ -71,7 +72,8 @@
     line-height: 1;
 
     opacity: .75;
-    color: white;
+    color: var(--site);
+   
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

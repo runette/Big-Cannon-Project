@@ -72,12 +72,9 @@
                         $('select').prop("disabled", true);
 
                     }
-                    $('#imgs').imagesGrid({
-                        images: [ {% for image in images %}{src:"{{image.original|safe}}", thumbnail: "{{image.s200|safe}}" },{% endfor %} ],
-                        cells: 4,
-                        align: true,
-                        showViewAl: "always"
-                    });
+                    function feature_toggle(feature){
+                            $(feature).collapse('toggle')
+                            }
                     $(function(){
                         let cannon = $("#cannon")[0];
                         cannon.addEventListener('load', function() {

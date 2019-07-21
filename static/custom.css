@@ -1,5 +1,9 @@
 /* Map Container */
 
+:root{
+ --site:#e3f2fd;
+}
+
 .full-width.map { top: 0; padding: 0 !important; margin-top: 50px; position: relative; }
 
 @media (min-width: 1000px) {
@@ -68,7 +72,7 @@
 }
 
 .bg-ur {
-background-color: #e3f2fd;
+background-color: var(--site);
 }
 
 
@@ -124,7 +128,7 @@ margin-bottom: 0;
           max-width: 30%;
           max-height: 80%;
           overflow-y: scroll;
-          background-color: #e3f2fd;
+          background-color: var(--site);
 }}
 
 @media (max-width: 999.98px) {
@@ -135,7 +139,7 @@ margin-bottom: 0;
 .fab {
    width: 50px;
    height: 50px;
-   background-color: #e3f2fd;
+   background-color: var(--site);
    border-radius: 50%;
    box-shadow: 0 6px 10px 0 #666;
    
@@ -198,7 +202,7 @@ margin-bottom: 0;
 }
 
 .image-checkbox-checked {
-        border-color: #e3f2fd;
+        border-color: var(--site);
 }
 .image-checkbox .fa {
   position: absolute;
