@@ -39,7 +39,7 @@ except ImportError:
 @app.route('/')
 def main_handler():
     base_url = request.host
-    if base_url == "www.biggun.site":
+    if base_url == "localhost:8080":
         response = "index2.html"
     else:
         response = "index.html"
