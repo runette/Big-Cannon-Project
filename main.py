@@ -39,7 +39,6 @@ except ImportError:
 @app.route('/')
 def main_handler():
     base_url = request.host
-    posts = get_posts()
     if base_url == "www.biggun.site":
         response = "index2.html"
     else:
@@ -49,7 +48,6 @@ def main_handler():
     return render_template(response,
             user_data=user_data,
             index=1,
-            posts=posts,
             )
 
 @app.route('/about')

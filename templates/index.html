@@ -26,7 +26,7 @@
 <div class="jumbotron jumbotron-fluid text-center paral para02">
      <div class="container">
                 <h3 class="text-white" style="text-shadow: #444 0 1px 1px;">Recording</h3>
-                <span class="img-back d-block"><p class="img-text bold" style="text-shadow: #444 0 1px 1px;">Our recording system allows you to record as little or as much as you like. Just add a photograph and a location to qualify as an Observer, identify features on your gun for a Recorder record or measure your gun's dimensions to achieve Gold and be a Surveyor. Our world map of guns allows you to see where guns are and how much information about each one has been documented. Find out more about recording guns.</p></span>
+                <span class="img-back bg-dark d-block"><p class="img-text bold" style="text-shadow: #444 0 1px 1px;">Our recording system allows you to record as little or as much as you like. Just add a photograph and a location to qualify as an Observer, identify features on your gun for a Recorder record or measure your gun's dimensions to achieve Gold and be a Surveyor. Our world map of guns allows you to see where guns are and how much information about each one has been documented. Find out more about recording guns.</p></span>
                 <a class="btn btn-small btn-light" role="button" href="http://www.3hconsulting.com/techniques/TechRecordingCannon.html"> How to Record Guns</a>
         </div>
 </div>
@@ -36,25 +36,6 @@
      <div class="container">
 <h1>About the Project</h1>
         <div id="picture-carousel" class="container pictures d-none d-md-flex">
-            {% for post in posts.posts %}
-                    <div class="card" onClick="location.href='{{post.URL|safe}}'">
-                        <div class="h5 card-header">
-                            {{post.title|safe}}
-                        </div>
-                        <div class="row no-gutters">
-                            <div class="col-4">
-                                <img class="card-img" src="{{post.post_thumbnail.URL|safe}}" alt="picture">
-                            </div>
-                            <div class="col-8">
-                                <div class="card-body">
-                                    <div class="card-text">
-                                        {{post.excerpt|safe}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            {% endfor %}
         </div>
     <p>
 The Ultima Ratio Project aims to develop a centralised database of historical muzzle-loading artillery guns.
@@ -98,19 +79,57 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
 {%block script%}
 <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <script>
+    function populate_posts(){
+        let posts = JSON.parse(sessionStorage.getItem('posts'));
+        let container = $('#picture-carousel')
+        for (let post in posts.posts) {
+            if (posts.posts.hasOwnProperty(post)) {
+                    detail = posts.posts[post];
+                    container.append(
+                    `<div class="card" onClick="location.href='${detail.URL}'">
+                        <div class="h5 card-header">
+                            ${detail.title}<\/div>
+                        <div class="row no-gutters">
+                            <div class="col-4">
+                                <img class="card-img post_image" src="${detail.post_thumbnail.URL}" alt="picture">
+                            <\/div>
+                            <div class="col-8">
+                                <div class="card-body">
+                                    <div class="card-text">
+                                        ${detail.excerpt}
+                                    <\/div>
+                                <\/div>
+                            <\/div>
+                        <\/div>
+                    <\/div>`)
+                    };
+                };
+            $('.pictures').slick({
+                autoplay: true,
+                arrows: true,
+                centerPadding: '100px',
+                autoplaySpeed: 3000,
+                dots: true,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 1,
+                centerMode: false,
+                variableWidth: false
+                });
+            };
+ 
     $(document).ready(function(){
-      $('.pictures').slick({
-      autoplay: true,
-      arrows: true,
-      centerPadding: '100px',
-      autoplaySpeed: 3000,
-      dots: true,
-      infinite: true,
-      speed: 300,
-      slidesToShow: 1,
-      centerMode: false,
-      variableWidth: false
-      });
+      if (!sessionStorage.getItem('posts')){
+        $.get('https://public-api.wordpress.com/rest/v1.2/sites/ultimaproject.org/posts', {number:5}, function(data){
+            if (data.found > 0) {
+                sessionStorage.setItem('posts', JSON.stringify(data))
+                populate_posts()
+                }
+            })     
+      }
+      else {
+            populate_posts()
+      }
     });
 </script>
 {% endblock %}

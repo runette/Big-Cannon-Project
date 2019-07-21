@@ -151,6 +151,7 @@ margin-bottom: 0;
    position: fixed;
    right: 50px;
    bottom: 50px;
+   z-index:2000;
    
   transition: all 0.1s ease-in-out;
 }
@@ -217,7 +218,6 @@ margin-bottom: 0;
 }
 
 .img-back {
-  background-color: black;
   opacity: 0.6;
 }
 
