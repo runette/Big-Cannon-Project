@@ -113,7 +113,7 @@ function file_dialog(data) {
                 })},
                 afterClose: function() {
                 if (!dialog_cancel){
-                        window.location.href = "/database/entry?gun_id=" + data.gunid.toString() ;
+                        window.location.href = sessionStorage.getItem('next') ;
                 } else {
                         return true
                 }}
@@ -122,25 +122,18 @@ function file_dialog(data) {
 }
 
 function send_first_file(data) {
-        let folder = data.gunid.toString();
-        send_file_worker(folder, function(snapshot) {
-                    console.log('Uploaded a blob or file!');
-                    data.metadata = snapshot.metadata;
-                    let payload = JSON.stringify(data);
-                    let addrecord = $.ajax({
-                            url: "/add_record",
-                            contentType: "application/json",
-                            method: "POST",
-                            data: payload
-                        });
-                        addrecord.done(function (data, textStatus, jqXHR) {
-                            $("#imgs").attr("src", data);
-                            console.log(data);
-                            $('.custom-file-label').removeClass("selected").html("");
-                            $('.progress').addClass('hidden');
-                            $('.progress-bar').css('width', '0%')
-                            $('#file_close').removeAttr("disabled");
-                        })
-                    
-                    })
+        let payload = JSON.stringify(data);
+        let addrecord = $.ajax({
+                url: "/add_record",
+                contentType: "application/json",
+                method: "POST",
+                data: payload
+                });
+        addrecord.done(function (post_data, textStatus, jqXHR){
+                folder = post_data;
+                send_file_worker(folder)
+                $('.custom-file-label').removeClass("selected").html("");
+                $('#file_close').removeAttr("disabled");
+                sessionStorage.setItem('next',`/database/entry?gun_id=${post_data}`)
+        })
     };

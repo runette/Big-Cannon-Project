@@ -39,7 +39,7 @@ except ImportError:
 @app.route('/')
 def main_handler():
     base_url = request.host
-    if base_url == "localhost:8080":
+    if base_url == "www.biggun.site":
         response = "index2.html"
     else:
         response = "index.html"
@@ -191,9 +191,11 @@ def add_photo():
             if len(image_list) == 1 and image_list[0] == "":
                 gun.images = [json.dumps(url)]
             else :
-                gun.images = json.dumps(url)
+                images = gun.images
+                images.append(json.dumps(url))
+                gun.images = images
             gun.put()
-        return url.get("original", '')
+        return json.dumps(url)
     return "No User"
 
 @app.route('/bng_convert', methods=['POST'])
@@ -248,7 +250,7 @@ def get_location():
         lon = request.args.get('lon')
         location = GeoPt(lat, lon)
         geo = geolocate(location)
-        return json.dumps({"location": [lat, lon], "geolocation": geo["geolocation"], 'places': geo["places"], "gunid": Gun.get_next()})
+        return json.dumps({"location": [lat, lon], "geolocation": geo["geolocation"], 'places': geo["places"]})
         
 @app.route("/add_record", methods=['POST'])
 def add_record():
@@ -256,7 +258,7 @@ def add_record():
     user = user_data['user']
     if user:
         data = request.get_json()
-        gunid = data['gunid']
+        gunid = Gun.get_next()
         location = data['location']
         gun = Gun(
             gunid=gunid,
@@ -273,13 +275,11 @@ def add_record():
             gun.site = data['current_site']['formatted_address']
         except:
             gun.site = data['current_site']['name']
-        url = get_serving_url(data['metadata'])
-        gun.images = [json.dumps(url)]
         for location in data['geolocation']:
             if "country" in location['types']:
                 gun.country = location['formatted_address']        
         gun.put()
-        return url.get("original", '')
+        return str(gun.gunid)
 
     
 @app.route('/img/<path:path>', methods=['GET'])

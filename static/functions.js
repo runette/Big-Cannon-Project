@@ -187,7 +187,7 @@ function select_button ( cl) {
 
 
     //from https://stackoverflow.com/a/16808048/9652221
-    async function send_file_worker(folder, then_function) {
+    async function send_file_worker(folder) {
 	    let imageRef, root
 	    let storage = firebase.storage();
 	    if (dev) {
@@ -198,40 +198,44 @@ function select_button ( cl) {
 	    }
 	    let files = $('.custom-file-input')[0].files;
 	    if (! files) {return}
+	    $('.progress').removeClass('hidden');
+	    let number_files = Object.keys(files).length
+	    let count = 0
 	    for (let file of files) {
 		let file_name = file.name;
 		imageRef = storage.ref().child(root).child(folder).child(file_name + "/original");
 		console.log ("uploading " + imageRef.fullPath);
-		$('.progress').removeClass('hidden');
 		let uploadTask = imageRef.put(file);
-		uploadTask.then(snapshot => then_function(snapshot));
 		uploadTask.on('state_changed', function(snapshot){
-			let progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 10) * 10;
+			let progress = (Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 10) * 10 / number_files) + (100/number_files*count);
 			$('.progress-bar').css('width', progress + '%')
 			})
-	    }
-	}
-	
-    function send_file() {
-	let folder = $('#id').val().toString();
-	send_file_worker(folder, function(snapshot) {
-		    console.log('Uploaded a blob or file!');
-		    let payload = JSON.stringify(snapshot.metadata)
-		    let addphoto = $.ajax({
+		let snapshot = await uploadTask
+		console.log('Uploaded a blob or file!');
+		let payload = JSON.stringify(snapshot.metadata)
+		let addphoto = $.ajax({
 			    url: "/add_photo?id=" + folder,
 			    contentType: "application/json",
 			    method: "POST",
 			    data: payload
 			});
-			addphoto.done(function (data, textStatus, jqXHR) {
-			    $("#imgs").attr("src", data);
+		addphoto.done(function (data, textStatus, jqXHR) {
+			    data = JSON.parse(data)
+			    $("#imgs").append(
+				`<a href="${data.original}" data-fancybox="image-gallery" data-caption="cannon photo">
+				<img src="${data.s200}" alt="" />`)
 			    console.log(data);
-			    $('.custom-file-label').removeClass("selected").html("");
-			    $('.progress').addClass('hidden');
-			    $('.progress-bar').css('width', '0%')
 			})
-		    
-		    })
+		count += 1;
+		}
+		$('.custom-file-label').removeClass("selected").html("");
+		$('.progress').addClass('hidden');
+		$('.progress-bar').css('width', '0%')
+	}
+	
+    function send_file() {
+	let folder = $('#id').val().toString();
+	send_file_worker(folder)
     };
     
     
