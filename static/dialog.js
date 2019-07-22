@@ -6,6 +6,22 @@ $.fancybox.open({
                 clickOutside: false,
                 dblclickOutside: false,
                 clickSlide:false,
+                mobile: {
+                        preventCaptionOverlap: false,
+                        idleTime: false,
+                        clickContent: function (current, event) {
+                                 return current.type === "image" ? "toggleControls" : false;
+                        },
+                        clickSlide: function (current, event) {
+                                return current.type === "image" ? "toggleControls" : false;
+                        },
+                        dblclickContent: function (current, event) {
+                                return current.type === "image" ? "zoom" : false;
+                        },
+                        dblclickSlide: function (current, event) {
+                                return current.type === "image" ? "zoom" : false;
+                        }
+                },
                 afterShow: function () {
                         // bind a click event to fancybox close button
                         // set the value of the currentTarget to the eTarget variable
@@ -44,7 +60,22 @@ function sites_dialog(json_data) {
                 touch: false,
                 clickOutside: false,
                 dblclickOutside: false,
-                clickSlide:false,
+                clickSlide:false,mobile: {
+                        preventCaptionOverlap: false,
+                        idleTime: false,
+                        clickContent: function (current, event) {
+                                 return current.type === "image" ? "toggleControls" : false;
+                        },
+                        clickSlide: function (current, event) {
+                                return current.type === "image" ? "toggleControls" : false;
+                        },
+                        dblclickContent: function (current, event) {
+                                return current.type === "image" ? "zoom" : false;
+                        },
+                        dblclickSlide: function (current, event) {
+                                return current.type === "image" ? "zoom" : false;
+                        }
+                },
                 afterLoad: function(current){
                         let geolocation = json_data.geolocation;
                         let places = json_data.places
@@ -102,6 +133,22 @@ function file_dialog(data) {
                 clickOutside: false,
                 dblclickOutside: false,
                 clickSlide:false,
+                mobile: {
+                        preventCaptionOverlap: false,
+                        idleTime: false,
+                        clickContent: function (current, event) {
+                                 return current.type === "image" ? "toggleControls" : false;
+                        },
+                        clickSlide: function (current, event) {
+                                return current.type === "image" ? "toggleControls" : false;
+                        },
+                        dblclickContent: function (current, event) {
+                                return current.type === "image" ? "zoom" : false;
+                        },
+                        dblclickSlide: function (current, event) {
+                                return current.type === "image" ? "zoom" : false;
+                        }
+                },
                 afterLoad: function(current){
                         $('#file_upload').click(function(){send_first_file(data)})
                  },
