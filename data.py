@@ -209,7 +209,12 @@ def get_serving_url(upload_metadata):
     folder = full_path.replace('/original', '')
     original = ndbImage(full_path, bucket_name)
     original.get()
-    thumb_32 = original.resize((32,32), folder + "/32x32")
+    original.content_format = original.image.format
+    if original.image.format == 'TIFF':
+        rgb = original.image.convert('RGB')
+        original.image = rgb
+        original.put(content_type='image/jpeg', content_format='JPEG')
+    thumb_32 = original.resize((32, 32), folder + "/32x32")
     thumb_32.put()
     thumb_200 = original.resize((200,200), folder + "/200x200")
     thumb_200.put()    
