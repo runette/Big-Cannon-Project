@@ -2,7 +2,7 @@
 {% set images = gun.get_images() %}
 {% block main_content %}
 
- <form action="/set_entry" id="bronze" method="post">
+ <form action="/set_entry" id="detail" method="post">
     <input type="hidden" id="id" name="id" value="{{ gun.gunid }}" readonly >
     <input type="hidden" id="user_id" name="user_id" value="{{gun.user_id}}" readonly >
     <div class="row p-3  bg-ur" >
@@ -20,21 +20,6 @@
                 </h2>
             </div>
         </div>
-    <div class="row  p-3 mb-3 bg-ur">
-    <div class="mx-auto d-block">
-        <ul class="nav nav-tabs bg-ur" data-toggle="" title="">
-            <li class="nav-item">
-                <a class="nav-link text-center list-group-item-action active" id="list-bronze-list" data-toggle="list"  href="#list-bronze" role="tab" aria-controls="list-bronze">Observer</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-center list-group-item-action " id="list-silver-list" data-toggle="list"  href="#list-silver" role="tab" aria-controls="list-silver">Recorder</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-center list-group-item-action " id="list-gold-list" data-toggle="list"  href="#list-gold" role="tab" aria-controls="list-gold">Surveyor</a>
-            </li>
-        </ul>
-    </div>
-    </div>
     <div class="tab-content" id="nav-tabContent">
         <div class='tab-pane fade show active' id="list-bronze" role="tabpanel" aria-labelledby='list-bronze-list'>
             {% include 'observer.html'  %}
@@ -47,9 +32,34 @@
         </div>
      </div>   
 </form>
-<div class="fab" onClick="location.href='/new_record'" > + </div>
+<div class="fab fab-click" id="fab" > + </div>
 
+<div class="pb-5"></div>
 
+<div class="row fixed-bottom  bg-light ">
+<div class="col-3">
+  <span class="btm-nav float-left mx-3 my-1 px-3" onclick="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Last</span></span>
+  </div><div class="col-6">
+  
+            <ul class="nav justify-content-center" data-toggle="" title="">
+            <li class="nav-item">
+                <a class="nav-link text-center btm-pill active" id="list-bronze-list" data-toggle="list"  href="#list-bronze" role="tab" aria-controls="list-bronze"><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-center btm-pill " id="list-silver-list" data-toggle="list"  href="#list-silver" role="tab" aria-controls="list-silver"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Reporter</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-center btm-pill " id="list-gold-list" data-toggle="list"  href="#list-gold" role="tab" aria-controls="list-gold"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></a>
+            </li>
+            </ul>
+            </div>
+        
+        <div class="col-3">
+  <span class=" btm-nav float-right mx-3 my-1 px-3" onclick="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </span>
+  </div>
+</div>
+
+ 
 {% endblock %}
 
 {% block script %}
@@ -59,12 +69,10 @@
 <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
 <script type="application/javascript" >
                     let edit = "{{edit}}";
+                    let gunid = {{gun.gunid}}
                     $('.bng').hide();
                     $('.locate').hide();
                     if (edit === "True") {
-                        $('#top-button').html(
-                            '<ul class="nav-bar nav px-1"><Button type="submit" form="bronze" class="btn btn-primary"  href="#">Save</Button></ul>' + $('#top-button').html()
-                        )
                         $('#inputGroupFileAddon01').click(function(){send_file()})
                         }
                     else {
@@ -72,9 +80,55 @@
                         $('select').prop("disabled", true);
 
                     }
+                    $('#fab').on('click.fab-click', function(){
+                        location.href='/new_record'
+                    })
                     function feature_toggle(feature){
                             $(feature).collapse('toggle')
                             }
+                    function next() {
+                        let current_view = JSON.parse(sessionStorage.getItem("current_view"))
+                        let current_href=window.location.href.split('?')[0]
+                        let idx
+                        for (idx = 0; idx<current_view.length; idx++ ){
+                                if (current_view[idx].anchor_id == gunid) {
+                                if ( idx != current_view.length -1) {
+                                    window.location.href=current_href + `?gun_id=${current_view[idx + 1].anchor_id}`
+                                    }
+                                else {
+                                     window.location.href=current_href + `?gun_id=${current_view[0].anchor_id}`
+                                    }
+                                }
+                            }
+                        }
+                    
+                    function last() {
+                    let current_view = JSON.parse(sessionStorage.getItem("current_view"))
+                        let current_href=window.location.href.split('?')[0]
+                        let idx
+                        for (idx = 0; idx<current_view.length; idx++ ){
+                                if (current_view[idx].anchor_id == gunid) {
+                                if ( idx != 0) {
+                                    window.location.href=current_href + `?gun_id=${current_view[idx - 1].anchor_id}`
+                                    }
+                                else {
+                                     window.location.href=current_href + `?gun_id=${current_view[current_view.length -1].anchor_id}`
+                                    }
+                                }
+                            }
+                        }
+                        
+                    function form_changed(){
+                        if (edit == 'True') {
+                            $('#fab')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>'
+                            $('#fab')
+                                .off('click.fab-click')
+                                .on('click.fab-click', function(){
+                                    $('#detail').submit()
+                                })
+                            }
+                        }
+                        
                     $(function(){
                         let cannon = $("#cannon")[0];
                         cannon.addEventListener('load', function() {
@@ -118,6 +172,11 @@
                             })
                             $(this.parentElement).addClass('image-checkbox-checked')
                             e.preventDefault();
+                            });
+                        $("#detail :input").change(function() {
+                            if ($('#file-name').text() != " ") {
+                                form_changed()
+                                }
                             });
                     })
 </script>

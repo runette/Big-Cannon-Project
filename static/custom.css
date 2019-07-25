@@ -4,6 +4,14 @@
  --site:#e3f2fd;
 }
 
+.bg-site {
+  background-color: var(--site);
+}
+
+.site {
+  color: var(--site) !important;
+}
+
 .full-width.map { top: 0; padding: 0 !important; margin-top: 50px; position: relative; }
 
 @media (min-width: 1000px) {
@@ -140,6 +148,7 @@ margin-bottom: 0;
    width: 50px;
    height: 50px;
    background-color: var(--site);
+   fill: blue;
    border-radius: 50%;
    box-shadow: 0 6px 10px 0 #666;
    
@@ -225,3 +234,79 @@ margin-bottom: 0;
   color: white;
   opacity:1.0 !important;
 }
+
+.btm-nav {
+
+   background-color: var(--site);
+   box-shadow: 0 6px 10px 0 #666;
+   color: blue;
+   text-align: center;
+  transition: all 0.1s ease-in-out;
+}
+.btm-nav:hover {
+   box-shadow: 0 6px 14px 0 #666;
+   transform: scale(1.05);
+}
+
+.arrow {
+  border: solid blue;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.btm-pill:not(.active) {
+  color: blue;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+}
+
+.btm-pill.active {
+  background-color: var(--site);
+  box-shadow: 0 6px 10px 0 #666;
+  color: blue;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+}
+
+.btm-pill:hover {
+   box-shadow: 0 6px 14px 0 #666;
+   transform: scale(1.05);
+}
+.btn-primary {
+  background-color: var(--site);
+  box-shadow: 0 6px 10px 0 #666;
+  border-color: var(--site);
+  color: blue;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: var(--site);
+  color: blue;
+  border-color: var(--site);
+   box-shadow: 0 6px 14px 0 #666;
+   transform: scale(1.05);
+}
+

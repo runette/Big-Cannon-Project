@@ -296,6 +296,7 @@ function select_button ( cl) {
             let location = marker.getPosition();
             $('#lat').val(location.lat);
             $('#lon').val(location.lng);
+	    form_changed();
         });
 
     }
@@ -363,6 +364,8 @@ function select_button ( cl) {
 	    }
 	return null;
 	}
+	
+    
 	
     
 

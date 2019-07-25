@@ -31,7 +31,7 @@
         
 
     };
-})(window.jQuery, function ($, AnchorGmap) {
+})(window.jQuery, function ($, dataBase) {
 
     var MIN_ZOOM = 7,
         MAX_ZOOM = 12;
@@ -62,6 +62,7 @@
     function refreshMap() {
         deleteMarkers();
         arrEntries = applyFilter(getEntries());
+        sessionStorage.setItem('current_view', JSON.stringify(arrEntries))
         initMarkerClusterer();
 
         if(bounds) {
@@ -70,11 +71,11 @@
     }
 
     function getIcon(icon) {
-        if (!AnchorGmap || !AnchorGmap.icons[icon]) {
-            return AnchorGmap.icons['none'];
+        if (!dataBase || !dataBase.icons[icon]) {
+            return dataBase.icons['none'];
         }
 
-        return AnchorGmap.icons[icon];
+        return dataBase.icons[icon];
     }
 
     /* marker */
@@ -156,7 +157,7 @@
     function generateContent(entry) {
         var filename;
         if (!entry['filename']) {
-            filename = AnchorGmap['defaultThumb'];
+            filename = dataBase['defaultThumb'];
         }
         else {
             filename =  entry['filename'];
@@ -180,8 +181,8 @@
     }
 
     function getEntries() {
-        if (AnchorGmap.entries && $.isArray(AnchorGmap.entries)) {
-            return AnchorGmap.entries;
+        if (dataBase.entries && $.isArray(dataBase.entries)) {
+            return dataBase.entries;
         }
 
         return [];
@@ -214,12 +215,12 @@
     }
 
     function sortAnchorByDateSubmitted(fiterredEntries, order) {
-        if (order == AnchorGmap.sort['asc']) {
+        if (order == dataBase.sort['asc']) {
             return fiterredEntries.sort(function (a, b) {
                 return a.anchor_id - b.anchor_id;
             });
         }
-        else if (order == AnchorGmap.sort['desc']) {
+        else if (order == dataBase.sort['desc']) {
             return fiterredEntries.sort(function (a, b) {
                 return b.anchor_id - a.anchor_id;
             });
@@ -238,10 +239,10 @@
     }
 
     function generateEntry(entry) {
-        var filename, href = AnchorGmap['entryPath'] +  entry["anchor_id"];
+        var filename, href = dataBase['entryPath'] +  entry["anchor_id"];
 
         if (!entry['filename']) {
-            filename = AnchorGmap['defaultThumb'];
+            filename = dataBase['defaultThumb'];
         }
         else {
             filename = entry['filename'];
@@ -271,9 +272,9 @@
             $pagination = $('<ul class="pagination pagination-sm"></ul>').insertAfter($tableEntries);
         }
 
-        if (AnchorGmap.pageSize && entries.length && entries.length > AnchorGmap.pageSize) {
+        if (dataBase.pageSize && entries.length && entries.length > dataBase.pageSize) {
             let total = 10,
-                totalPages = Math.ceil(entries.length / AnchorGmap.pageSize),
+                totalPages = Math.ceil(entries.length / dataBase.pageSize),
                 i = 0,
                 html = '';
 
@@ -330,7 +331,7 @@
 
 
         if (entries && entries.length) {
-            var pageSize = Math.min(AnchorGmap['pageSize'], entries.length),
+            var pageSize = Math.min(dataBase['pageSize'], entries.length),
                 i = curentPage * pageSize,
                 l = i + pageSize,
                 html = '';
