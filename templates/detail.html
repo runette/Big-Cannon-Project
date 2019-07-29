@@ -43,13 +43,13 @@
   
             <ul class="nav justify-content-center" data-toggle="" title="">
             <li class="nav-item">
-                <a class="nav-link text-center btm-pill active" id="list-bronze-list" data-toggle="list"  href="#list-bronze" role="tab" aria-controls="list-bronze"><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></a>
+                <a class="nav-link text-center btm-pill active" id="observer" role="tab" data-toggle="list"  href="#list-bronze" aria-controls="list-bronze" onclick="sessionStorage.setItem('view', 'observer')"><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-center btm-pill " id="list-silver-list" data-toggle="list"  href="#list-silver" role="tab" aria-controls="list-silver"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Reporter</span></a>
+                <a class="nav-link text-center btm-pill " id="reporter" role="tab" data-toggle="list"  href="#list-silver"  aria-controls="list-silver" onclick="sessionStorage.setItem('view', 'reporter')"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Reporter</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-center btm-pill " id="list-gold-list" data-toggle="list"  href="#list-gold" role="tab" aria-controls="list-gold"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></a>
+                <a class="nav-link text-center btm-pill " id="surveyor" role="tab" data-toggle="list"  href="#list-gold" aria-controls="list-gold" onclick="sessionStorage.setItem('view', 'surveyor')"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></a>
             </li>
             </ul>
             </div>
@@ -70,6 +70,8 @@
 <script type="application/javascript" >
                     let edit = "{{edit}}";
                     let gunid = {{gun.gunid}}
+                    sessionStorage.setItem('gunid',gunid)
+                    let database = JSON.parse(sessionStorage.getItem('database'))
                     $('.bng').hide();
                     $('.locate').hide();
                     if (edit === "True") {
@@ -83,20 +85,22 @@
                     $('#fab').on('click.fab-click', function(){
                         location.href='/new_record'
                     })
+                    if (sessionStorage.getItem('view')){
+                        $('#' + sessionStorage.getItem('view')).tab('show')
+                    }
                     function feature_toggle(feature){
                             $(feature).collapse('toggle')
                             }
                     function next() {
                         let current_view = JSON.parse(sessionStorage.getItem("current_view"))
-                        let current_href=window.location.href.split('?')[0]
                         let idx
                         for (idx = 0; idx<current_view.length; idx++ ){
                                 if (current_view[idx].anchor_id == gunid) {
                                 if ( idx != current_view.length -1) {
-                                    window.location.href=current_href + `?gun_id=${current_view[idx + 1].anchor_id}`
+                                    window.location.href=database.entryPath + current_view[idx + 1].anchor_id
                                     }
                                 else {
-                                     window.location.href=current_href + `?gun_id=${current_view[0].anchor_id}`
+                                     window.location.href=database.entryPath + current_view[0].anchor_id
                                     }
                                 }
                             }

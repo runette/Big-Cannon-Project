@@ -1,37 +1,35 @@
 (function ($, callback) {
-    $.ajax({
-        type: 'post',
-        url: "/map_fetch",
-        success: function (data) {
-            response = JSON.parse(data);
-            callback($,response)
-        }
-    });
-    
-    
-    window.initMap = function () {
-        location_uk = {lat: 52, lng: 0};
-        mapOptions = {
-            zoom: 7,
-            center: location_uk,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            zoomControl: true,
-            zoomControlOptions:{
-                position: google.maps.ControlPosition.LEFT_BOTTOM},
-            mapTypeControl: false,
-            scaleControl: true,
-            streetViewControl: false,
-            rotateControl: true,
-            fullscreenControl: false
+        window.initMap = function () {
+            location_uk = {lat: 52, lng: 0};
+            mapOptions = {
+                zoom: 7,
+                center: location_uk,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                zoomControl: true,
+                zoomControlOptions:{
+                    position: google.maps.ControlPosition.LEFT_BOTTOM},
+                mapTypeControl: false,
+                scaleControl: true,
+                streetViewControl: false,
+                rotateControl: true,
+                fullscreenControl: false
+            };
+            window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+            window.infoWindow = new google.maps.InfoWindow();
+            callback($);
         };
-
-        window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
-
-        window.infoWindow = new google.maps.InfoWindow();
-        
-
-    };
-})(window.jQuery, function ($, dataBase) {
+    if (!sessionStorage.getItem('database')) {
+        $.ajax({
+            type: 'post',
+            url: "/map_fetch",
+            success: function (data) {
+                sessionStorage.setItem('database', data);
+                callback($)
+                }
+            })
+        }
+    
+})(window.jQuery, function ($) {
 
     var MIN_ZOOM = 7,
         MAX_ZOOM = 12;
@@ -56,6 +54,7 @@
         $quality = $('#quality'),
         $order = $('#order'),
         arrEntries;
+        dataBase = JSON.parse(sessionStorage.getItem('database'));
 
     /* map functions */
 
@@ -195,6 +194,8 @@
             isSearchAnchorType = anchorType != '',
             isSearchQuality = quality != '',
             fiterredEntries;
+            
+        sessionStorage.setItem("filter", JSON.stringify({type:anchorType, quality:quality, order:order}))
 
         fiterredEntries = entries.filter(function (entry) {
             if (isSearchAnchorType && entry.anchor_type !== anchorType) {
@@ -260,12 +261,12 @@
         ].join('');
     }
 
-    function updateTableEntries() {
+    function updateTableEntries(current_page) {
         refreshMap();
-        initTableEntries(arrEntries);
+        initTableEntries(arrEntries, current_page);
     }
 
-    function updatePaginations(entries, curentPage) {
+    function updatePaginations(entries, currentPage) {
         var $pagination = $('.pagination');
 
         if (!$pagination.length) {
@@ -278,32 +279,33 @@
                 i = 0,
                 html = '';
 
-            if (curentPage <= 0) {
+            if (currentPage <= 0) {
                 html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
             }
             else {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="'+(curentPage-1)+'"><span>&laquo;</span></a></li>';
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="'+(currentPage-1)+'"><span>&laquo;</span></a></li>';
             }
 
-            if (curentPage - 5 > 0) {
-                i = curentPage - 5;
-                total = curentPage + 5
+            if (currentPage - 5 > 0) {
+                i = currentPage - 5;
+                total = currentPage + 5
             }
-            if (curentPage + 5 > totalPages) {
+            if (currentPage + 5 >= totalPages) {
                 i = Math.max(0, totalPages - 10);
                 total = totalPages;
             }
+            
 
             for (; i < total; i++) {
                 var p = i + 1,
                     a = '';
-                if (i === curentPage) {
+                if (i === currentPage) {
                     a = 'active';
                 }
                 html += '<li class="page-item ' + a + '"><a class="page-link" href="#" data-page="' + i + '">' + p + '</li>';
             }
             $pagination.html(html);
-            var next = curentPage + 1;
+            var next = currentPage + 1;
             if (next >= totalPages) {
                 var $next = $('<li class="page-item disabled"><span class="page-link">&raquo;</span></li>');
             }
@@ -317,7 +319,7 @@
         }
     }
 
-    function initTableEntries(data, curentPage) {
+    function initTableEntries(data, currentPage) {
         var entries;
         if ($.isArray(data)) {
             entries = data;
@@ -325,14 +327,23 @@
         else {
             entries = getEntries();
         }
-        if (curentPage == null) {
-            curentPage = 0;
+        let gunid = sessionStorage.getItem('gunid')
+        if (currentPage == null) {
+            if (gunid){
+                for (let idx = 0; idx<entries.length; idx++ ){
+                                if (entries[idx].anchor_id == gunid){
+                                    currentPage = Math.floor(idx / dataBase.pageSize) ;
+                                    break;
+                                }
+                    }
+                }
+            else {
+                currentPage = 0
+            }
         }
-
-
         if (entries && entries.length) {
             var pageSize = Math.min(dataBase['pageSize'], entries.length),
-                i = curentPage * pageSize,
+                i = currentPage * pageSize,
                 l = i + pageSize,
                 html = '';
             for (; i < l; i++) {
@@ -351,7 +362,7 @@
             $tableEntries.addClass('hide');
         }
 
-        updatePaginations(entries, curentPage);
+        updatePaginations(entries, currentPage);
     }
 
     function initSearchForm() {
@@ -369,6 +380,7 @@
                 submitForm();
             });
 
+
         $doc.on('click', '[data-page]', function (e) {
             e.preventDefault();
             var $target = $(this);
@@ -378,31 +390,33 @@
             }
 
             initTableEntries(arrEntries, $target.data('page'));
+            sessionStorage.removeItem('gunid')
             scrollToElement($tableEntries);
-        });
+        });}
 
-        function submitForm() {
-            updateTableEntries();
-        }
+    function submitForm() {
+        
+        updateTableEntries();
     }
+        
 
-    function initialize() {
-        initTableEntries();
-        initSearchForm();
+    $doc.on('click', '.clickable-row', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-        $doc.on('click', '.clickable-row', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.location.href = $(this).data('href');
-        });
-    }
-
-
+        window.location.href = $(this).data('href');
+    });
+    
     map = window.map;
     infoWindow = window.infoWindow;
-    refreshMap();
-    $(initialize);
+    if (sessionStorage.getItem('filter')){
+            let filter = JSON.parse(sessionStorage.getItem('filter'));
+            $('#anchor-type').val(filter.type);
+            $('#quality').val(filter.quality);
+            $('#order').val(filter.order);
+        }
+    initSearchForm();
+    submitForm();
     //resize
         $(window).off('resize.map').on('resize.map', function () {
             if(map.getZoom()< MIN_ZOOM){

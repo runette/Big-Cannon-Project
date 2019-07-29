@@ -4,8 +4,15 @@
  --site:#e3f2fd;
 }
 
+:root {
+  --site-dark:#007bff}
+
 .bg-site {
   background-color: var(--site);
+}
+
+.bg-site-dark {
+  background-color: var(--site-dark);
 }
 
 .site {
@@ -148,13 +155,13 @@ margin-bottom: 0;
    width: 50px;
    height: 50px;
    background-color: var(--site);
-   fill: blue;
+   fill: var(--site-dark);
    border-radius: 50%;
    box-shadow: 0 6px 10px 0 #666;
    
    font-size: 50px;
    line-height: 45px;
-   color: blue;
+   color: var(--site-dark);
    text-align: center;
    
    position: fixed;
@@ -239,7 +246,7 @@ margin-bottom: 0;
 
    background-color: var(--site);
    box-shadow: 0 6px 10px 0 #666;
-   color: blue;
+   color: var(--site-dark);
    text-align: center;
   transition: all 0.1s ease-in-out;
 }
@@ -249,7 +256,7 @@ margin-bottom: 0;
 }
 
 .arrow {
-  border: solid blue;
+  border: solid var(--site-dark);
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 3px;
@@ -276,7 +283,7 @@ margin-bottom: 0;
 }
 
 .btm-pill:not(.active) {
-  color: blue;
+  color: var(--site-dark);
   text-align: center;
   transition: all 0.1s ease-in-out;
 }
@@ -284,7 +291,7 @@ margin-bottom: 0;
 .btm-pill.active {
   background-color: var(--site);
   box-shadow: 0 6px 10px 0 #666;
-  color: blue;
+  color: var(--site-dark);
   text-align: center;
   transition: all 0.1s ease-in-out;
 }
@@ -297,14 +304,14 @@ margin-bottom: 0;
   background-color: var(--site);
   box-shadow: 0 6px 10px 0 #666;
   border-color: var(--site);
-  color: blue;
+  color: var(--site-dark);
   text-align: center;
   transition: all 0.1s ease-in-out;
 }
 
 .btn-primary:hover {
   background-color: var(--site);
-  color: blue;
+  color: var(--site-dark);
   border-color: var(--site);
    box-shadow: 0 6px 14px 0 #666;
    transform: scale(1.05);

@@ -160,6 +160,8 @@ function file_dialog(data) {
                 })},
                 afterClose: function() {
                 if (!dialog_cancel){
+                        sessionStorage.removeItem('database')
+                        history.pushState({}, 'Title: Database', '/database');
                         window.location.href = sessionStorage.getItem('next') ;
                 } else {
                         return true
