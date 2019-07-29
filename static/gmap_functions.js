@@ -395,7 +395,7 @@
         });}
 
     function submitForm() {
-        
+        sessionStorage.removeItem('gunid');
         updateTableEntries();
     }
         
@@ -416,7 +416,7 @@
             $('#order').val(filter.order);
         }
     initSearchForm();
-    submitForm();
+    updateTableEntries();
     //resize
         $(window).off('resize.map').on('resize.map', function () {
             if(map.getZoom()< MIN_ZOOM){
