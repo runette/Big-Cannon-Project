@@ -68,10 +68,12 @@
 <script src="/static/markerclusterer.js"></script>
 <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
 <script type="application/javascript" >
-                    let edit = "{{edit}}";
-                    let gunid = {{gun.gunid}}
+                    history.pushState({}, 'Title: Database', '/database');
+                    let edit = "{{edit}}",
+                        gunid = {{gun.gunid}},
+                        current_view = JSON.parse(sessionStorage.getItem("current_view")),
+                        database = JSON.parse(sessionStorage.getItem('database'));
                     sessionStorage.setItem('gunid',gunid)
-                    let database = JSON.parse(sessionStorage.getItem('database'))
                     $('.bng').hide();
                     $('.locate').hide();
                     if (edit === "True") {
@@ -92,7 +94,6 @@
                             $(feature).collapse('toggle')
                             }
                     function next() {
-                        let current_view = JSON.parse(sessionStorage.getItem("current_view"))
                         let idx
                         for (idx = 0; idx<current_view.length; idx++ ){
                                 if (current_view[idx].anchor_id == gunid) {
@@ -107,16 +108,14 @@
                         }
                     
                     function last() {
-                    let current_view = JSON.parse(sessionStorage.getItem("current_view"))
-                        let current_href=window.location.href.split('?')[0]
                         let idx
                         for (idx = 0; idx<current_view.length; idx++ ){
                                 if (current_view[idx].anchor_id == gunid) {
-                                if ( idx != 0) {
-                                    window.location.href=current_href + `?gun_id=${current_view[idx - 1].anchor_id}`
+                                if ( idx != 0 ) {
+                                    window.location.href=database.entryPath + current_view[idx - 1].anchor_id
                                     }
                                 else {
-                                     window.location.href=current_href + `?gun_id=${current_view[current_view.length -1].anchor_id}`
+                                     window.location.href=database.entryPath + current_view[current_view.length - 1].anchor_id
                                     }
                                 }
                             }
@@ -128,6 +127,7 @@
                             $('#fab')
                                 .off('click.fab-click')
                                 .on('click.fab-click', function(){
+                                    sessionStorage.removeItem('database');
                                     $('#detail').submit()
                                 })
                             }
