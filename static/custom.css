@@ -317,3 +317,6 @@ margin-bottom: 0;
    transform: scale(1.05);
 }
 
+$custom-file-text: (
+  en: "Choose Photo",
+);
