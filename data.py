@@ -111,16 +111,16 @@ class Gun(Model):
     @classmethod
     def map_data(cls):
         result = cls.query(order=['gunid']).fetch()
+        users = User.query().fetch()
         map_data = []
-        for gun in result :
+        for gun in result:
             try:
                 thumbnail = gun.get_images()[0].get("s32")
             except:
                 thumbnail = "/img/32x32.png"
             try:
-                name = User.get_by_id(gun.user_id).fire_user['name']
+                name = [user for user in users if user.user_id == gun.user_id][0].fire_user['name']
             except Exception as e:
-                users = User.query().fetch()
                 id = ""
                 for user in users:
                     fu = user.fire_user
