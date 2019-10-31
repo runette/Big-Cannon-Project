@@ -89,6 +89,7 @@ class Gun(Model):
         self.Property("name", ndb.StringProperty)
         self.Property("date", ndb.DateTimeProperty, auto_now=True)
         self.Property("site", ndb.StringProperty)
+        self.Property('display_name', ndb.StringProperty)
         self.Property("context", ndb.StringProperty)
         self.Property("collection", ndb.BooleanProperty)
         self.Property("coll_name", ndb.StringProperty)
@@ -134,17 +135,17 @@ class Gun(Model):
                     name = gun.name
             try:
                 map_data.append({
-                    "anchor_id" : gun.gunid,
-                    "description" : gun.description,
-                    "latitude" : gun.location.latitude,
-                    "longitude" : gun.location.longitude,
-                    "anchor_type" : GUN_TYPES[gun.type.value],
-                    "location"  : gun.context,
-                    "names" : name,
-                    'filename' : thumbnail,
-                    'quality' : gun.quality.value,
+                    "anchor_id": gun.gunid,
+                    "description": gun.description,
+                    "latitude": gun.location.latitude,
+                    "longitude": gun.location.longitude,
+                    "anchor_type": GUN_TYPES[gun.type.value],
+                    "location": gun.context,
+                    "names": name,
+                    'filename': thumbnail,
+                    'quality': gun.quality.value,
                     'nationality': gun.country,
-                    'site' : gun.site,
+                    'site': gun.display_name,
                 })
             except Exception as e:
                 logging.error(str(e))

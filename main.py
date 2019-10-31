@@ -134,6 +134,10 @@ def set_entry():
                 gunid=gun_id,
                 name=user.email,
             )
+        if gun.site != request.form.get('site', ""):
+            gun.display_name = request.form.get('site', "")
+        else:
+            gun.display_name = request.form.get('display_name', "")
         gun.populate(
             description=request.form.get('description'),
             type=Gun.Types[request.form.get('type')],

@@ -74,11 +74,11 @@
                             <th colspan='2' scope="row">Context</th>
                             </thead>
                             <tr>
-                                <td>Description of Location</td>
-                                <td><input class="form-control" type="text" name="context" value="{%if gun.context%}{{gun.context}}{%endif%}" placeholder="Describe context"></td>
+                                <td>Name</td>
+                                <td><input class="form-control" type="text" name="display_name" value="{%if gun.display_name%}{{gun.display_name}}{%endif%}" placeholder="Give a name to the site"></td>
                             </tr>
                             <tr>
-                                <td>Site Name</td>
+                                <td>Location</td>
                                 <td>
                                 <select class="custom-select" name="site">
                                     {% for site in gun.geocode.places %}
@@ -91,16 +91,20 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Museum / Collection</td>
+                                <td>Description of Cannon Location</td>
+                                <td><input class="form-control" type="text" name="context" value="{%if gun.context%}{{gun.context}}{%endif%}" placeholder="Describe context"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
                                 <td>
                                     <div class="custom-control custom-switch">
                                             <input type="checkbox" name="collection" class="custom-control-input update-field" id="collection" {% if gun.collection %} checked {% endif %} onchange="select_button('collection')" >
-                                            <label class="custom-control-label" for="collection">In a Museum / Collection?</label>
+                                            <label class="custom-control-label" small for="collection">Is this cannon part of a  Museum, Gallery or Collection or on the grounds of a heritage site like a castle or recognised archeological site?</label>
                                         </div>
                                 </td>
                             </tr>
                             <tr class="hidden collection">
-                                <td>Collection Name</td>
+                                <td>Name of Museum / Gallery / Heritage Site / Collection</td>
                                 <td><input class="form-control" type="text" name="coll_name" value="{%if gun.coll_name %}{{gun.coll_name}}{%endif%}" placeholder="Collection name"></td>
 
                             </tr>
