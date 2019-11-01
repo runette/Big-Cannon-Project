@@ -79,7 +79,6 @@ function sites_dialog(json_data) {
                 afterLoad: function(current){
                         let geolocation = json_data.geolocation;
                         let places = json_data.places
-                        let location = new google.maps.LatLng(json_data.location[0],json_data.location[1]);
                         let places_list = [];
                         for (let key in places){
                                 if (places.hasOwnProperty(key)) {
@@ -94,13 +93,13 @@ function sites_dialog(json_data) {
                         for (let key in places_list) {
                                 if (places_list.hasOwnProperty(key)){
                                         let location = places_list[key];
-                                        let index = key + 1;
                                         if (location.hasOwnProperty("formatted_address")){
-                                                $('#siteSelect').append('<option value="' + index + '">' + location.formatted_address + '</option> ');
+                                                $('#siteSelect').append('<option value="' + key + '">' + location.formatted_address + '</option> ');
                                         } else {
-                                                $('#siteSelect').append('<option value="' + index + '">' + location.name + '</option> ');
+                                                $('#siteSelect').append('<option value="' + key + '">' + location.name + '</option> ');
                                         }
-                                }};       
+                                }};
+                        json_data.places_list = places_list
                         },
                 afterShow: function() {
                         // from https://stackoverflow.com/questions/22062722/fancybox-get-id-of-clicked-anchor-element-in-afterclose-function
@@ -112,8 +111,8 @@ function sites_dialog(json_data) {
                         if (!dialog_cancel) {
                                 let data = json_data;
                                 let element = $('#siteSelect');
-                                let key = element[0].selectedOptions[0].value.charAt(0);
-                                let location = data.places[key];
+                                let key = element[0].selectedOptions[0].value;
+                                let location = data.places_list[key];
                                 data['current_site'] = location;
                                 file_dialog(data);
                                 return true
@@ -150,7 +149,10 @@ function file_dialog(data) {
                         }
                 },
                 afterLoad: function(current){
-                        $('#file_upload').click(function(){send_first_file(data)})
+                        $('#file-upload').click(function(){
+                                $('#file-upload').prop('disabled', true);
+                                send_first_file(data);
+                                });
                  },
                  afterShow: function() {
                         // from https://stackoverflow.com/questions/22062722/fancybox-get-id-of-clicked-anchor-element-in-afterclose-function
@@ -160,9 +162,7 @@ function file_dialog(data) {
                 })},
                 afterClose: function() {
                 if (!dialog_cancel){
-                        sessionStorage.removeItem('database')
-                        history.pushState({}, 'Title: Database', '/database');
-                        window.location.href = sessionStorage.getItem('next') ;
+                        return true
                 } else {
                         return true
                 }}
@@ -170,19 +170,27 @@ function file_dialog(data) {
 })
 }
 
+
+
 function send_first_file(data) {
-        let payload = JSON.stringify(data);
-        let addrecord = $.ajax({
-                url: "/add_record",
-                contentType: "application/json",
-                method: "POST",
-                data: payload
+        if ($('.custom-file-input')[0].files.length > 0) {
+                let payload = JSON.stringify(data);
+                let addrecord = $.ajax({
+                        url: "/add_record",
+                        contentType: "application/json",
+                        method: "POST",
+                        data: payload
+                        });
+                addrecord.done(function (post_data, textStatus, jqXHR){
+                        send_file_worker(post_data, close)
                 });
-        addrecord.done(function (post_data, textStatus, jqXHR){
-                folder = post_data;
-                send_file_worker(folder)
-                $('.custom-file-label').removeClass("selected").html("");
-                $('#file_close').removeAttr("disabled");
-                sessionStorage.setItem('next',`/database/entry?gun_id=${post_data}`)
-        })
+        } else {
+                $('#file-upload').prop('disabled', false);
+        }
     };
+    
+function close(folder) {
+        sessionStorage.removeItem('database')
+        history.pushState({}, 'Title: Database', '/database');
+        window.location.href = `/database/entry?gun_id=${folder}`;
+}   

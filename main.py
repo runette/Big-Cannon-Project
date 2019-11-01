@@ -70,6 +70,7 @@ def database():
 
 @app.route('/map_fetch', methods=['POST'])
 def fetch_map():
+    user_data = UserStatus(request.cookies.get("token"))
     map = {
         "defaultThumb" : "/img/70x70.png",
         "icons" : {
@@ -82,7 +83,7 @@ def fetch_map():
         "entryPath" : "/database/entry?gun_id=",
         "sort":{"asc": 4, "desc": 3},
     }
-    entries = Gun.map_data()
+    entries = Gun.map_data(user_data.namespace)
     map.update({
         "entries":entries
     })
@@ -95,10 +96,10 @@ def fetch_entry():
     gun_id = to_int(request.args.get('gun_id'))
     index = 3
     try:
-        gun = Gun.get_id(gun_id)
+        gun = Gun.get_id(gun_id, user_data.namespace)
         if user and user.user_id == gun.user_id:
             edit = True
-        elif User.get_by_id(user.user_id).standing != User.Standing.OBSERVER:
+        elif user_data.local_user.standing != User.Standing.OBSERVER:
             edit=True
         else:
             edit = False
@@ -107,7 +108,7 @@ def fetch_entry():
         return render_template('detail.html',
                            user_data=user_data,
                            gun=gun,
-                           user_name=User.get_by_id(gun.user_id).fire_user['name'],
+                           user_name=user['name'],
                            gun_types=GUN_TYPES,
                            qualities_text=RECORD_QUALITIES,
                            qualities=Gun.Quality,
@@ -128,7 +129,7 @@ def set_entry():
     if user:
         gun_id = to_int(request.form.get('id'))
         new_location = GeoPt(request.form.get('lat'), request.form.get('lon'))
-        gun = Gun.get_id(gun_id)
+        gun = Gun.get_id(gun_id, user_data.namespace)
         if not gun :
             gun = Gun(
                 gunid=gun_id,
@@ -189,7 +190,7 @@ def add_photo():
         data = request.json
         url = get_serving_url(data)
         gun_id = to_int(request.args.get('id'))
-        gun = Gun.get_id(gun_id)
+        gun = Gun.get_id(gun_id, user_data.namespace)
         if gun :
             image_list = gun.images
             if len(image_list) == 1 and image_list[0] == "":
@@ -262,9 +263,9 @@ def add_record():
     user = user_data['user']
     if user:
         data = request.get_json()
-        gunid = Gun.get_next()
+        gunid = Gun.get_next(user_data.namespace)
         location = data['location']
-        gun = Gun(
+        gun = Gun( namespace=user_data.namespace,
             gunid=gunid,
             user_id=user.user_id,
             type=Gun.Types.NOT_KNOWN,
@@ -279,6 +280,7 @@ def add_record():
             gun.site = data['current_site']['formatted_address']
         except:
             gun.site = data['current_site']['name']
+        gun.display_name = gun.site
         for location in data['geolocation']:
             if "country" in location['types']:
                 gun.country = location['formatted_address']        

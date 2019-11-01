@@ -110,8 +110,8 @@ class Gun(Model):
         self.Property("button_code", ndb.StringProperty)
 
     @classmethod
-    def map_data(cls):
-        result = cls.query(order=['gunid']).fetch()
+    def map_data(cls, namespace):
+        result = cls.query(order=['gunid'], namespace=namespace).fetch()
         users = User.query().fetch()
         map_data = []
         for gun in result:
@@ -152,16 +152,16 @@ class Gun(Model):
         return map_data
 
     @classmethod
-    def get_next(cls):
-        all = cls.query(order=["-gunid"]).fetch()
+    def get_next(cls, namespace):
+        all = cls.query(order=["-gunid"], namespace=namespace).fetch()
         if all :
             return all[0].gunid + 1
         else:
             return 1
 
     @classmethod
-    def get_id(cls, id):
-        return cls.query(filters=[("gunid","=", id)]).get()
+    def get_id(cls, id, namespace):
+        return cls.query(filters=[("gunid", "=", id)], namespace=namespace).get()
     
     def get_images(self):
         IMAGE_DEFAULTS = [{"s200":"/img/70x70.png", "original":""}]
@@ -190,7 +190,7 @@ class User(Model):
         self.Property("standing", ndb.EnumProperty, enum=User.Standing, default=User.Standing.OBSERVER)
         self.Property('created', ndb.DateTimeProperty, auto_now=True)
         self.Property("fire_user", ndb.JsonProperty)
-
+        self.Property('test_user', ndb.BooleanProperty)
         
     @classmethod
     def get_by_id(cls, id):
@@ -222,7 +222,6 @@ def get_serving_url(upload_metadata):
     mediaLink = {"original": original.get_media_link(), "s32": thumb_32.get_media_link(), "s200": thumb_200.get_media_link()}
     return mediaLink
 
-
 def UserStatus (id_token):
     result = simplendb.users.UserStatus(id_token)
     if result['user'] :
@@ -233,6 +232,11 @@ def UserStatus (id_token):
                 fire_user= json.dumps(result['user'])
             )
             user.put()
+        result['local_user'] = user
+        result['test'] = user.test_user
+        result['namespace'] = None
+        if result['test']:
+            result['namespace'] = 'test'
     return result
 
 def get_posts():

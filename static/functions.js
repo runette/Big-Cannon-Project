@@ -105,8 +105,9 @@
 		    $('#login').click(function(){
 		     firebase.auth().signOut()
 		     clearCookie('token');
-		     $('#firebaseui-auth-container').text("You are now logged out")
-		     $('[data-dismiss="modal"]').click(function(){window.location.href ="/" })
+		     sessionStorage.removeItem('database');
+		     $('#firebaseui-auth-container').text("You are now logged out");
+		     $('[data-dismiss="modal"]').click(function(){window.location.href ="/" });
 	    })} else {
 		    $('#login').click(function(){
 		     ui.start('#firebaseui-auth-container', uiConfig);
@@ -187,7 +188,8 @@ function select_button ( cl) {
 
 
     //from https://stackoverflow.com/a/16808048/9652221
-    async function send_file_worker(folder) {
+    async function send_file_worker(folder, callback) {
+	    $('#file-upload').prop('disabled', true);
 	    let imageRef, root
 	    let storage = firebase.storage();
 	    if (dev) {
@@ -225,6 +227,9 @@ function select_button ( cl) {
 				`<a href="${data.original}" data-fancybox="image-gallery" data-caption="cannon photo">
 				<img src="${data.s200}" alt="" />`)
 			    console.log(data);
+			    if (callback) {callback(folder)}
+			    $('.custom-file-input').val(null);
+			    $('#file-upload').prop('disabled', false);
 			})
 		count += 1;
 		}
@@ -234,12 +239,14 @@ function select_button ( cl) {
 	}
 	
     function send_file() {
-	let folder = $('#id').val().toString();
-	send_file_worker(folder)
+	if ($('.custom-file-input')[0].files.length > 0) {
+	    let folder = $('#id').val().toString();
+	    send_file_worker(folder, null)
+	} else {
+		$('#file-upload').prop('disabled', false);
+	}
+	
     };
-    
-    
-
 
     function BNG_convert(form) {
         let data = $('form').serializeArray();
