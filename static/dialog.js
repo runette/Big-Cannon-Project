@@ -77,9 +77,10 @@ function sites_dialog(json_data) {
                         }
                 },
                 afterLoad: function(current){
-                        let geolocation = json_data.geolocation;
-                        let places = json_data.places
-                        let places_list = [];
+                        let geolocation = json_data.geolocation,
+                                places = json_data.places,
+                                places_list = [],
+                                default_place = json_data.default;
                         for (let key in places){
                                 if (places.hasOwnProperty(key)) {
                                         let location =  places[key];
@@ -94,9 +95,9 @@ function sites_dialog(json_data) {
                                 if (places_list.hasOwnProperty(key)){
                                         let location = places_list[key];
                                         if (location.hasOwnProperty("formatted_address")){
-                                                $('#siteSelect').append('<option value="' + key + '">' + location.formatted_address + '</option> ');
+                                                $('#siteSelect').append(`<option value='${key}' ${(location.formatted_address === default_place) ? "selected" : ""}>${location.formatted_address}</option>`);
                                         } else {
-                                                $('#siteSelect').append('<option value="' + key + '">' + location.name + '</option> ');
+                                                $('#siteSelect').append(`<option value='${key}'>${location.name}</option>`);
                                         }
                                 }};
                         json_data.places_list = places_list
@@ -193,4 +194,6 @@ function close(folder) {
         sessionStorage.removeItem('database')
         history.pushState({}, 'Title: Database', '/database');
         window.location.href = `/database/entry?gun_id=${folder}`;
-}   
+} 
+
+function form_changed () {}; // needed to void error in map_reset

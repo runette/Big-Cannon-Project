@@ -72,20 +72,23 @@ def database():
 def fetch_map():
     user_data = UserStatus(request.cookies.get("token"))
     map = {
-        "defaultThumb" : "/img/70x70.png",
-        "icons" : {
-            "bronze" : '/img/cannon_bronze.png',
-            "silver" : "/img/cannon_silver.png",
-            'gold' : "/img/cannon_gold.png",
-            'none' : '/img/cannon_bronze.png',
+        "defaultThumb": "/img/70x70.png",
+        "icons": {
+            "bronze": '/img/cannon_bronze.png',
+            "silver": "/img/cannon_silver.png",
+            'gold': "/img/cannon_gold.png",
+            'none': '/img/cannon_bronze.png',
         },
         "pageSize": 10,
-        "entryPath" : "/database/entry?gun_id=",
-        "sort":{"asc": 4, "desc": 3},
+        "entryPath": "/database/entry?gun_id=",
+        "sort": {"asc": 4, "desc": 3},
     }
-    entries = Gun.map_data(user_data.namespace)
+    if user_data.user:
+        entries = Gun.map_data(user_data.namespace)
+    else:
+        entries = Gun.map_data(None)
     map.update({
-        "entries":entries
+        "entries": entries
     })
     return json.dumps(map)
 
@@ -167,9 +170,9 @@ def set_entry():
             gun.location = new_location
             address = geolocate(gun.location)
             gun.geocode = address
-            for location in address["geolocation"]:
-                if "country" in location['types']:
-                    gun.country = location['formatted_address']
+            gun.site = address['default']
+            gun.display_name = gun.site
+            gun.country = address['country']
         gun.put()
         return render_template('detail.html',
                                user_data= user_data,
@@ -255,7 +258,8 @@ def get_location():
         lon = request.args.get('lon')
         location = GeoPt(lat, lon)
         geo = geolocate(location)
-        return json.dumps({"location": [lat, lon], "geolocation": geo["geolocation"], 'places': geo["places"]})
+        geo.update({"location": [lat, lon]})
+        return json.dumps(geo)
         
 @app.route("/add_record", methods=['POST'])
 def add_record():
@@ -265,13 +269,14 @@ def add_record():
         data = request.get_json()
         gunid = Gun.get_next(user_data.namespace)
         location = data['location']
-        gun = Gun( namespace=user_data.namespace,
+        gun = Gun(namespace=user_data.namespace,
             gunid=gunid,
             user_id=user.user_id,
             type=Gun.Types.NOT_KNOWN,
-            date= datetime.now(),
-            measurements={}
-        )
+            date=datetime.now(),
+            measurements={},
+            country=data['country'],
+                  )
         gun.location = GeoPt(location[0], location[1])
         geo = {"geolocation": data['geolocation']}
         geo.update({"places":data['places']})
@@ -280,10 +285,7 @@ def add_record():
             gun.site = data['current_site']['formatted_address']
         except:
             gun.site = data['current_site']['name']
-        gun.display_name = gun.site
-        for location in data['geolocation']:
-            if "country" in location['types']:
-                gun.country = location['formatted_address']        
+        gun.display_name = gun.site      
         gun.put()
         return str(gun.gunid)
 
