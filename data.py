@@ -30,6 +30,7 @@ import simplendb.users
 from simplendb.images import ndbImage, Blob
 from simplendb.helpers import to_bool, to_int
 import requests
+import time
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
@@ -201,8 +202,40 @@ class User(Model):
 def geolocate(location) :
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
     reverse_geocode_result = gmaps.reverse_geocode((location.latitude, location.longitude))
-    places_result = gmaps.places_nearby(location=(location.latitude, location.longitude), radius=500)
-    return {"geolocation": reverse_geocode_result, "places": places_result["results"]}
+    for radius in [100, 300, 600, 1000]:
+        places_result = gmaps.places_nearby(location=(location.latitude, location.longitude), radius=radius)
+        token = places_result.get('next_page_token')
+        results = places_result["results"]
+        while token:
+            try:
+                places_result = gmaps.places_nearby(page_token=token)
+            except Exception as e:
+                logging.error(str(e))
+                if 'INVALID_REQUEST' in str(e):
+                    time.sleep(2)
+                    continue
+                raise
+            results += places_result['results']
+            token = places_result.get('next_page_token')
+        if len(results) > 10:
+            break
+    level = 0
+    for location in reverse_geocode_result:
+        if "country" in location['types']:
+            country = location['formatted_address']
+        if 'neighborhood' in location['types']:
+            level = 10
+            default = location['formatted_address']
+            continue
+        try:
+            admin = [item for item in location['types'] if 'administrative_area' in item][0]
+            admin_level = to_int(admin[-1])
+            if admin_level > level:
+                level = admin_level
+                default = location['formatted_address']
+        except:
+            pass    
+    return {"geolocation": reverse_geocode_result, "places": results, 'default': default, 'country': country}
 
 def get_serving_url(upload_metadata):
     bucket_name = upload_metadata.get('bucket')
