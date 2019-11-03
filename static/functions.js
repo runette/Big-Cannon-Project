@@ -100,7 +100,6 @@
 			    });
 		    console.log(`Signed in as ${user.displayName} (${user.email})`);
 		    if ($('#login')[0].innerText === "Login") {
-			sessionStorage.removeItem('database');
 			window.location.href ="/" 
 		    }
 		    $('#login').click(function(){
@@ -138,7 +137,7 @@
 		}
 		$(this).next('.custom-file-label').addClass("selected").html(fileName); 
 	});
-	
+	dev = window.location.hostname == ('localhost')
     }
     $(initialize);
 });
