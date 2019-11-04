@@ -25,6 +25,7 @@ from update import UpdateSchema
 from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
 from flask import Flask, render_template, send_from_directory, request
 from datetime import datetime
+from urllib.parse import urlparse
 
 
 app = Flask(__name__)
@@ -192,18 +193,21 @@ def add_photo():
     if user:
         data = request.json
         url = get_serving_url(data)
+        json_url = json.dumps(url)
         gun_id = to_int(request.args.get('id'))
         gun = Gun.get_id(gun_id, user_data.namespace)
         if gun :
             image_list = gun.images
             if len(image_list) == 1 and image_list[0] == "":
-                gun.images = [json.dumps(url)]
-            else :
-                images = gun.images
-                images.append(json.dumps(url))
-                gun.images = images
+                gun.images = [json_url]
+            else:
+                for image in image_list:
+                    if urlparse(url['original']).path == urlparse(json.loads(image)['original']).path:
+                        image_list.remove(image)
+                image_list.append(json_url)
+                gun.images = image_list
             gun.put()
-        return json.dumps(url)
+        return json_url
     return "No User"
 
 @app.route('/bng_convert', methods=['POST'])
