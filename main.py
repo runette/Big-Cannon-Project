@@ -29,7 +29,7 @@ from urllib.parse import urlparse
 
 
 app = Flask(__name__)
-root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "img")
+root = os.path.dirname(os.path.abspath(__file__))
 
 try:
     import googleclouddebugger
@@ -296,7 +296,11 @@ def add_record():
     
 @app.route('/img/<path:path>', methods=['GET'])
 def img(path):
-    return send_from_directory(root, path)
+    return send_from_directory(os.path.join(root, 'img'), path)
+
+@app.route('/sw.js', methods=['GET'])
+def sw():
+    return send_from_directory(root, 'sw.js')
     
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

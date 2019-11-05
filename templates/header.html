@@ -8,7 +8,15 @@
     <meta name="csrf-param" content="_csrf">
     <meta name="csrf-token" content="5iiQ79ZII_orKUeWGItkjIgDZLBkxt5GtwRU3YjkBWK-R9GHmywXg15TE_1h4j7m13Qi7wakpCfvaTKzybVVUA==">
     <title>Big Cannon Project</title>
+    <meta name="description" content="Online database of Cannon">
+    <meta name="keywords" content="NAS, Nautical, Archeology, cannon, ultim-ratio, gun, breach, loading">
+    <meta name="author" content="Paul Harwood">
+    <meta name="theme-color" content="#e3f2fd"/>
+    <link rel="icon" sizes="192x192" href="/img/gun-map-192.png">
+    <link rel="apple-touch-icon" href="/img/gun-map-192.png">
     <link rel="shortcut icon" href="/static/favicon.ico"/>
+    <link rel='manifest' href='/static/manifest.json'/>
+    <link rel="preconnect" href="https://maps.googleapis.com">
     <script type="text/javascript">window.BaseUrl = '';</script>
     <link href="//fonts.googleapis.com/css?family=Titillium+Web:400,200,700" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
@@ -18,7 +26,7 @@
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
     <link rel="stylesheet" type="text/css" href="/static/slick.css"/>
     <link rel="stylesheet" type="text/css" href="/static/slick-theme.css"/>
-                                
+
 </head>
 <body class="pt-5">
     <div class="modal fade" tabindex="-1" role="dialog" id="login-modal">
@@ -91,9 +99,22 @@
     <script >
     dev = ('{{user_data.test is defined }}' === 'True')?true:false || window.location.hostname == ('localhost')
     </script>
-    
-    
-    
+<script type="module">
+import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-window.prod.mjs';
+
+if ('serviceWorker' in navigator) {
+  const wb = new Workbox('/sw.js');
+  wb.addEventListener('waiting', (event) => {
+    wb.addEventListener('controlling', (event) => {
+              window.location.reload();
+            });
+    wb.messageSW({type: 'SKIP_WAITING'});
+  });
+  wb.register();
+}
+</script>
+
+
 
 {% block script %}{% endblock %}
 </html>

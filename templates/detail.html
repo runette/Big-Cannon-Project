@@ -12,7 +12,7 @@
 
             <div class="media-body display-1 p-2">
                 <h2>Gun ID : {{ gun.gunid }}
-                {% if edit %} 
+                {% if edit %}
 
                 {% else %}
                     <small class="text-muted float-right align-middle"> Read-only </small>
@@ -23,14 +23,14 @@
     <div class="tab-content" id="nav-tabContent">
         <div class='tab-pane fade show active' id="list-bronze" role="tabpanel" aria-labelledby='list-bronze-list'>
             {% include 'observer.html'  %}
-        </div>    
+        </div>
         <div div class='tab-pane fade' id="list-silver" role="tabpanel" aria-labelledby='list-silver-list'>
             {% include 'recorder.html'  %}
         </div>
         <div div class='tab-pane fade' id="list-gold" role="tabpanel" aria-labelledby='list-gold-list'>
             {%  include 'surveyor.html'  %}
         </div>
-     </div>   
+     </div>
 </form>
 <div class="fab fab-click" id="fab" > + </div>
 
@@ -40,7 +40,7 @@
 <div class="col-3">
   <span class="btm-nav float-left mx-3 my-1 px-3" onclick="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></span>
   </div><div class="col-6">
-  
+
             <ul class="nav justify-content-center" data-toggle="" title="">
             <li class="nav-item">
                 <a class="nav-link text-center btm-pill active" id="observer" role="tab" data-toggle="list"  href="#list-bronze" aria-controls="list-bronze" onclick="sessionStorage.setItem('view', 'observer')"><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></a>
@@ -53,20 +53,20 @@
             </li>
             </ul>
             </div>
-        
+
         <div class="col-3">
   <span class=" btm-nav float-right mx-3 my-1 px-3" onclick="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </span>
   </div>
 </div>
 
- 
+
 {% endblock %}
 
 {% block script %}
 
 <script src="/static/sweetalert.min.js"></script>
 <script src="/static/markerclusterer.js"></script>
-<script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
 <script type="application/javascript" >
                     history.pushState({}, 'Title: Database', '/database');
                     let edit = "{{edit}}",
@@ -106,7 +106,7 @@
                                 }
                             }
                         }
-                    
+
                     function last() {
                         let idx
                         for (idx = 0; idx<current_view.length; idx++ ){
@@ -120,7 +120,7 @@
                                 }
                             }
                         }
-                        
+
                     function form_changed(){
                         if (edit == 'True') {
                             $('#fab')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>'
@@ -132,7 +132,7 @@
                                 })
                             }
                         }
-                        
+
                     $(function(){
                         let cannon = $("#cannon")[0];
                         cannon.addEventListener('load', function() {
@@ -166,9 +166,9 @@
 
                             e.preventDefault();
                             });
-                            
+
                         $("[type='radio']").on("change", function (e) {
-                            $("[name='" + this.name + "']").each(function(index){                        
+                            $("[name='" + this.name + "']").each(function(index){
                                 let parent = this.parentElement
                                 if ($(parent).hasClass('image-checkbox-checked')) {
                                     $(parent).removeClass('image-checkbox-checked');
