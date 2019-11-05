@@ -2,7 +2,7 @@
 
 {% block main_content %}
 
-    
+
 
 <div class="jumbotron jumbotron-fluid text-center paral para01" >
     <div class="container">
@@ -17,16 +17,17 @@
 <div class="jumbotron jumbotron-fluid text-center bg-white">
      <div class="container">
         <h3 >Gun Database</h3>
-        <p >The database allows individual recorders to upload their gun records, to improve them over time and to view all the other guns that have been recorded around the world. The project database is linked to a world map so that gun records can be viewed in geographical context.</p>
+        <p class="bold">The database allows individual recorders to upload their gun records, to improve them over time and to view all the other guns that have been recorded around the world. The project database is linked to a world map so that gun records can be viewed in geographical context.</p>
         <a href="/database" class="btn btn-primary align-middle">Explore the Guns</a>
-        
+
       </div>
 </div>
-    
+
 <div class="jumbotron jumbotron-fluid text-center paral para02">
      <div class="container">
                 <h3 class="text-white" style="text-shadow: #444 0 1px 1px;">Recording</h3>
-                <span class="img-back bg-dark d-block"><p class="img-text bold" style="text-shadow: #444 0 1px 1px;">Our recording system allows you to record as little or as much as you like. Just add a photograph and a location to qualify as an Observer, identify features on your gun for a Recorder record or measure your gun's dimensions to achieve Gold and be a Surveyor. Our world map of guns allows you to see where guns are and how much information about each one has been documented. Find out more about recording guns.</p></span>
+                <span class="img-back bg-dark d-block"><p class="img-text bold" style="text-shadow: #444 0 1px 1px;">Our recording system allows you to record as little or as much data as you like. For Bronze level records, Observers only need to upload a picture and a location. Recorders can create Silver level records by identifying key physical features of the gun. At the Surveyor level, you can provide full dimensions to achieve Gold and be a Surveyor.
+                  Our world map of guns allows you to see where guns are and how much information about each one has been documented.</p></span>
                 <a class="btn btn-small btn-primary" role="button" href="http://www.3hconsulting.com/techniques/TechRecordingCannon.html"> How to Record Guns</a>
         </div>
 </div>
@@ -34,9 +35,9 @@
 
 <div class="jumbotron jumbotron-fluid text-center bg-white" id="about">
      <div class="container">
-<h1>About the Project</h1>
         <div id="picture-carousel" class="container pictures d-none d-md-flex">
         </div>
+        <h1>About the Project</h1>
     <p>
 The Ultima Ratio Project aims to develop a centralised database of historical muzzle-loading artillery guns.
     </p><p>
@@ -59,18 +60,18 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
 </div>
 
 <div class="row pt-3">
-        
+
             <div class="col">
                 <a href="http://armamentresearch.com/" target="_blank"><img class="rounded mx-auto d-block" src="/img/Ares_Logo-3.png" height="50px"> </a>
             </div><div class="col">
                 <a class="thin" href="https://www.nauticalarchaeologysociety.org/" target="_blank"><img src="/img/icons/nas.png" height="70px" alt="" /></a>
             </div><div class="col">
-                <a class="thin" href="#" target="_blank"><img src="/img/basiliscoe.png" height="70px" alt="" /></a>
+                <a class="thin" href="http://www.basiliscoe.com/" target="_blank"><img src="/img/basiliscoe.png" height="70px" alt="" /></a>
             </div><div class="col-md">
-                <a class="thin" href="#" target="_blank"><img src="/img/cismas.png" height="50px" alt="" /></a>
+                <a class="thin" href="http://www.cismas.org.uk/" target="_blank"><img src="/img/cismas.png" height="50px" alt="" /></a>
             </div>
             <div class="col-sm">
-                <a class="thin" href="#" target="_blank"><img src="/img/MSDS-768.png" height="50px" alt=""></a>
+                <a class="thin" href="https://msdsmarine.com/" target="_blank"><img src="/img/MSDS-768.png" height="50px" alt=""></a>
             </div>
 </div>
 
@@ -117,7 +118,7 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
                 variableWidth: false
                 });
             };
- 
+
     $(document).ready(function(){
       if (!sessionStorage.getItem('posts')){
         $.get('https://public-api.wordpress.com/rest/v1.2/sites/ultimaproject.org/posts', {number:5}, function(data){
@@ -125,7 +126,7 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
                 sessionStorage.setItem('posts', JSON.stringify(data))
                 populate_posts()
                 }
-            })     
+            })
       }
       else {
             populate_posts()

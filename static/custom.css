@@ -93,7 +93,7 @@ background-color: var(--site);
 
 .status { width: 1%; white-space:nowrap; padding: 5px; }
 .status span {
-  width: 15px; height: 15px;  
+  width: 15px; height: 15px;
   color: #FFF; display: block; margin: 0 auto;
   border-radius: 100px; -webkit-border-radius: 100px;
 }
@@ -101,7 +101,7 @@ background-color: var(--site);
 .quality2 { background: #ffcc00; }
 .quality1 { background: #CCC; }
 .quality0 { background: #ae7a3c; }
-        
+
 @media (min-width: 1000px) {
 .overlap {
           position:absolute;
@@ -158,17 +158,17 @@ margin-bottom: 0;
    fill: var(--site-dark);
    border-radius: 50%;
    box-shadow: 0 6px 10px 0 #666;
-   
+
    font-size: 50px;
    line-height: 45px;
    color: var(--site-dark);
    text-align: center;
-   
+
    position: fixed;
    right: 50px;
    bottom: 50px;
    z-index:2000;
-   
+
   transition: all 0.1s ease-in-out;
 }
 
@@ -181,7 +181,7 @@ margin-bottom: 0;
 .map-nav {
   max-width: 60%;
   }}
-  
+
 @media (max-width: 999.98px) {
 .map-nav {}}
 
@@ -191,7 +191,7 @@ margin-bottom: 0;
           top: 93%;
           left: 72.5%;
   }}
-  
+
 @media (max-width: 999.98px) {
 .pagination {}}
 
@@ -211,11 +211,11 @@ margin-bottom: 0;
         outline: 0;
 }
 .image-checkbox input[type="checkbox"] {
-        display: none;    
+        display: none;
 }
 
 .image-checkbox input[type="radio"] {
-        display: none; 
+        display: none;
 }
 
 .image-checkbox-checked {
@@ -235,6 +235,7 @@ margin-bottom: 0;
 
 .img-back {
   opacity: 0.8;
+  background-color: var(--site);
 }
 
 .img-text {
