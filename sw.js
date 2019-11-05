@@ -33,7 +33,7 @@ self.addEventListener('message', (event) => {
   },
   {
     "url": "static/custom.css",
-    "revision": "1e3c9594e0a6c45a88f18265153757e7"
+    "revision": "c7bf306047a5a5b7a6386bdf753fad09"
   },
   {
     "url": "static/dialog.js",
