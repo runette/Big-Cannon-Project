@@ -91,6 +91,9 @@ function sites_dialog(json_data) {
                                         let location = geolocation[key];
                                         places_list.push(location);
                                         }};
+                        if (places_list.length === 0) {
+                                places_list.push({'formatted_address': default_place})
+                        }
                         for (let key in places_list) {
                                 if (places_list.hasOwnProperty(key)){
                                         let location = places_list[key];

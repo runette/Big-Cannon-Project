@@ -220,21 +220,30 @@ def geolocate(location) :
         if len(results) > 10:
             break
     level = 0
-    for location in reverse_geocode_result:
-        if "country" in location['types']:
-            country = location['formatted_address']
-        if 'neighborhood' in location['types']:
-            level = 10
-            default = location['formatted_address']
-            continue
+    if len(reverse_geocode_result) < 2:
         try:
-            admin = [item for item in location['types'] if 'administrative_area' in item][0]
-            admin_level = to_int(admin[-1])
-            if admin_level > level:
-                level = admin_level
-                default = location['formatted_address']
+            default = reverse_geocode_result[0]['formatted_address']
         except:
-            pass    
+            default = "None"
+        country = default
+    else:
+        for location in reverse_geocode_result:
+            if "country" in location['types']:
+                country = location['formatted_address']
+                if level == 0:
+                    default = location['formatted_address']
+            if 'neighborhood' in location['types']:
+                level = 10
+                default = location['formatted_address']
+                continue
+            try:
+                admin = [item for item in location['types'] if 'administrative_area' in item][0]
+                admin_level = to_int(admin[-1])
+                if admin_level > level:
+                    level = admin_level
+                    default = location['formatted_address']
+            except:
+                pass    
     return {"geolocation": reverse_geocode_result, "places": results, 'default': default, 'country': country}
 
 def get_serving_url(upload_metadata):
