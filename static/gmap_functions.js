@@ -283,7 +283,7 @@
                 html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
             }
             else {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="'+(currentPage-1)+'"><span>&laquo;</span></a></li>';
+                html += '<li class="page-item"><btn class="page-link"  data-page="'+(currentPage-1)+'"><span>&laquo;</span></a></li>';
             }
 
             if (totalPages < total){
@@ -306,7 +306,7 @@
                 if (i === currentPage) {
                     a = 'active';
                 }
-                html += '<li class="page-item ' + a + '"><a class="page-link" href="#" data-page="' + i + '">' + p + '</li>';
+                html += '<li class="page-item ' + a + '"><btn class="page-link" data-page="' + i + '">' + p + '</li>';
             }
             $pagination.html(html);
             var next = currentPage + 1;
@@ -314,7 +314,7 @@
                 var $next = $('<li class="page-item disabled"><span class="page-link">&raquo;</span></li>');
             }
             else {
-                var $next = $('<li class="page-item"><a class="page-link" href="#" data-page="' + next + '"><span>&raquo;</span></a></li>');
+                var $next = $('<li class="page-item"><btn class="page-link"  data-page="' + next + '"><span>&raquo;</span></a></li>');
             }
             $pagination.append($next);
         }
@@ -395,7 +395,7 @@
 
             initTableEntries(arrEntries, $target.data('page'));
             sessionStorage.removeItem('gunid')
-            scrollToElement($tableEntries);
+            //scrollToElement($tableEntries);
         });}
 
     function submitForm() {
