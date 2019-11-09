@@ -49,7 +49,7 @@ self.addEventListener('message', (event) => {
   },
   {
     "url": "static/gmap_functions.js",
-    "revision": "93ad99813ae29380720d86fe097d6edb"
+    "revision": "aee8adcd49ac60a4d54c7c73f331aa17"
   },
   {
     "url": "static/manifest.json",

@@ -112,7 +112,7 @@ def fetch_entry():
         return render_template('detail.html',
                            user_data=user_data,
                            gun=gun,
-                           user_name=user['name'],
+                           user_name=User.get_by_id(gun.user_id).fire_user['name'],
                            gun_types=GUN_TYPES,
                            qualities_text=RECORD_QUALITIES,
                            qualities=Gun.Quality,

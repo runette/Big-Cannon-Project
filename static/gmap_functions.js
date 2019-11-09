@@ -250,9 +250,9 @@
         }
 
         return [
-            '<div class="card" onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">',
+            '<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">',
             '<img class="card-img" src="' + filename + '"  width="32px"/></div>',
-            '<div class="col-8"><div class="card-body"><div class="h5 card-title">' + entry["site"] + '</div>',
+            '<div class="col-8"><div class="card-body"><div class="h5 card-title text-truncate">' + entry["site"] + '</div>',
             '<div class="card-text">' + entry["anchor_type"] + '</div>',
             '<div class="card-text"><small class=text-muted>' + entry["names"] + '</small></div></div></div>', 
             '<div class="col-2 status">',
