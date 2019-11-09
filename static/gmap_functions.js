@@ -286,15 +286,19 @@
                 html += '<li class="page-item"><a class="page-link" href="#" data-page="'+(currentPage-1)+'"><span>&laquo;</span></a></li>';
             }
 
-            if (currentPage - 5 > 0) {
-                i = currentPage - 5;
-                total = currentPage + 5
-            }
+            if (totalPages < total){
+                total = totalPages;
+            } else {
             if (currentPage + 5 >= totalPages) {
                 i = Math.max(0, totalPages - 10);
                 total = totalPages;
-            }
-            
+            } else {
+                if (currentPage - 5 > 0) {
+                    i = currentPage - 5;
+                    total = currentPage + 5;
+                    }
+                };
+                };
 
             for (; i < total; i++) {
                 var p = i + 1,

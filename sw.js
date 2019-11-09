@@ -33,11 +33,11 @@ self.addEventListener('message', (event) => {
   },
   {
     "url": "static/custom.css",
-    "revision": "c7bf306047a5a5b7a6386bdf753fad09"
+    "revision": "85e3cb710e0d6ab98c7d16b0132fd998"
   },
   {
     "url": "static/dialog.js",
-    "revision": "cc5d0e1c1248b0b714e7fd935b4c05fc"
+    "revision": "7e05f151a1136f3ac8189de1deb1239d"
   },
   {
     "url": "static/favicon.ico",
@@ -49,7 +49,7 @@ self.addEventListener('message', (event) => {
   },
   {
     "url": "static/gmap_functions.js",
-    "revision": "c1381dbaf108b45bd5a6081f73501ad0"
+    "revision": "e71afa9af1fdb7c5b5b5af6f987468c6"
   },
   {
     "url": "static/manifest.json",
