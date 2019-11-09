@@ -173,6 +173,7 @@
                                 }
                             })
                             $(this.parentElement).addClass('image-checkbox-checked')
+                            $(`#${this.name}`).text(this.value)
                             e.preventDefault();
                             });
                         $("#detail :input").change(function() {

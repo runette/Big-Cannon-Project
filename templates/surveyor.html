@@ -1,6 +1,6 @@
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#mouldings')"> MOULDING CODE - <input class="bg-site" type="text" name="moulding" id="moulding" onclick="event.stopPropagation()" value="{% for code in gun.moulding_code %}{{code}}{% endfor %}"/></div>
-    <div class="collapse" id="mouldings">
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#mouldings')" > MOULDING CODE - <input class="bg-site" type="text" name="moulding" id="moulding" style="width:25%;" onclick="event.stopPropagation()" value="{% for code in gun.moulding_code %}{{code}}{% endfor %}"/></div>
+    <div class="collapse" id="mouldings" style="max-width:700px;">
     <div class="row">
         <div class="card">
             <img src="/img/mouldings.png" class="card-img-top mx-auto" alt="..." style="max-width: 600px">
@@ -74,8 +74,8 @@
     </div>
 </div>
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#muzzle')"> MUZZLE CODE - {{gun.muzzle_code}}</div>
-    <div class="collapse" id="muzzle">
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#muzzle')"> MUZZLE CODE - <span id="muzzle_code">{{gun.muzzle_code}}</span></div>
+    <div class="collapse" id="muzzle" style="max-width:700px;">
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>R</h1><small>Tulip</small></span>
@@ -120,8 +120,8 @@
     </div></div>
 </div>
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#cascable')"> CASCABLE CODE - {{gun.cas_code}}</div>
-    <div class="collapse" id="cascable">
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#cascable')"> CASCABLE CODE - <span id="cas_code">{{gun.cas_code}}</span></div>
+    <div class="collapse" id="cascable" style="max-width:700px;">
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>K</h1><small>Conical</small></span>
@@ -163,8 +163,8 @@
     </div></div>
 </div>
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#button')"> BUTTON CODE - {{gun.button_code}}</div>
-    <div class="collapse show" id="button">
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#button')"> BUTTON CODE - <span id="button_code">{{gun.button_code}}</span></div>
+    <div class="collapse show" id="button" style="max-width:700px;">
     <div class="row">
         <label class="image-checkbox iradio col-4 nopad text-center ">
             <span class="imagecheck_text"><h1>N</h1><small>Knob</small></span>
