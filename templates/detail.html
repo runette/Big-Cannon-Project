@@ -154,17 +154,15 @@
                                 $(this).removeClass('image-checkbox-checked');
                                 }
                             });
-                        $(".icheck  ").on("click", function (e) {
-                            if ($(this).hasClass('image-checkbox-checked')) {
-                                $(this).removeClass('image-checkbox-checked');
-                                $(this).find('input[type="checkbox"]').first().removeAttr("checked");
-                                }
-                            else {
+                        $(".icheck").on("click", function (e) {
+                            if (! $(this).hasClass('image-checkbox-checked')) {
                                 $(this).addClass('image-checkbox-checked');
                                 $(this).find('input').first().attr("checked", "checked");
                             }
-
+                            el = $('#moulding')
+                            el.val(el.val() + $(this).find('input').first().val());
                             e.preventDefault();
+                            form_changed();
                             });
 
                         $("[type='radio']").on("change", function (e) {

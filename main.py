@@ -156,7 +156,7 @@ def set_entry():
             mark_details=request.form.get('mark_details'),
             interpretation=to_bool(request.form.get('interpretation')),
             inter_details=request.form.get('inter_details'),
-            moulding_code=request.form.getlist('moulding[]'),
+            moulding_code=list(request.form.get('moulding')),
             muzzle_code=request.form.get('muzzle_code', ""),
             cas_code=request.form.get('cas_code', ""),
             button_code=request.form.get('button_code', ""),
