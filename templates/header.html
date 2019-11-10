@@ -50,7 +50,7 @@
     <div class="container">
         <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: var(--site);">
           <div class="navbar-brand">
-              <img class="img-responsive m0 p0" height="50" src="https://ultimaproject.files.wordpress.com/2018/07/cropped-ultima-ratio-logo1.jpg   ">
+              <img class="img-responsive m0 p0" height="50" src="img/ultima-ratio-logo.jpg   ">
           </div>
           <div class="collapse navbar-collapse" id="navbarNav">
                 <a class="navbar-brand" href="/"></a>
@@ -77,11 +77,25 @@
               <span class="navbar-toggler-icon"></span>
           </button>
         </nav>
+
     </div>
     <div class="container pt-5">
 
     {% block main_content %} {% endblock %}
 
+    </div>
+    <div class="toast" role="alert" id="update-toast" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+        <strong class="mr-auto">Update</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="toast-body">
+        There is an application update. Refresh your browser t get the update.
+        <button class='btn-primary' tyep='button' onclick="windows.location.reload()">Refresh</button>
+      </div>
     </div>
 </body>
     <script
@@ -101,15 +115,17 @@
     </script>
 <script type="module">
 import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-window.prod.mjs';
-
+$('.toast').toast()
 if ('serviceWorker' in navigator) {
   const wb = new Workbox('/sw.js');
-  wb.addEventListener('waiting', (event) => {
-    wb.addEventListener('controlling', (event) => {
-              window.location.reload();
-            });
-    wb.messageSW({type: 'SKIP_WAITING'});
-  });
+  wb.addEventListener('installed', (event) => {
+    if (event.isUpdate) {
+            $('#update-toast').toast('show');
+            new Promise(resolve => setTimeout(resolve, 5000)).then(() => {
+              $('#update-toast').toast('dispose');
+            })
+          };
+        });
   wb.register();
 }
 </script>

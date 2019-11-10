@@ -13,11 +13,8 @@
 
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
+workbox.core.skipWaiting();
+workbox.core.clientsClaim();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
@@ -53,7 +50,7 @@ self.addEventListener('message', (event) => {
   },
   {
     "url": "static/manifest.json",
-    "revision": "bf2475da6c32db3b5ba67395c8333bb4"
+    "revision": "7f7b8fe80771c88053eadf97a9835ca4"
   },
   {
     "url": "static/markerclusterer.js",
@@ -144,4 +141,4 @@ workbox.routing.registerRoute(
       }),
     ],
   }),
-); 
+);
