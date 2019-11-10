@@ -12,7 +12,9 @@
                 scaleControl: true,
                 streetViewControl: false,
                 rotateControl: true,
-                fullscreenControl: false
+                fullscreenControl: false,
+                gestureHandling: 'cooperative',
+                scrollwheel: false,
             };
             window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
             window.infoWindow = new google.maps.InfoWindow();
@@ -115,22 +117,22 @@
         }
 
         var content = generateContent(entry);
-        marker.addListener('click', function (e) {
-            e.cancelBubble = true;
-            e.returnValue = false;
-            if (e.stopPropagation) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
+        //marker.addListener('click', function (e) {
+            //e.cancelBubble = true;
+            //e.returnValue = false;
+            //if (e.stopPropagation) {
+                //e.stopPropagation();
+                //e.preventDefault();
+            //}
 
-            infoWindow.setContent(content);
-            infoWindow.open(map, marker);
-            map.setCenter(marker.position);
+            //infoWindow.setContent(content);
+            //infoWindow.open(map, marker);
+            //map.setCenter(marker.position);
 
-            if (map.getZoom() < MIN_ZOOM) {
-                map.setZoom(MIN_ZOOM);
-            }
-        });
+            //if (map.getZoom() < MIN_ZOOM) {
+                //map.setZoom(MIN_ZOOM);
+            //}
+        //});
 
         markers.push(marker);
     }
@@ -422,9 +424,9 @@
     initSearchForm();
     updateTableEntries();
     //resize
-        $(window).off('resize.map').on('resize.map', function () {
-            if(map.getZoom()< MIN_ZOOM){
-                map.setZoom(MIN_ZOOM);
-            }
-        });
+     //   $(window).off('resize.map').on('resize.map', function () {
+     //       if(map.getZoom()< MIN_ZOOM){
+     //           map.setZoom(MIN_ZOOM);
+     //       }
+     //   });
 });
