@@ -28,7 +28,7 @@
                 }
             })
         }
-    
+
 })(window.jQuery, function ($) {
 
     var MIN_ZOOM = 7,
@@ -93,7 +93,7 @@
 
         markerClusterer = new MarkerClusterer(map, markers, mcOptions);
     }
-    
+
     function addMarkers() {
         for (var i = 0, l = arrEntries.length; i < l; i++) {
             addMarker(arrEntries[i]);
@@ -189,7 +189,7 @@
             isSearchAnchorType = anchorType != '',
             isSearchQuality = quality != '',
             fiterredEntries;
-            
+
         sessionStorage.setItem("filter", JSON.stringify({type:anchorType, quality:quality, order:order}))
 
         fiterredEntries = entries.filter(function (entry) {
@@ -249,7 +249,7 @@
             '<img class="card-img" src="' + filename + '"  width="32px"/></div>',
             '<div class="col-8"><div class="card-body"><div class="h5 card-title text-truncate">' + entry["site"] + '</div>',
             '<div class="card-text">' + entry["anchor_type"] + '</div>',
-            '<div class="card-text"><small class=text-muted>' + entry["names"] + '</small></div></div></div>', 
+            '<div class="card-text"><small class=text-muted>' + entry["names"] + '</small></div></div></div>',
             '<div class="col-2 status">',
             '<span class="quality' + entry["quality"] + '"></span>',
             '</div></div></div>',
@@ -273,7 +273,7 @@
                 totalPages = Math.ceil(entries.length / dataBase.pageSize),
                 i = 0,
                 html = '';
-
+            var width = window.innerWidth
             if (currentPage <= 0) {
                 html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
             }
@@ -397,7 +397,7 @@
         sessionStorage.removeItem('gunid');
         updateTableEntries();
     }
-        
+
 
     $doc.on('click', '.clickable-row', function (e) {
         e.preventDefault();
@@ -405,7 +405,7 @@
 
         window.location.href = $(this).data('href');
     });
-    
+
     map = window.map;
     infoWindow = window.infoWindow;
     if (sessionStorage.getItem('filter')){
