@@ -13,8 +13,6 @@
                 streetViewControl: false,
                 rotateControl: true,
                 fullscreenControl: false,
-                gestureHandling: 'cooperative',
-                scrollwheel: false,
             };
             window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
             window.infoWindow = new google.maps.InfoWindow();
@@ -117,22 +115,17 @@
         }
 
         var content = generateContent(entry);
-        //marker.addListener('click', function (e) {
-            //e.cancelBubble = true;
-            //e.returnValue = false;
-            //if (e.stopPropagation) {
-                //e.stopPropagation();
-                //e.preventDefault();
-            //}
+        marker.addListener('click', function (e) {
+            e.cancelBubble = true;
+            e.returnValue = false;
+            if (e.stopPropagation) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
 
-            //infoWindow.setContent(content);
-            //infoWindow.open(map, marker);
-            //map.setCenter(marker.position);
-
-            //if (map.getZoom() < MIN_ZOOM) {
-                //map.setZoom(MIN_ZOOM);
-            //}
-        //});
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+        });
 
         markers.push(marker);
     }
@@ -171,9 +164,9 @@
             '<img src="' + filename + '" style="width: 100%; height: auto;">',
             '</div>',
             '<div style="overflow: hidden; padding-left: 10px;">',
-            '<p style="margin-bottom: 0;"><strong>Type: </strong>' + entry.anchor_type + '</p>',
             '<p style="margin-bottom: 0;"><strong>Site: </strong>' + (entry.site == '' ? 'unknown' : entry.site) + '</p>',
-            '<p style="margin-bottom: 0;"><strong>Location: </strong>' + entry.location + '</p>',
+            '<p style="margin-bottom: 0;"><strong>Type: </strong>' + entry.anchor_type + '</p>',
+            entry.location ? '<p style="margin-bottom: 0;"><strong>Location: </strong>' + entry.location + '</p>' : "",
             '</div>',
             '</div>',
             '</a>',
