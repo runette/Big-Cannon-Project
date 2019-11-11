@@ -92,6 +92,29 @@ def fetch_map():
     })
     return json.dumps(map)
 
+@app.route('/map_fetch_2', methods=['POST'])
+def fetch_map_2():
+    user_data = UserStatus(request.cookies.get("token"))
+    map = {
+        "defaultThumb": "/img/70x70.png",
+        "icons": {
+            "bronze": '/img/cannon_bronze.png',
+            "silver": "/img/cannon_silver.png",
+            'gold': "/img/cannon_gold.png",
+            'none': '/img/cannon_bronze.png',
+        },
+        "entryPath": "/database/entry?gun_id=",
+        "sort": {"asc": 4, "desc": 3},
+    }
+    if user_data.user:
+        entries = Gun.map_data_2(user_data.namespace)
+    else:
+        entries = Gun.map_data_2(None)
+    map.update({
+        "entries": entries
+    })
+    return json.dumps(map)
+
 @app.route('/database/entry')
 def fetch_entry():
     user_data = UserStatus(request.cookies.get("token"))

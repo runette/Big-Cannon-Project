@@ -34,9 +34,10 @@ import time
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
-
 RECORD_QUALITIES = ('Observer', "Recorder", "Surveyor")
-
+GUN_CATEGORIES = ("Not Known", "Muzzle Loading", "Breach Loading", "Carronade")
+GUN_STATUS = ('Unverified', 'Auto', 'Verified')
+MATRIX = {'type': GUN_TYPES, 'qualitiy': RECORD_QUALITIES, 'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 
 
 class BNG():
@@ -79,7 +80,12 @@ class Gun(Model):
         UNVERIFIED = 0
         AUTO = 1
         VERIFIED = 2
-    
+    class Categories(Enum):
+        NOT_KNOWN = 0
+        MUZZLE_LOAD = 1
+        BREACH_LOAD = 2
+        CARRONADE = 3
+        
     def schema(self):
         super().schema()
         self.Property("gunid", ndb.IntegerProperty)
@@ -109,6 +115,7 @@ class Gun(Model):
         self.Property("muzzle_code", ndb.StringProperty)
         self.Property("cas_code", ndb.StringProperty)
         self.Property("button_code", ndb.StringProperty)
+        self.Property('category', ndb.EnumProperty, enum=Gun.Categories, default=Gun.Categories.NOT_KNOWN)
 
     @classmethod
     def map_data(cls, namespace):
@@ -151,6 +158,47 @@ class Gun(Model):
             except Exception as e:
                 logging.error(str(e))
         return map_data
+    
+    @classmethod
+    def map_data_2(cls, namespace):
+        result = cls.query(order=['gunid'], namespace=namespace).fetch()
+        users = User.query().fetch()
+        map_data = []
+        for gun in result:
+            try:
+                thumbnail = gun.get_images()[0].get("s32")
+            except:
+                thumbnail = "/img/32x32.png"
+            try:
+                name = [user for user in users if user.user_id == gun.user_id][0].fire_user['name']
+            except Exception as e:
+                id = ""
+                for user in users:
+                    fu = user.fire_user
+                    if fu['email'] in gun.name :
+                        id = fu['user_id']
+                if id != "" :
+                    gun.user_id = id
+                    gun.put()
+                    name = User.get_by_id(gun.user_id).fire_user['name']
+                else :
+                    name = gun.name
+            try:
+                line = {}
+                line.update({'thumbnail': thumbnail, 'author': name})
+                for item in gun.items():
+                    if item[0] == 'location':
+                        line.update({'lat': item[1].latitude, 'lng': gun.location.longitude})
+                    elif item[0] in MATRIX:
+                        line.update({item[0]: MATRIX[item[0]][item[1]]})
+                    elif item[0] == 'date':
+                        line.update({'date': gun.date.strftime('%d %b %Y')})
+                    else:
+                        line.update({item[0]: item[1]})
+                map_data.append(line)
+            except Exception as e:
+                logging.error(str(e))
+        return map_data    
 
     @classmethod
     def get_next(cls, namespace):

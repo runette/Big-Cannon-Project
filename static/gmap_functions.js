@@ -55,6 +55,7 @@
         $order = $('#order'),
         arrEntries;
         dataBase = JSON.parse(sessionStorage.getItem('database'));
+        var pagesize = window.innerWidth < 1000 ? 5 : 10;
 
     /* map functions */
 
@@ -263,7 +264,7 @@
 
     function updatePaginations(entries, currentPage) {
         var $pagination = $('.pagination');
-        let pagesize = window.innerWidth < 1000 ? 5 : 10;
+
         if (!$pagination.length) {
             $pagination = $('<ul class="pagination pagination-sm"></ul>').insertAfter($tableEntries);
         }
@@ -330,7 +331,7 @@
             if (gunid){
                 for (let idx = 0; idx<entries.length; idx++ ){
                                 if (entries[idx].anchor_id == gunid){
-                                    currentPage = Math.floor(idx / dataBase.pageSize) ;
+                                    currentPage = Math.floor(idx / pagesize) ;
                                     break;
                                 }
                     }
@@ -340,7 +341,7 @@
             }
         }
         if (entries && entries.length) {
-            var pageSize = Math.min(window.innerWidth < 1000 ? 5 : 10, entries.length),
+            var pageSize = Math.min(pagesize, entries.length),
                 i = currentPage * pageSize,
                 l = i + pageSize,
                 html = '';
@@ -360,7 +361,7 @@
             $tableEntries.addClass('hide');
         }
 
-        updatePaginations(entries, currentPage); 
+        updatePaginations(entries, currentPage);
     }
 
     function initSearchForm() {
