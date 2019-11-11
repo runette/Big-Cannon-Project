@@ -80,7 +80,6 @@ def fetch_map():
             'gold': "/img/cannon_gold.png",
             'none': '/img/cannon_bronze.png',
         },
-        "pageSize": 10,
         "entryPath": "/database/entry?gun_id=",
         "sort": {"asc": 4, "desc": 3},
     }

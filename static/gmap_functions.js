@@ -263,17 +263,16 @@
 
     function updatePaginations(entries, currentPage) {
         var $pagination = $('.pagination');
-
+        let pagesize = window.innerWidth < 1000 ? 5 : 10;
         if (!$pagination.length) {
             $pagination = $('<ul class="pagination pagination-sm"></ul>').insertAfter($tableEntries);
         }
 
-        if (dataBase.pageSize && entries.length && entries.length > dataBase.pageSize) {
+        if ( entries.length > pagesize) {
             let total = 10,
-                totalPages = Math.ceil(entries.length / dataBase.pageSize),
+                totalPages = Math.ceil(entries.length / pagesize),
                 i = 0,
                 html = '';
-            var width = window.innerWidth
             if (currentPage <= 0) {
                 html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
             }
@@ -341,7 +340,7 @@
             }
         }
         if (entries && entries.length) {
-            var pageSize = Math.min(dataBase['pageSize'], entries.length),
+            var pageSize = Math.min(window.innerWidth < 1000 ? 5 : 10, entries.length),
                 i = currentPage * pageSize,
                 l = i + pageSize,
                 html = '';
@@ -361,7 +360,7 @@
             $tableEntries.addClass('hide');
         }
 
-        updatePaginations(entries, currentPage);
+        updatePaginations(entries, currentPage); 
     }
 
     function initSearchForm() {
@@ -416,10 +415,4 @@
         }
     initSearchForm();
     updateTableEntries();
-    //resize
-     //   $(window).off('resize.map').on('resize.map', function () {
-     //       if(map.getZoom()< MIN_ZOOM){
-     //           map.setZoom(MIN_ZOOM);
-     //       }
-     //   });
 });
