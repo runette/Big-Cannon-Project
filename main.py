@@ -23,7 +23,7 @@
 import jinja2, os, json, logging
 from update import UpdateSchema
 from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
-from flask import Flask, render_template, send_from_directory, request
+from flask import Flask, render_template, send_from_directory, request, redirect
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -318,7 +318,16 @@ def add_record():
         gun.put()
         return str(gun.gunid)
 
-    
+@app.route('/privacy', methods=['GET'])
+def privacy():
+    return redirect("https://www.iubenda.com/privacy-policy/19391456", code=302)
+
+@app.route('/tor', methods=['GET'])
+def tor():
+    return redirect("https://app.termly.io/document/terms-and-conditions/39c09e25-344b-49a8-95d2-d817738d36aa", code=302)
+
+
+
 @app.route('/img/<path:path>', methods=['GET'])
 def img(path):
     return send_from_directory(os.path.join(root, 'img'), path)

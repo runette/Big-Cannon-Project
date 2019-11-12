@@ -38,7 +38,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="small modal-body">To create a Gun record, you must be logged in. When you log in, we create a cookie on your computer strictly for essential functional use only. By proceeding you accept this and our <a href="https://app.termly.io/document/terms-and-conditions/39c09e25-344b-49a8-95d2-d817738d36aa">Terms of Reference</a> and <a href="https://www.iubenda.com/privacy-policy/19391456">Privacy Policy</a></div>
+          <div class="small modal-body">To create a Gun record, you must be logged in. When you log in, we create a cookie on your computer strictly for essential functional use only. By proceeding you accept this and our <a href="/tor">Terms of Reference</a> and <a href="/privacy">Privacy Policy</a></div>
           <div class="modal-body" id="firebaseui-auth-container">
           </div>
           <div class="modal-footer">
@@ -57,16 +57,19 @@
                 <a href="/" class="logo"></a>
                 <ul class="navbar-nav font-weight-bold">
                     <li class="nav-item{% if index == 1 %} active {% endif %}" id="nav-1">
-                        <a class="nav-link" href="/">Home</a>
+                      <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item {% if index == 3 %} active {% endif %}" id="nav-2">
-                        <a class="nav-link" href="/database">Gun Database</a>
+                      <a class="nav-link" href="/database">Gun Database</a>
                     </li>
                     <li class="nav-item {% if index == 4 %} active {% endif %}" id="nav-3">
-                        <a class="nav-link" href="/new_record">New Record</a>
+                      <a class="nav-link" href="/new_record">New Record</a>
                     </li>
                     <li class="nav-bar nav " >
-                        <a class="nav-link" id="login"  role="button" data-toggle="modal" data-target="#login-modal"> {{user_data.url_linktext}}</a>
+                      <a class="nav-link" id="login"  role="button" data-toggle="modal" data-target="#login-modal"> {{user_data.url_linktext}}</a>
+                    </li>
+                    <li id="test-badge" class="d-none">
+                      <span class="badge badge-warning">Test</span>
                     </li>
                 </ul>
           </div>
@@ -111,7 +114,10 @@
     <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
     <script src="/static/functions.js"></script>
     <script >
-    dev = ('{{user_data.test is defined }}' === 'True')?true:false || window.location.hostname == ('localhost')
+    dev = ('{{user_data.test }}' === 'True')?true:false || window.location.hostname == ('localhost')
+    if (dev) {
+      $('#test-badge').removeClass('d-none');
+    }
     </script>
 <script type="module">
 import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-window.prod.mjs';
