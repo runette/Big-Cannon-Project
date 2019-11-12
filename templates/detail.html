@@ -176,6 +176,11 @@
                             $(`#${this.name}`).text(this.value)
                             e.preventDefault();
                             });
+                        $("#detail :input").keypress(function() {
+                            if (this.id != "file-name"){
+                                form_changed()
+                                }
+                            });
                         $("#detail :input").change(function() {
                             if (this.id != "file-name"){
                                 form_changed()
