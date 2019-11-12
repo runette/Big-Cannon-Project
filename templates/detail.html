@@ -127,7 +127,7 @@
                             $('#fab')
                                 .off('click.fab-click')
                                 .on('click.fab-click', function(){
-                                    sessionStorage.removeItem('database');
+                                    //sessionStorage.removeItem('database');
                                     $('#detail').submit()
                                 })
                             }
@@ -177,7 +177,7 @@
                             e.preventDefault();
                             });
                         $("#detail :input").change(function() {
-                            if ($('#file-name').text() != " ") {
+                            if (this.id != "file-name"){
                                 form_changed()
                                 }
                             });

@@ -305,9 +305,9 @@ def get_serving_url(upload_metadata):
         rgb = original.image.convert('RGB')
         original.image = rgb
         original.put(content_type='image/jpeg', content_format='JPEG')
-    thumb_32 = original.resize((32, 32), folder + "/32x32")
+    thumb_32 = original.thumbnail((32, 32), folder + "/32x32")
     thumb_32.put()
-    thumb_200 = original.resize((200,200), folder + "/200x200")
+    thumb_200 = original.thumbnail((200,200), folder + "/200x200")
     thumb_200.put()    
     mediaLink = {"original": original.get_media_link(), "s32": thumb_32.get_media_link(), "s200": thumb_200.get_media_link()}
     return mediaLink
