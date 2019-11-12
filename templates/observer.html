@@ -2,12 +2,21 @@
                     <div class="col-md-6">
                         <table  class="table table-striped">
                             <thead class="thead-dark">
-                            <th colspan='2' scope="row">Basic Information</th>
+                            <th colspan='4' scope="row">Basic Information</th>
                             </thead>
                             <tbody>
                             <tr>
+                                <td >Type of Gun</td>
+                                <td colspan="3"> <select class="custom-select" name="category">
+                                    {% for name,member in gun.Categories.__members__.items() %}
+                                      <option value="{{name}}" {% if gun.category.value == member.value %} selected {% endif %} >{{gun_categories[member.value]}}</option>
+                                    {% endfor %}
+                                     </select>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Material</td>
-                                <td> <select class="custom-select" name="type">
+                                <td colspan="3"> <select class="custom-select" name="type">
                                     {% for name,member in gun.Types.__members__.items() %}
                                       <option value="{{name}}" {% if gun.type.value == member.value %} selected {% endif %} >{{gun_types[member.value]}}</option>
                                     {% endfor %}
@@ -15,16 +24,14 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Short Desc</td>
-                                <td><input class="form-control" type="text" name="description" value="{% if gun.description%}{{ gun.description }}{%endif%}" placeholder="Description" > </td>
+                                <td >Short Desc</td>
+                                <td colspan="3"><input class="form-control" type="text" name="description" value="{% if gun.description%}{{ gun.description }}{%endif%}" placeholder="Description" > </td>
                             </tr>
                             <tr>
-                                <td>Author</td>
-                                <td><input class="form-control" type="text" name="name" value="{{ user_name }}" placeholder="Name" readonly ></td>
-                            </tr>
-                            <tr>
-                                <td>Date Recorded</td>
-                                <td class="">{{gun.date.strftime('%d %b %Y')}}</td>
+                                <td >Author</td>
+                                <td><input class="form-control" type="text" name="name" value="{{ user_name }}" placeholder="Name" readonly style="max-width:10em;"></td>
+                                <td>Date <span class="d-none d-md-inline">Recorded</span></td>
+                                <td class="">{{gun.date.strftime('%x')}}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -34,7 +41,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" name="markings" class="custom-control-input update-field" id="markings" {% if gun.markings %} checked {% endif %} onchange="select_button('markings')" >
+                                            <input type="checkbox" name="markings" class="custom-control-input update-field"  id="markings" {% if gun.markings %} checked {% endif %} onchange="select_button('markings')" >
                                         <label class="custom-control-label" for="markings">Markings?</label>
                                         </div>
                                     </div>

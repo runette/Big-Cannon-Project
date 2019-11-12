@@ -22,7 +22,7 @@
 
 import jinja2, os, json, logging
 from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
 from flask import Flask, render_template, send_from_directory, request
 from datetime import datetime
 from urllib.parse import urlparse
@@ -98,9 +98,9 @@ def fetch_map_2():
     map = {
         "defaultThumb": "/img/70x70.png",
         "icons": {
-            "bronze": '/img/cannon_bronze.png',
-            "silver": "/img/cannon_silver.png",
-            'gold': "/img/cannon_gold.png",
+            "observer": '/img/cannon_bronze.png',
+            "recorder": "/img/cannon_silver.png",
+            'surveyor': "/img/cannon_gold.png",
             'none': '/img/cannon_bronze.png',
         },
         "entryPath": "/database/entry?gun_id=",
@@ -138,6 +138,7 @@ def fetch_entry():
                            gun_types=GUN_TYPES,
                            qualities_text=RECORD_QUALITIES,
                            qualities=Gun.Quality,
+                           gun_categories=GUN_CATEGORIES,
                            index=index,
                            edit=edit,
                                )
@@ -168,6 +169,7 @@ def set_entry():
         gun.populate(
             description=request.form.get('description'),
             type=Gun.Types[request.form.get('type')],
+            category=Gun.Categories[request.form.get('category')],
             user_id=request.form.get('user_id'),
             site=request.form.get('site', ""),
             context=request.form.get('context'),
@@ -198,12 +200,13 @@ def set_entry():
             gun.country = address['country']
         gun.put()
         return render_template('detail.html',
-                               user_data= user_data,
-                               gun= gun,
-                               gun_types= GUN_TYPES,
-                               qualities_text= RECORD_QUALITIES,
-                               qualities= Gun.Quality,
-                               index= 4,
+                               user_data=user_data,
+                               gun=gun,
+                               gun_types=GUN_TYPES,
+                               qualities_text=RECORD_QUALITIES,
+                               qualities=Gun.Quality,
+                               gun_categories=GUN_CATEGORIES,
+                               index=4,
                                edit=True
                                )
 

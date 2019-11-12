@@ -303,7 +303,14 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
   /http.*\.(?:js|css)$/,
-  new workbox.strategies.CacheFirst(),
+  new workbox.strategies.CacheFirst({
+    cacheName: 'libraries',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      }),
+    ],
+  }),
 );
 
 workbox.routing.registerRoute(

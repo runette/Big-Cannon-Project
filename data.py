@@ -37,7 +37,7 @@ GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 RECORD_QUALITIES = ('Observer', "Recorder", "Surveyor")
 GUN_CATEGORIES = ("Not Known", "Muzzle Loading", "Breach Loading", "Carronade")
 GUN_STATUS = ('Unverified', 'Auto', 'Verified')
-MATRIX = {'type': GUN_TYPES, 'qualitiy': RECORD_QUALITIES, 'category': GUN_CATEGORIES, 'status': GUN_STATUS}
+MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES, 'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 
 
 class BNG():

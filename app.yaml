@@ -1,9 +1,11 @@
 runtime: python37
 
-
-
 handlers:
 
+- url: /sw\.js
+  static_files : sw.js
+  upload: sw\.js
+  expiration: "1s"
 
 - url: /static
   static_dir: static
