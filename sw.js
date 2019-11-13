@@ -302,7 +302,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  /http.*\.(?:js|css)$/,
+  /http.*\.(?:js|css|mjs)$/,
   new workbox.strategies.CacheFirst({
     cacheName: 'libraries',
     plugins: [
