@@ -193,8 +193,6 @@ class Gun(Model):
                         line.update({item[0]: MATRIX[item[0]][item[1]]})
                     elif item[0] == 'date':
                         line.update({'date': gun.date.strftime('%d %b %Y')})
-                    elif item[0] == 'name':
-                        line.update({item[0]: name})
                     else:
                         line.update({item[0]: item[1]})
                 map_data.append(line)

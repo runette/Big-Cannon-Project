@@ -186,10 +186,12 @@ def set_entry():
             button_code=request.form.get('button_code', ""),
         )
         gun.measurements = {}
+        scale = 1 if to_bool(request.form.get('units')) else 1000
         MEASUREMENTS = ['length', 'base_ring', 'muzzle', 'bore', 'trunnion_position', 'trunnion_width', 'trunnion_diameter', 'trunnion_offset']
         for item in MEASUREMENTS:
             m = gun.measurements
-            m.update({item: to_int(request.form.get(item))})
+            value = request.form.get(item) if request.form.get(item) else "0"
+            m.update({item: int(float(value) * scale)})
             gun.measurements = m
         if  gun.country == 'none' or new_location != gun.location:
             gun.location = new_location
@@ -325,8 +327,6 @@ def privacy():
 @app.route('/tor', methods=['GET'])
 def tor():
     return redirect("https://app.termly.io/document/terms-and-conditions/39c09e25-344b-49a8-95d2-d817738d36aa", code=302)
-
-
 
 @app.route('/img/<path:path>', methods=['GET'])
 def img(path):

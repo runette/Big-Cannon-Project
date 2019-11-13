@@ -83,16 +83,17 @@
                         $('input').prop("readonly", true);
                         $('select').prop("disabled", true);
 
-                    }
+                    };
                     $('#fab').on('click.fab-click', function(){
                         location.href='/new_record'
-                    })
+                    });
+
                     if (sessionStorage.getItem('view')){
                         $('#' + sessionStorage.getItem('view')).tab('show')
-                    }
+                    };
                     function feature_toggle(feature){
                             $(feature).collapse('toggle')
-                            }
+                            };
                     function next() {
                         let idx
                         for (idx = 0; idx<current_view.length; idx++ ){
@@ -105,7 +106,7 @@
                                     }
                                 }
                             }
-                        }
+                        };
 
                     function last() {
                         let idx
@@ -119,7 +120,26 @@
                                     }
                                 }
                             }
-                        }
+                        };
+                        
+                    function updateSvg(cannonSvg) {
+                        cannonSvg.getElementById('length-text').firstElementChild.innerHTML = measurements['length']/scale;
+                        $('#length').val(measurements['length']/scale);
+                        cannonSvg.getElementById('br-text').firstElementChild.innerHTML = measurements['base_ring']/scale;
+                        $('#base_ring').val(measurements['base_ring']/scale);
+                        cannonSvg.getElementById('muzzle-text').firstElementChild.innerHTML = measurements['muzzle']/scale;
+                        $('#muzzle').val    (measurements['muzzle']/scale);
+                        cannonSvg.getElementById('bore-text').firstElementChild.innerHTML = measurements['bore']/scale;
+                        $('#bore').val(measurements['bore']/scale);
+                        cannonSvg.getElementById('tp-text').firstElementChild.innerHTML = measurements['trunnion_position']/scale;
+                        $('#trunnion_position').val(measurements['trunnion_position']/scale);
+                        cannonSvg.getElementById('tw-text').firstElementChild.innerHTML = measurements['trunnion_width']/scale;
+                        $('#trunnion_width').val(measurements['trunnion_width']/scale);
+                        cannonSvg.getElementById('td-text').firstElementChild.innerHTML = measurements['trunnion_diameter']/scale;
+                        $('#trunnion_diameter').val(measurements['trunnion_diameter']/scale);
+                        cannonSvg.getElementById('to-text').firstElementChild.innerHTML = measurements['trunnion_offset']/scale;
+                        $('#trunnion_offset').val(measurements['trunnion_offset']/scale);
+                        };
 
                     function form_changed(){
                         if (edit == 'True') {
@@ -131,21 +151,33 @@
                                     $('#detail').submit()
                                 })
                             }
-                        }
-
-                    $(function(){
-                        let cannon = $("#cannon")[0];
+                        };
+                    let measurements = {
+                        "length":{{gun.measurements.length | default(0, true)}},
+                        "base_ring":{{gun.measurements.base_ring | default(0, true)}},
+                        "muzzle":{{gun.measurements.muzzle | default(0, true)}},
+                        "bore":{{gun.measurements.bore | default(0, true)}},
+                        "trunnion_position":{{gun.measurements.trunnion_position | default(0, true)}},
+                        "trunnion_width":{{gun.measurements.trunnion_width | default(0, true)}},
+                        "trunnion_diameter":{{gun.measurements.trunnion_diameter | default(0, true)}},
+                        "trunnion_offset":{{gun.measurements.trunnion_offset | default(0, true)}},
+                        };
+                    let scale;
+                    if (sessionStorage.getItem('scale') == 'm') {
+                        $('#units').prop( "checked", false );
+                        scale=1000.0;
+                    }
+                    else {
+                        sessionStorage.setItem("scale","mm");
+                        scale=1.0;
+                    };
+                    let cannon = $("#cannon")[0];
                         cannon.addEventListener('load', function() {
                             let cannonSvg = cannon.contentDocument;
-                            cannonSvg.getElementById('length-text').firstElementChild.innerHTML = "{{gun.measurements.length}}";
-                            cannonSvg.getElementById('br-text').firstElementChild.innerHTML = "{{gun.measurements.base_ring}}";
-                            cannonSvg.getElementById('muzzle-text').firstElementChild.innerHTML = "{{gun.measurements.muzzle}}";
-                            cannonSvg.getElementById('bore-text').firstElementChild.innerHTML = "{{gun.measurements.bore}}";
-                            cannonSvg.getElementById('tp-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_position}}";
-                            cannonSvg.getElementById('tw-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_width}}";
-                            cannonSvg.getElementById('td-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_diameter}}";
-                            cannonSvg.getElementById('to-text').firstElementChild.innerHTML = "{{gun.measurements.trunnion_offset}}";
+                            updateSvg(cannonSvg);
                             });
+
+                    $(function(){
                         $(".image-checkbox").each(function () {
                             if ($(this).find('input').first().attr("checked")) {
                                 $(this).addClass('image-checkbox-checked');
@@ -176,16 +208,21 @@
                             $(`#${this.name}`).text(this.value)
                             e.preventDefault();
                             });
-                        $("#detail :input").keypress(function() {
-                            if (this.id != "file-name"){
+                        $("#detail :input").on('input',function(e) {
+                            if (! this.classList.contains("update-ignore")){
                                 form_changed()
                                 }
+                            if (this.classList.contains('measurement')){
+                                let field=this.name;
+                                measurements[field] = parseFloat(this.value * scale) ||  measurements[field] ;
+                                updateSvg(cannon.contentDocument);
+                            }
                             });
-                        $("#detail :input").change(function() {
-                            if (this.id != "file-name"){
-                                form_changed()
-                                }
-                            });
-                    })
+                        $('#units').on('change', function(){
+                            sessionStorage.setItem('scale', (this.checked)?"mm":"m")
+                            scale = (this.checked) ? 1 : 1000;
+                            updateSvg(cannon.contentDocument);
+                        })
+                        })
 </script>
 {% endblock %}
