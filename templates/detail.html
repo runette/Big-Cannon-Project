@@ -212,11 +212,16 @@
                             if (! this.classList.contains("update-ignore")){
                                 form_changed()
                                 }
-                            if (this.classList.contains('measurement')){
-                                let field=this.name;
-                                measurements[field] = parseFloat(this.value * scale) ||  measurements[field] ;
+                            });
+                        $(".measurement").on('input',function(e) {    
+                            let field=this.name,
+                            current = this.value,
+                            value = parseFloat(this.value);
+                            if (value || value === 0) {
+                                measurements[field] = value * scale ;
                                 updateSvg(cannon.contentDocument);
-                            }
+                                this.value=current;
+                                }
                             });
                         $('#units').on('change', function(){
                             sessionStorage.setItem('scale', (this.checked)?"mm":"m")
