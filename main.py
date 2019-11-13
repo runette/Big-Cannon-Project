@@ -162,10 +162,6 @@ def set_entry():
                 gunid=gun_id,
                 name=user.email,
             )
-        if gun.site != request.form.get('site', ""):
-            gun.display_name = request.form.get('site', "")
-        else:
-            gun.display_name = request.form.get('display_name', "")
         gun.populate(
             description=request.form.get('description'),
             type=Gun.Types[request.form.get('type')],
@@ -184,6 +180,7 @@ def set_entry():
             muzzle_code=request.form.get('muzzle_code', ""),
             cas_code=request.form.get('cas_code', ""),
             button_code=request.form.get('button_code', ""),
+            display_name = request.form.get('display_name', ""),
         )
         gun.measurements = {}
         scale = 1 if to_bool(request.form.get('units')) else 1000
@@ -203,6 +200,7 @@ def set_entry():
         gun.put()
         return render_template('detail.html',
                                user_data=user_data,
+                               user_name=User.get_by_id(gun.user_id).fire_user['name'],
                                gun=gun,
                                gun_types=GUN_TYPES,
                                qualities_text=RECORD_QUALITIES,

@@ -24,6 +24,7 @@
             url: "/map_fetch",
             success: function (data) {
                 sessionStorage.setItem('database', data);
+                sessionStorage.setItem('entryPath', JSON.parse(data).entryPath);
                 callback($)
                 }
             })

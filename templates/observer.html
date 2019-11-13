@@ -82,12 +82,12 @@
                             </thead>
                             <tr>
                                 <td>Name</td>
-                                <td><input class="form-control" type="text" name="display_name" value="{%if gun.display_name%}{{gun.display_name}}{%endif%}" placeholder="Give a name to the site"></td>
+                                <td><input class="form-control" type="text" name="display_name" id="display_name" value="{%if gun.display_name%}{{gun.display_name}}{%endif%}" placeholder="Give a name to the site"></td>
                             </tr>
                             <tr>
                                 <td>Location</td>
                                 <td>
-                                <select class="custom-select" name="site">
+                                <select class="custom-select" name="site" onchange="$('#display_name').val($(this).children('option:selected').val())">
                                     {% for site in gun.geocode.places %}
                                       <option value="{{site.name}}" {% if gun.site == site.name %} selected {% endif %} >{{site.name}}</option>
                                     {% endfor %}

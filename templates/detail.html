@@ -73,7 +73,8 @@
                         gunid = {{gun.gunid}},
                         current_view = JSON.parse(sessionStorage.getItem("current_view")),
                         database = JSON.parse(sessionStorage.getItem('database'));
-                    sessionStorage.setItem('gunid',gunid)
+                    sessionStorage.setItem('gunid',gunid);
+                    let entryPath = sessionStorage.getItem('entryPath');
                     $('.bng').hide();
                     $('.locate').hide();
                     if (edit === "True") {
@@ -99,10 +100,10 @@
                         for (idx = 0; idx<current_view.length; idx++ ){
                                 if (current_view[idx].anchor_id == gunid) {
                                 if ( idx != current_view.length -1) {
-                                    window.location.href=database.entryPath + current_view[idx + 1].anchor_id
+                                    window.location.href=entryPath + current_view[idx + 1].anchor_id
                                     }
                                 else {
-                                     window.location.href=database.entryPath + current_view[0].anchor_id
+                                     window.location.href=entryPath + current_view[0].anchor_id
                                     }
                                 }
                             }
@@ -113,10 +114,10 @@
                         for (idx = 0; idx<current_view.length; idx++ ){
                                 if (current_view[idx].anchor_id == gunid) {
                                 if ( idx != 0 ) {
-                                    window.location.href=database.entryPath + current_view[idx - 1].anchor_id
+                                    window.location.href=entryPath + current_view[idx - 1].anchor_id
                                     }
                                 else {
-                                     window.location.href=database.entryPath + current_view[current_view.length - 1].anchor_id
+                                     window.location.href=entryPath + current_view[current_view.length - 1].anchor_id
                                     }
                                 }
                             }
@@ -147,7 +148,7 @@
                             $('#fab')
                                 .off('click.fab-click')
                                 .on('click.fab-click', function(){
-                                    //sessionStorage.removeItem('database');
+                                    sessionStorage.removeItem('database');
                                     $('#detail').submit()
                                 })
                             }
