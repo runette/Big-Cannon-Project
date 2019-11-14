@@ -180,6 +180,7 @@ function file_dialog(data) {
 
 function send_first_file(data) {
         if ($('.custom-file-input')[0].files.length > 0) {
+                $(".fancybox-close-small").prop('disabled', true);
                 let payload = JSON.stringify(data);
                 let addrecord = $.ajax({
                         url: "/add_record",
@@ -189,7 +190,8 @@ function send_first_file(data) {
                         });
                 addrecord.done(function (post_data, textStatus, jqXHR){
                         folder=post_data
-                        send_file_worker(post_data, close)
+                        send_file_worker(post_data, close);
+                        $('#file-upload').prop('disabled', true);
                 });
         } else {
                 $('#file-upload').prop('disabled', false);

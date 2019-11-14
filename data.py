@@ -35,7 +35,7 @@ import time
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
 RECORD_QUALITIES = ('Observer', "Recorder", "Surveyor")
-GUN_CATEGORIES = ("Not Known", "Muzzle Loading", "Breach Loading", "Carronade")
+GUN_CATEGORIES = ("Not Known", "Muzzle Loading", "Breech Loading", "Carronade")
 GUN_STATUS = ('Unverified', 'Auto', 'Verified')
 MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES, 'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 
@@ -83,7 +83,7 @@ class Gun(Model):
     class Categories(Enum):
         NOT_KNOWN = 0
         MUZZLE_LOAD = 1
-        BREACH_LOAD = 2
+        BREECH_LOAD = 2
         CARRONADE = 3
         
     def schema(self):
