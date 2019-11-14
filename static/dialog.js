@@ -41,12 +41,13 @@ $.fancybox.open({
                                 convert.done(function (data, textStatus, jqXHR) {
                                         let json_data = JSON.parse(data);
                                         sites_dialog(json_data);
-                                        return true;
-                                });
+                                        });
                                 convert.fail (function (jqXHR, textStatus) {
-                                        alert('conversion failed : ' + textStatus)});
+                                        alert('conversion failed : ' + textStatus);
+                                        close();
+                                        });
                                 } else {
-                                return true
+                                        close();
                                 };
                 }
         }
@@ -119,15 +120,16 @@ function sites_dialog(json_data) {
                                 let location = data.places_list[key];
                                 data['current_site'] = location;
                                 file_dialog(data);
-                                return true
+                                return true;
                         }else {
-                                return true
+                                return close();
                                 };
                         
                 }
         }})};
         
 function file_dialog(data) {
+        let folder;
         $.fancybox.open({
         src  : '#file_dialog',
         type : 'inline',
@@ -166,9 +168,9 @@ function file_dialog(data) {
                 })},
                 afterClose: function() {
                 if (!dialog_cancel){
-                        return true
+                        return true;
                 } else {
-                        return true
+                        return close(folder);
                 }}
 }
 })
@@ -186,6 +188,7 @@ function send_first_file(data) {
                         data: payload
                         });
                 addrecord.done(function (post_data, textStatus, jqXHR){
+                        folder=post_data
                         send_file_worker(post_data, close)
                 });
         } else {
@@ -196,7 +199,11 @@ function send_first_file(data) {
 function close(folder) {
         sessionStorage.removeItem('database')
         history.pushState({}, 'Title: Database', '/database');
-        window.location.href = `/database/entry?gun_id=${folder}`;
+        if (folder) {
+                window.location.href = `/database/entry?gun_id=${folder}`;
+        } else {
+                window.location.href = `/database`;
+        }
 } 
 
 function form_changed () {}; // needed to void error in map_reset
