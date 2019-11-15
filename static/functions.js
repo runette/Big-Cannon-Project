@@ -215,6 +215,7 @@ function select_button ( cl) {
 			})
 		let snapshot = await uploadTask
 		console.log('Uploaded a blob or file!');
+		$('#status-message').html('<p>Your image is being processed and you will be taken to the new record shortly.</p><p> If this does not happen, your record will almost certainly have been created. Go to the Database screen using the BACK button and check the last record.</p>')
 		let payload = JSON.stringify(snapshot.metadata)
 		let addphoto = $.ajax({
 			    url: "/add_photo?id=" + folder,
@@ -223,12 +224,12 @@ function select_button ( cl) {
 			    data: payload
 			});
 		addphoto.done(function (data, textStatus, jqXHR) {
-			    data = JSON.parse(data)
+			    data = JSON.parse(data);
 			    $("#imgs").append(
 				`<a href="${data.original}" data-fancybox="image-gallery" data-caption="cannon photo">
-				<img src="${data.s200}" alt="" />`)
+				<img src="${data.s200}" alt="" />`);
 			    console.log(data);
-			    if (callback) {callback(folder)}
+			    if (callback) {callback(folder)};
 			    $('.custom-file-input').val(null);
 			    $('#file-upload').prop('disabled', false);
 			})

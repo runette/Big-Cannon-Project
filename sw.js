@@ -34,7 +34,7 @@ workbox.core.clientsClaim();
   },
   {
     "url": "static/dialog.js",
-    "revision": "ec23b80d5fc20442624a05b189550f15"
+    "revision": "081c43462103ce2b94cfda4e4eeed675"
   },
   {
     "url": "static/favicon.ico",
@@ -42,7 +42,7 @@ workbox.core.clientsClaim();
   },
   {
     "url": "static/functions.js",
-    "revision": "c73594b1fc878141cdb84c8ee7f6a241"
+    "revision": "c67164961623c3ef41af9fd71501876d"
   },
   {
     "url": "static/gmap_functions.js",

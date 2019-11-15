@@ -180,7 +180,7 @@ def set_entry():
             muzzle_code=request.form.get('muzzle_code', ""),
             cas_code=request.form.get('cas_code', ""),
             button_code=request.form.get('button_code', ""),
-            display_name = request.form.get('display_name', ""),
+            display_name=request.form.get('display_name', ""),
         )
         gun.measurements = {}
         scale = 1 if to_bool(request.form.get('units')) else 1000

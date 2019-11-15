@@ -189,6 +189,7 @@ function send_first_file(data) {
                         data: payload
                         });
                 addrecord.done(function (post_data, textStatus, jqXHR){
+                        sessionStorage.removeItem('database')
                         folder=post_data
                         send_file_worker(post_data, close);
                         $('#file-upload').prop('disabled', true);
@@ -199,7 +200,6 @@ function send_first_file(data) {
     };
     
 function close(folder) {
-        sessionStorage.removeItem('database')
         history.pushState({}, 'Title: Database', '/database');
         if (folder) {
                 window.location.href = `/database/entry?gun_id=${folder}`;
