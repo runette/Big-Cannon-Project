@@ -21,8 +21,7 @@
 #SOFTWARE.
 
 import jinja2, os, json, logging
-from update import UpdateSchema
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts, get_memory
 from flask import Flask, render_template, send_from_directory, request, redirect
 from datetime import datetime
 from urllib.parse import urlparse
@@ -49,7 +48,7 @@ def main_handler():
     return render_template(response,
             user_data=user_data,
             index=1,
-            )
+                           )
 
 @app.route('/about')
 def about():
@@ -63,9 +62,9 @@ def about():
 def database():
     user_data = UserStatus(request.cookies.get("token"))
     return render_template("database.html",
-                           user_data= user_data,
-                           gun_types= GUN_TYPES,
-                           index= 3                           
+                           user_data=user_data,
+                           gun_types=GUN_TYPES,
+                           index=3
                            )
 
 

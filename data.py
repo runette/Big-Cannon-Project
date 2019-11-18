@@ -31,6 +31,7 @@ from simplendb.images import ndbImage, Blob
 from simplendb.helpers import to_bool, to_int
 import requests
 import time
+from pympler import muppy, summary
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
@@ -310,6 +311,9 @@ def get_serving_url(upload_metadata):
     thumb_200 = original.thumbnail((200,200), folder + "/200x200")
     thumb_200.put()    
     mediaLink = {"original": original.get_media_link(), "s32": thumb_32.get_media_link(), "s200": thumb_200.get_media_link()}
+    del original
+    del thumb_32
+    del thumb_200
     return mediaLink
 
 def UserStatus (id_token):
@@ -343,4 +347,10 @@ def get_posts():
             raise Exception('ApiError' + str(result.status_code))
     except Exception as e:
         logging.error(str(e))
-        return    
+        return
+    
+def get_memory():
+    all_objects = muppy.get_objects()
+    sum1 = summary.summarize(all_objects)
+    # Prints out a summary of the large objects
+    logging.info(summary.print_(sum1))
