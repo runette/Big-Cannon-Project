@@ -264,6 +264,7 @@
     }
 
     function updatePaginations(entries, currentPage) {
+        current_page = currentPage;
         var $pagination = $('.pagination');
 
         if (!$pagination.length) {
@@ -399,7 +400,6 @@
         updateTableEntries();
     }
 
-
     $doc.on('click', '.clickable-row', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -415,6 +415,14 @@
             $('#quality').val(filter.quality);
             $('#order').val(filter.order);
         }
+    var mc = new Hammer(document.getElementById('table-entries'));
+    // listen to events...
+        mc.on("swipeleft", function(ev) {
+            initTableEntries(arrEntries, current_page+1);
+         });
+         mc.on("swiperight", function(ev) {
+            initTableEntries(arrEntries, current_page-1);
+         });
     initSearchForm();
     updateTableEntries();
 });
