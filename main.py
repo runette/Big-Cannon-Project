@@ -21,7 +21,7 @@
 #SOFTWARE.
 
 import jinja2, os, json, logging
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts, get_memory
+from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
 from flask import Flask, render_template, send_from_directory, request, redirect
 from datetime import datetime
 from urllib.parse import urlparse

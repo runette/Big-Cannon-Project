@@ -31,7 +31,6 @@ from simplendb.images import ndbImage, Blob
 from simplendb.helpers import to_bool, to_int
 import requests
 import time
-from pympler import muppy, summary
 
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
@@ -348,9 +347,4 @@ def get_posts():
     except Exception as e:
         logging.error(str(e))
         return
-    
-def get_memory():
-    all_objects = muppy.get_objects()
-    sum1 = summary.summarize(all_objects)
-    # Prints out a summary of the large objects
-    logging.info(summary.print_(sum1))
+
