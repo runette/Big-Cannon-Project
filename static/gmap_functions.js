@@ -264,7 +264,6 @@
     }
 
     function updatePaginations(entries, currentPage) {
-        current_page = currentPage;
         var $pagination = $('.pagination');
 
         if (!$pagination.length) {
@@ -278,9 +277,11 @@
                 html = '';
             if (currentPage <= 0) {
                 html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
+                prevPage = -1;
             }
             else {
                 html += '<li class="page-item"><btn class="page-link"  data-page="'+(currentPage-1)+'"><span>&laquo;</span></a></li>';
+                prevPage=currentPage-1;
             }
 
             if (totalPages < total){
@@ -309,9 +310,11 @@
             var next = currentPage + 1;
             if (next >= totalPages) {
                 var $next = $('<li class="page-item disabled"><span class="page-link">&raquo;</span></li>');
+                nextPage=-1;
             }
             else {
                 var $next = $('<li class="page-item"><btn class="page-link"  data-page="' + next + '"><span>&raquo;</span></a></li>');
+                nextPage=next;
             }
             $pagination.append($next);
         }
@@ -418,10 +421,14 @@
     var mc = new Hammer(document.getElementById('table-entries'));
     // listen to events...
         mc.on("swipeleft", function(ev) {
-            initTableEntries(arrEntries, current_page+1);
+            if (nextPage != -1) {
+                initTableEntries(arrEntries, nextPage);
+                };
          });
          mc.on("swiperight", function(ev) {
-            initTableEntries(arrEntries, current_page-1);
+         if (prevPage != -1) {
+                initTableEntries(arrEntries, prevPage);
+                };
          });
     initSearchForm();
     updateTableEntries();
