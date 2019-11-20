@@ -418,7 +418,9 @@
             $('#quality').val(filter.quality);
             $('#order').val(filter.order);
         }
-    var mc = new Hammer(document.getElementById('table-entries'));
+    var mc = new Hammer(document.getElementById('table-entries'), {
+        domEvents: true,
+    });
     // listen to events...
         mc.on("swipeleft", function(ev) {
             if (nextPage != -1) {
