@@ -30,6 +30,7 @@ from urllib.parse import urlparse
 app = Flask(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
 
+
 try:
     import googleclouddebugger
     googleclouddebugger.enable()
@@ -276,8 +277,8 @@ def new_record():
                                index= 4,
                                edit=False
                                )
-    
-@app.route("/get_location", methods=['POST'])    
+
+@app.route("/get_location", methods=['POST'])
 def get_location():
     user_data = UserStatus(request.cookies.get("token"))
     user = user_data['user']
@@ -288,7 +289,7 @@ def get_location():
         geo = geolocate(location)
         geo.update({"location": [lat, lon]})
         return json.dumps(geo)
-        
+
 @app.route("/add_record", methods=['POST'])
 def add_record():
     user_data = UserStatus(request.cookies.get("token"))
@@ -313,7 +314,7 @@ def add_record():
             gun.site = data['current_site']['formatted_address']
         except:
             gun.site = data['current_site']['name']
-        gun.display_name = gun.site      
+        gun.display_name = gun.site
         gun.put()
         return str(gun.gunid)
 
@@ -332,7 +333,7 @@ def img(path):
 @app.route('/sw.js', methods=['GET'])
 def sw():
     return send_from_directory(root, 'sw.js')
-    
+
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This

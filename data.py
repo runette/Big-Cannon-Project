@@ -325,6 +325,9 @@ def UserStatus (id_token):
                 fire_user= json.dumps(result['user'])
             )
             user.put()
+        if user.fire_user['name'] != result['user']['name']:
+            user.fire_user = json.dumps(result['user'])
+            a = user.put()
         result['local_user'] = user
         result['test'] = user.test_user
         result['namespace'] = None

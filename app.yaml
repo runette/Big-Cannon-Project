@@ -1,7 +1,7 @@
 runtime: python37
-instance_class: F4
+instance_class: F2
 automatic_scaling:
-  min_instances: 1
+  min_instances: 0
 
 handlers:
 
@@ -9,7 +9,7 @@ handlers:
   static_files : sw.js
   upload: sw\.js
   expiration: "1s"
-  
+
 - url: /robots\.txt
   static_files : robots.txt
   upload: robots\.txt
