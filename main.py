@@ -345,4 +345,4 @@ if __name__ == '__main__':
     if 'WINGDB_ACTIVE' in os.environ:
         app.debug = False
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-        app.run(host='127.0.0.1', port=8080, use_reloader=True)
+        app.run(host='192.168.1.180', port=8080, use_reloader=True)

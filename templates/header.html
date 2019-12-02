@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.6/dist/jquery.fancybox.min.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/custom.css">
+    <link rel="stylesheet" data-include href="/static/custom.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
     <link rel="stylesheet" type="text/css" href="/static/slick.css"/>
     <link rel="stylesheet" type="text/css" href="/static/slick-theme.css"/>
@@ -39,7 +39,7 @@
             </button>
           </div>
           <div class="small modal-body">To create a Gun record, you must be logged in. When you log in, we create a cookie on your computer strictly for essential functional use only. By proceeding you accept this and our <a href="/tor">Terms of Reference</a> and <a href="/privacy">Privacy Policy</a></div>
-          <div class="modal-body" id="firebaseui-auth-container">
+          <div class="modal-body" id="firebaseui-auth-container"> <span class="badge badge-warning text-wrap"  id="status-message" style="white-space: unset;">Your Browser is probable not supported. No version of IE is supported. However please try at least twice before reporting an error </span>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="container">
-        <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: var(--site);">
+        <nav class="navbar navbar-expand-md navbar-light bg-site fixed-top" >
           <div class="navbar-brand">
               <img class="img-responsive m0 p0" height="50" src="/img/ultima-ratio-logo.jpg   ">
           </div>
@@ -113,12 +113,20 @@
     <script src="https://www.gstatic.com/firebasejs/5.8.2/firebase-storage.js"></script>
     <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
     <script src="/static/functions.js"></script>
     <script >
     dev = ('{{user_data.test }}' === 'True')?true:false || window.location.hostname == ('localhost')
     if (dev) {
       $('#test-badge').removeClass('d-none');
     }
+    cssVars({
+  // Include only CSS from <link> and <style> elements with
+  // a "data-include" attribute
+  // Ex: <link data-include rel="stylesheet" href="...">
+  // Ex: <style data-include>...</style>
+  include: '[data-include]'
+});
     </script>
 <script type="module">
 import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-window.prod.mjs';

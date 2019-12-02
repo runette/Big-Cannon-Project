@@ -25,10 +25,10 @@ $.fancybox.open({
                 afterShow: function () {
                         // bind a click event to fancybox close button
                         // set the value of the currentTarget to the eTarget variable
-                        dialog_cancel=false; // reset variable
+                        window.dialog_cancel=false; // reset variable
                         reset_map();
                         $(".fancybox-close-small").on("click", function (event) {
-                        dialog_cancel=true;
+                        dialog_cancel=true;      
             })},
                 beforeClose : function(instance, current ) {
                         if (!dialog_cancel) {
@@ -190,7 +190,7 @@ function send_first_file(data) {
                         });
                 addrecord.done(function (post_data, textStatus, jqXHR){
                         sessionStorage.removeItem('database')
-                        folder=post_data
+                        //let folder=post_data
                         send_file_worker(post_data, close);
                         $('#file-upload').prop('disabled', true);
                 });

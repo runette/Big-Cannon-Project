@@ -56,7 +56,7 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
 <div class="d-flex flex-row justify-content-around pt-3">
 <a href="/privacy" class="iubenda-white iubenda-embed" title="Privacy Policy ">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
 
-<a class="btn btn-sm btn-light" role="button "href="/tor">Terms and Conditions of Access </a>
+<a class="btn btn-sm btn-light" role="button " href="/tor">Terms and Conditions of Access </a>
 </div>
 
 <div class="row pt-3">
@@ -85,24 +85,24 @@ The Ultima Ratio Project is administered by Armament Research Services (ARES), a
         let container = $('#picture-carousel')
         for (let post in posts.posts) {
             if (posts.posts.hasOwnProperty(post)) {
-                    detail = posts.posts[post];
+                    let detail = posts.posts[post];
                     container.append(
-                    `<div class="card" onClick="location.href='${detail.URL}'">
-                        <div class="h5 card-header">
-                            ${detail.title}<\/div>
-                        <div class="row no-gutters">
-                            <div class="col-4">
-                                <img class="card-img post_image" src="${detail.post_thumbnail.URL}" alt="picture">
-                            <\/div>
-                            <div class="col-8">
-                                <div class="card-body">
-                                    <div class="card-text">
-                                        ${detail.excerpt}
-                                    <\/div>
-                                <\/div>
-                            <\/div>
-                        <\/div>
-                    <\/div>`)
+                    '<div class="card" onClick="location.href=' + "'" + detail.URL + "'" +'">' +
+                        '<div class="h5 card-header">' +
+                            detail.title + "<\/div>" +
+                        '<div class="row no-gutters">' +
+                            '<div class="col-4">' +
+                                '<img class="card-img post_image" src="' + detail.post_thumbnail.URL + '" alt="picture">' +
+                            '<\/div>' +
+                            '<div class="col-8">' +
+                                '<div class="card-body">'+
+                                    '<div class="card-text">' +
+                                        detail.excerpt +
+                                    '<\/div>' +
+                                '<\/div>' +
+                            '<\/div>' +
+                        '<\/div>' +
+                    '<\/div>')
                     };
                 };
             $('.pictures').slick({

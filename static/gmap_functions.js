@@ -1,7 +1,7 @@
 (function ($, callback) {
         window.initMap = function () {
-            location_uk = {lat: 52, lng: 0};
-            mapOptions = {
+            let location_uk = {lat: 52, lng: 0};
+            let mapOptions = {
                 zoom: 7,
                 center: location_uk,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -55,7 +55,7 @@
         $quality = $('#quality'),
         $order = $('#order'),
         arrEntries;
-        dataBase = JSON.parse(sessionStorage.getItem('database'));
+        window.dataBase = JSON.parse(sessionStorage.getItem('database'));
         var pagesize = window.innerWidth < 1000 ? 5 : 10;
 
     /* map functions */
@@ -277,11 +277,11 @@
                 html = '';
             if (currentPage <= 0) {
                 html += '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
-                prevPage = -1;
+                window.prevPage = -1;
             }
             else {
                 html += '<li class="page-item"><btn class="page-link"  data-page="'+(currentPage-1)+'"><span>&laquo;</span></a></li>';
-                prevPage=currentPage-1;
+                window.prevPage=currentPage-1;
             }
 
             if (totalPages < total){
@@ -299,8 +299,8 @@
                 };
 
             for (; i < total; i++) {
-                var p = i + 1,
-                    a = '';
+                var p = i + 1;
+                var a = '';
                 if (i === currentPage) {
                     a = 'active';
                 }
@@ -314,7 +314,7 @@
             }
             else {
                 var $next = $('<li class="page-item"><btn class="page-link"  data-page="' + next + '"><span>&raquo;</span></a></li>');
-                nextPage=next;
+                window.nextPage=next;
             }
             $pagination.append($next);
         }

@@ -25,6 +25,7 @@
         callback($)
     }
 })(window.jQuery, function ($) {
+    
     var $win = $(window);
     
      // Initialize fancybox
@@ -43,7 +44,7 @@
 	  storageBucket: "ultima-ratio-221014.appspot.com",
 	  messagingSenderId: "927628257279"
 	};
-	app = firebase.initializeApp(config);
+	var app = firebase.initializeApp(config);
 	let ui = new firebaseui.auth.AuthUI(firebase.auth(app));
 	
 	// FirebaseUI config.
@@ -60,7 +61,7 @@
 			    
 			return false
 		    },
-		    signInFailure(error){
+		    signInFailure: function(error){
 			return alert(stringify(error))
 		    }
 		    },
@@ -88,6 +89,7 @@
 		};
 	
 	if (ui.isPendingRedirect()){
+	    $('#firebaseui-auth-container').text("");
 	    $('#login-modal').modal('show')
 	    ui.start('#firebaseui-auth-container', uiConfig);
 	    }
@@ -111,6 +113,7 @@
 		     $('[data-dismiss="modal"]').click(function(){window.location.href ="/" });
 	    })} else {
 		    $('#login').click(function(){
+		    $('#firebaseui-auth-container').text("");
 		     ui.start('#firebaseui-auth-container', uiConfig);
 		     })};
 	    }, function (error) {
@@ -132,7 +135,7 @@
 	$('.custom-file-input').on('change',function(){
 		let fileName = ""
 		let files = this.files;
-		for (file of files) { 
+		for (let file of files) { 
 		    if ( fileName.length > 0){ fileName += ","}
 		    fileName += file.name
 		}
