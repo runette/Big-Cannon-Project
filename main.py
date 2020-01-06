@@ -125,7 +125,9 @@ def fetch_entry():
         gun = Gun.get_id(gun_id, user_data.namespace)
         if user and user.user_id == gun.user_id:
             edit = True
-        elif user_data.local_user.standing != User.Standing.OBSERVER:
+        elif user_data.local_user.standing != User.Standing.OBSERVER.value:
+            a = user_data.local_user.standing
+            b = User.Standing.OBSERVER
             edit=True
         else:
             edit = False
@@ -345,4 +347,4 @@ if __name__ == '__main__':
     if 'WINGDB_ACTIVE' in os.environ:
         app.debug = False
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-        app.run(host='192.168.1.180', port=8080, use_reloader=True)
+        app.run(host='localhost', port=8080, use_reloader=True)
