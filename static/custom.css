@@ -298,8 +298,8 @@ margin-bottom: 0;
 }
 
 .btm-pill:hover {
-   box-shadow: 0 6px 14px 0 #666;
-   transform: scale(1.05);
+  box-shadow: 0 6px 14px 0 #666;
+  transform: scale(1.05);
 }
 .btn-primary {
   background-color: var(--site);
@@ -314,10 +314,15 @@ margin-bottom: 0;
   background-color: var(--site);
   color: var(--site-dark);
   border-color: var(--site);
-   box-shadow: 0 6px 14px 0 #666;
-   transform: scale(1.05);
+  box-shadow: 0 6px 14px 0 #666;
+  transform: scale(1.05);
 }
 
 .page-link {
   width: 2em;
+}
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control, .custom-select[disabled] {
+  background-color: white;
+  text: black;
 }

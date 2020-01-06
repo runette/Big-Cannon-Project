@@ -25,7 +25,7 @@
                             </tr>
                             <tr>
                                 <td >Short Desc</td>
-                                <td colspan="3"><input class="form-control" type="text" name="description" value="{% if gun.description%}{{ gun.description }}{%endif%}" placeholder="Description" > </td>
+                                <td colspan="3"><textarea class="form-control" rows="2" name="description" placeholder="Description" >{% if gun.description%}{{ gun.description }}{%endif%}</textarea> </td>
                             </tr>
                             <tr>
                                 <td >Author</td>
@@ -62,7 +62,7 @@
                                         Describe the Markings
                                     </td>
                                     <td>
-                                        <input class="form-control" type="text" name="mark_details" value="{%if gun.mark_details %} {{gun.mark_details}} {% endif %}" placeholder="Details">
+                                        <textarea class="form-control" name="mark_details" rows='2' placeholder="Details">{%if gun.mark_details %}{{gun.mark_details}}{% endif %}</textarea>
                                     </td>
                                 </tr>
                                 <tr class="hidden inter" >
@@ -70,7 +70,7 @@
                                         What does the board say?
                                     </td>
                                     <td>
-                                        <input class="form-control" type="text" name="inter_details" value="{%if gun.inter_details%}{{gun.inter_details}}{%endif%}" placeholder="Details">
+                                        <textarea class="form-control" rows='2' name="inter_details"  placeholder="Details">{%if gun.inter_details%}{{gun.inter_details}}{%endif%}</textarea>
                                     </td>
                                 </tr>
                         </table>
@@ -99,14 +99,13 @@
                             </tr>
                             <tr>
                                 <td>Description of Cannon Location</td>
-                                <td><input class="form-control" type="text" name="context" value="{%if gun.context%}{{gun.context}}{%endif%}" placeholder="Describe context"></td>
+                                <td><textarea class="form-control" rows='2' name="context" placeholder="Describe context">{%if gun.context%}{{gun.context}}{%endif%}</textarea></td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td>
+                                <td colspan='2'>
                                     <div class="custom-control custom-switch">
                                             <input type="checkbox" name="collection" class="custom-control-input update-field" id="collection" {% if gun.collection %} checked {% endif %} onchange="select_button('collection')" >
-                                            <label class="custom-control-label" small for="collection">Is this cannon part of a  Museum, Gallery or Collection or on the grounds of a heritage site like a castle or recognised archeological site?</label>
+                                            <label class="custom-control-label" small for="collection">Is this gun part of a  museum, gallery or collection or on the grounds of a heritage site like a castle or recognised archeological site?</label>
                                         </div>
                                 </td>
                             </tr>
