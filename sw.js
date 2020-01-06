@@ -30,7 +30,7 @@ workbox.core.clientsClaim();
   },
   {
     "url": "static/custom.css",
-    "revision": "2c9a6c9106be7c165cacd53b12443c89"
+    "revision": "bc4087945d22071fe55e3c3cf0d62f38"
   },
   {
     "url": "static/dialog-es5.js",
