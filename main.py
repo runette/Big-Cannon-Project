@@ -48,6 +48,7 @@ def main_handler():
     user = user_data['user']
     return render_template(response,
             user_data=user_data,
+            researcher=False,
             index=1,
                            )
 
@@ -55,17 +56,24 @@ def main_handler():
 def about():
     user_data = UserStatus(request.cookies.get("token"))
     return render_template('about.html',
-                           index= 2,
-                           user_data= user_data
+                           index=2,
+                           user_data=user_data,
+                           researcher=False,
                            )
 
 @app.route('/database')
 def database():
     user_data = UserStatus(request.cookies.get("token"))
+    user = user_data['user']
+    if user and user_data.local_user.standing != User.Standing.OBSERVER.value:
+        researcher = True
+    else:
+        researcher = False
     return render_template("database.html",
                            user_data=user_data,
                            gun_types=GUN_TYPES,
-                           index=3
+                           index=3,
+                           researcher=researcher,
                            )
 
 
@@ -126,11 +134,13 @@ def fetch_entry():
         if user and user.user_id == gun.user_id:
             edit = True
         elif user_data.local_user.standing != User.Standing.OBSERVER.value:
-            a = user_data.local_user.standing
-            b = User.Standing.OBSERVER
-            edit=True
+            edit = True
         else:
             edit = False
+        if user and user_data.local_user.standing != User.Standing.OBSERVER.value:
+            researcher = True
+        else:
+            researcher = False
         if gun.moulding_code is None:
             gun.moulding_code = []
         return render_template('detail.html',
@@ -143,11 +153,13 @@ def fetch_entry():
                            gun_categories=GUN_CATEGORIES,
                            index=index,
                            edit=edit,
+                           researcher=researcher,
                                )
     except Exception as e:
         return render_template('no_login.html',
                            user_data=user_data,
                            index=index,
+                           standing=User.Standing,
                            edit=False
                                )
 
@@ -159,6 +171,10 @@ def set_entry():
         gun_id = to_int(request.form.get('id'))
         new_location = GeoPt(request.form.get('lat'), request.form.get('lon'))
         gun = Gun.get_id(gun_id, user_data.namespace)
+        if user_data.local_user.standing != User.Standing.OBSERVER.value:
+            researcher = True
+        else:
+            researcher = False        
         if not gun :
             gun = Gun(
                 gunid=gun_id,
@@ -209,7 +225,8 @@ def set_entry():
                                qualities=Gun.Quality,
                                gun_categories=GUN_CATEGORIES,
                                index=4,
-                               edit=True
+                               edit=True,
+                               researcher=researcher,
                                )
 
 

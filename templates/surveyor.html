@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#mouldings')" > MOULDING CODE - <input class="bg-site" type="text" name="moulding" id="moulding" style="width:25%;" onclick="event.stopPropagation()" value="{% for code in gun.moulding_code %}{{code}}{% endfor %}"/></div>
+    <div class="row h3 bg-primary text-white p-1" onclick="feature_toggle('#mouldings')" > MOULDING CODE - <textarea class="bg-site w-auto"  rows="1" name="moulding" id="moulding" onclick="event.stopPropagation()">{% for code in gun.moulding_code %}{{code}}{% endfor %}</textarea></div>
     <div class="collapse" id="mouldings" style="max-width:700px;">
     <div class="row">
         <div class="card">

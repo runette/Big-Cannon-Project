@@ -65,6 +65,15 @@
                     <li class="nav-item {% if index == 4 %} active {% endif %}" id="nav-3">
                       <a class="nav-link" href="/new_record">New Record</a>
                     </li>
+                    {% if researcher%}
+                    <li class="nav-item dropdown {% if index == 5 %} active {% endif %}" id="nav-4">
+                      <a class="nav-link dropdown-toggle" role="button" href="#" data-toggle="dropdown">Researcher</a>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Spreadsheet View</a>
+                        <a class="dropdown-item" href="#">Form View</a>
+                      </div>
+                    </li>
+                    {% endif %}
                     <li class="nav-bar nav " >
                       <a class="nav-link" id="login"  role="button" data-toggle="modal" data-target="#login-modal"> {{user_data.url_linktext}}</a>
                     </li>
