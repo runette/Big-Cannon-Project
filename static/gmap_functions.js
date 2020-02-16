@@ -1,6 +1,6 @@
 (function ($, callback) {
         window.initMap = function () {
-            let location_uk = {lat: 52, lng: 0};
+            let location_uk = {lat: 0, lng: 0};
             let mapOptions = {
                 zoom: 7,
                 center: location_uk,
@@ -65,9 +65,23 @@
         arrEntries = applyFilter(getEntries());
         sessionStorage.setItem('current_view', JSON.stringify(arrEntries))
         initMarkerClusterer();
+        let w = map.getDiv().offsetWidth;
+        if (w >= 1000) {padding = {
+            bottom: 0,
+            left: 0,
+            top: 100,
+            right: 400
+        }} else {padding = {
+            bottom: 0,
+            left: 0,
+            top: 0,
+            right: 0
+        }
+        }
+        let padding
 
         if(bounds) {
-            map.fitBounds(bounds);
+            map.fitBounds(bounds, padding);
         }
     }
 

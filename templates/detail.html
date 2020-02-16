@@ -9,15 +9,22 @@
             <div class="media">
                 <a class="align-self-center mr-3 fancybox" href="{{images[0].original}}"><img src="{{images[0].s200}}" height="70px" alt=""></a>
             </div>
-
-            <div class="media-body display-1 p-2">
-                <h2>Gun ID : {{ gun.gunid }}
-                {% if edit %}
-
-                {% else %}
-                    <small class="text-muted float-right align-middle"> Read-only </small>
-                {% endif %}
-                </h2>
+            <div class="media-body  p-2">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2>Gun ID : {{ gun.gunid }}</h2>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-right">
+                    {% if edit %}
+    
+                    {% else %}
+                        <p class="text-muted"> Read-only </p>
+                    {% endif %}
+                    <button class="btn btn-secondary" type="button" onclick="link_here()" data-toggle="popover"  data-content="A permanent link to this record has been copied to the clipboard">Link here</button>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     <div class="tab-content" id="nav-tabContent">
@@ -68,7 +75,7 @@
 <script src="/static/markerclusterer.js"></script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
 <script type="application/javascript" >
-                    history.pushState({}, 'Title: Database', '/database');
+                    //history.pushState({}, 'Title: Database', '/database');
                     let edit = "{{edit}}",
                         gunid = {{gun.gunid}},
                         current_view = JSON.parse(sessionStorage.getItem("current_view")),
@@ -154,6 +161,27 @@
                                 })
                             }
                         };
+                        
+                    function link_here() {
+                        const el = document.createElement('textarea');  // Create a <textarea> element
+                        el.value = window.location.href;                                 // Set its value to the string that you want copied
+                        el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+                        el.style.position = 'absolute';                 
+                        el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+                        document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+                        const selected =            
+                            document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+                                ? document.getSelection().getRangeAt(0)     // Store selection if found
+                                : false;                                    // Mark as false to know no selection existed before
+                        el.select();                                    // Select the <textarea> content
+                        document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+                        document.body.removeChild(el);                  // Remove the <textarea> element
+                        if (selected) {                                 // If a selection existed before copying
+                            document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+                            document.getSelection().addRange(selected);   // Restore the original selection
+                        };
+                    };
+
                     let measurements = {
                         "length":{{gun.measurements.length | default(0, true)}},
                         "base_ring":{{gun.measurements.base_ring | default(0, true)}},
@@ -237,6 +265,15 @@
                          });
                         mc.on("swiperight", function(ev) {
                             last();
+                         });
+                        $('[data-toggle="popover"]').popover({
+                            trigger:'click',
+                            delay: { "show": 100, "hide": 200 },
+                            html: true,
+                            title: 'Link to Record <i class="fa fa-times float-right close"></i>'
+                         })
+                        $(document).on("click", ".popover .close" , function(){
+                            $(this).parents(".popover").popover('hide');
                          });
                         })
 </script>

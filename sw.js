@@ -30,7 +30,7 @@ workbox.core.clientsClaim();
   },
   {
     "url": "static/custom.css",
-    "revision": "bc4087945d22071fe55e3c3cf0d62f38"
+    "revision": "010b231e556991e6b7dd4926edaa9923"
   },
   {
     "url": "static/dialog-es5.js",
@@ -50,15 +50,15 @@ workbox.core.clientsClaim();
   },
   {
     "url": "static/functions.js",
-    "revision": "16814d0365d509bd3d17ad899ab67442"
+    "revision": "2f7d28ed68aa61e02fa77bb4c1fa089e"
   },
   {
     "url": "static/gmap_functions-es5.js",
-    "revision": "0d4b319c507cf8b51a43b80db36e8032"
+    "revision": "8fde8b132ddbf0d634e72ac60dc1ae60"
   },
   {
     "url": "static/gmap_functions.js",
-    "revision": "e1e94a896a51efc13d8a1197f0565d0a"
+    "revision": "2ec8e052c0dd6adb4e75a7069fc70e49"
   },
   {
     "url": "static/manifest.json",
@@ -66,7 +66,7 @@ workbox.core.clientsClaim();
   },
   {
     "url": "static/markerclusterer-es5.js",
-    "revision": "329cf906035ba617f30bafc560396fea"
+    "revision": "feb5b49c300ac46a401abcdf37ae26db"
   },
   {
     "url": "static/markerclusterer.js",
@@ -251,6 +251,10 @@ workbox.core.clientsClaim();
   {
     "url": "img/R.png",
     "revision": "7529d67e174080750b41be7a897f9cc1"
+  },
+  {
+    "url": "img/runette_long.png",
+    "revision": "36949ad758a9ea7d6f2c688fa00d89d8"
   },
   {
     "url": "img/S.png",

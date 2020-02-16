@@ -1,11 +1,26 @@
 "use strict";
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 /**
  * Copyright 2019 Google LLC. All Rights Reserved.
  *
@@ -102,6 +117,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
  *  to use for various cluster sizes.
  * @private
  */
+
+
 var ClusterIcon =
 /*#__PURE__*/
 function () {
@@ -741,13 +758,13 @@ function () {
    * @param {MarkerClustererOptions} [opt_options] The optional parameters.
    */
   function MarkerClusterer(map, opt_markers, opt_options) {
-    _classCallCheck(this, MarkerClusterer);
-
-    // MarkerClusterer implements google.maps.OverlayView interface. We use the
+    _classCallCheck(this, MarkerClusterer); // MarkerClusterer implements google.maps.OverlayView interface. We use the
     // extend function to extend MarkerClusterer with google.maps.OverlayView
     // because it might not always be available when the code is defined so we
     // look for it at the last possible moment. If it doesn't exist now then
     // there is no point going ahead :)
+
+
     this.extend(MarkerClusterer, google.maps.OverlayView);
     opt_markers = opt_markers || [];
     opt_options = opt_options || {};

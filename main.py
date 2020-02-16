@@ -21,8 +21,8 @@
 #SOFTWARE.
 
 import jinja2, os, json, logging
-from data import Gun, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
-from flask import Flask, render_template, send_from_directory, request, redirect
+from data import Gun, MATRIX, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
+from flask import Flask, render_template, send_from_directory, request, redirect, url_for
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -71,6 +71,7 @@ def database():
         researcher = False
     return render_template("database.html",
                            user_data=user_data,
+                           matrix=MATRIX,
                            gun_types=GUN_TYPES,
                            index=3,
                            researcher=researcher,
@@ -145,6 +146,7 @@ def fetch_entry():
             gun.moulding_code = []
         return render_template('detail.html',
                            user_data=user_data,
+                           user=user_data.user,
                            gun=gun,
                            user_name=User.get_by_id(gun.user_id).fire_user['name'],
                            gun_types=GUN_TYPES,
@@ -156,10 +158,17 @@ def fetch_entry():
                            researcher=researcher,
                                )
     except Exception as e:
+        gun = Gun.get_id(gun_id, None)
         return render_template('no_login.html',
                            user_data=user_data,
+                           user=None,
+                           gun=gun,
                            index=index,
                            standing=User.Standing,
+                           gun_types=GUN_TYPES,
+                           qualities_text=RECORD_QUALITIES,
+                           qualities=Gun.Quality,
+                           gun_categories=GUN_CATEGORIES,
                            edit=False
                                )
 
@@ -216,18 +225,7 @@ def set_entry():
             gun.display_name = gun.site
             gun.country = address['country']
         gun.put()
-        return render_template('detail.html',
-                               user_data=user_data,
-                               user_name=User.get_by_id(gun.user_id).fire_user['name'],
-                               gun=gun,
-                               gun_types=GUN_TYPES,
-                               qualities_text=RECORD_QUALITIES,
-                               qualities=Gun.Quality,
-                               gun_categories=GUN_CATEGORIES,
-                               index=4,
-                               edit=True,
-                               researcher=researcher,
-                               )
+        return redirect(url_for('fetch_entry', gun_id=gun_id))
 
 
 @app.route('/add_photo', methods=['POST'])
@@ -292,9 +290,10 @@ def new_record():
                                )
     else:
         return render_template('no_login.html',
-                               user_data= user_data,
-                               index= 4,
-                               edit=False
+                               user_data=user_data,
+                               index=4,
+                               edit=False,
+                               gun=None
                                )
 
 @app.route("/get_location", methods=['POST'])

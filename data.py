@@ -33,7 +33,7 @@ import requests
 import time
 
 
-GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known")
+GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze", "Not Known", "Combined Cast and Wrought Iron")
 RECORD_QUALITIES = ('Observer', "Recorder", "Surveyor")
 GUN_CATEGORIES = ("Not Known", "Muzzle Loading", "Breech Loading", "Carronade")
 GUN_STATUS = ('Unverified', 'Auto', 'Verified')
@@ -72,6 +72,7 @@ class Gun(Model):
         WROUGHT = 1
         BRONZE = 2
         NOT_KNOWN = 3
+        COMBINATION = 4
     class Quality(Enum):
         GOLD = 2
         SILVER = 1
@@ -154,6 +155,7 @@ class Gun(Model):
                     'quality': gun.quality.value,
                     'nationality': gun.country,
                     'site': gun.display_name,
+                    'category': GUN_CATEGORIES[gun.category.value],
                 })
             except Exception as e:
                 logging.error(str(e))

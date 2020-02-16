@@ -27,14 +27,17 @@
                                 <td >Short Desc</td>
                                 <td colspan="3"><textarea class="form-control" rows="2" name="description" placeholder="Description" >{% if gun.description%}{{ gun.description }}{%endif%}</textarea> </td>
                             </tr>
+{% if user %}
                             <tr>
                                 <td >Author</td>
                                 <td><input class="form-control" type="text" name="name" value="{{ user_name }}" placeholder="Name" readonly style="max-width:10em;"></td>
                                 <td>Date <span class="d-none d-md-inline">Recorded</span></td>
                                 <td class="">{{gun.date.strftime('%x')}}</td>
                             </tr>
+{% endif %}
                             </tbody>
                         </table>
+{% if user %}
                         <table class="table table-striped">
                             <tbody>
                             <tr>
@@ -74,7 +77,9 @@
                                     </td>
                                 </tr>
                         </table>
+{% endif %}
                     </div><!-- end grid -->
+
                     <div class="col-md-6">
                         <table  class="table table-striped">
                             <thead class="thead-dark">
@@ -101,6 +106,7 @@
                                 <td>Description of Cannon Location</td>
                                 <td><textarea class="form-control" rows='2' name="context" placeholder="Describe context">{%if gun.context%}{{gun.context}}{%endif%}</textarea></td>
                             </tr>
+{% if user %}
                             <tr>
                                 <td colspan='2'>
                                     <div class="custom-control custom-switch">
@@ -109,7 +115,9 @@
                                         </div>
                                 </td>
                             </tr>
+{% endif %}
                         </table>
+{%if user %}
                         <table class="table table-striped">
                             <tbody>
                             <tr class="hidden collection">
@@ -122,10 +130,9 @@
                                 <td><input class="form-control" type="text" name="coll_ref" value="{%if gun.coll_ref%}{{gun.coll_ref}}{%endif%}" placeholder="Collection reference"></td>
                             </tr>
                         </tbody></table>
+{% endif %}
                     </div>
             </div>
-
-
     <div class="row bg-light pt-3">
             <div class="col-md-6">
                 <h3 class="bold">Location</h3>
@@ -138,11 +145,18 @@
                                 'SILVER': "/img/cannon_silver.png"
                             };
 
-                        marker_quality = "{{gun.quality.name}}"
-
-                        let location = {
-                            lat: parseFloat($('#lat').val()),
-                            lng: parseFloat($('#lon').val())
+                        marker_quality = "{{gun.quality.name}}";
+                        let location;
+                        if ( {{user is not none | lower}}) {
+                            location = {
+                                lat: parseFloat($('#lat').val()),
+                                lng: parseFloat($('#lon').val())
+                                };
+                        } else {
+                            location = {
+                            lat: {{ gun.location.latitude }},
+                            lng: {{ gun.location.longitude }}
+                            };
                         };
                         map = new google.maps.Map(document.getElementById('map_canvas'), {
                             zoom: 12,
@@ -156,10 +170,10 @@
                             fullscreenControl: true
                         });
                         marker = null;
-                        reset_map()
+                        reset_map(location)
                     };
                 </script>
-
+{% if user %}
                 <div class="row">
                     <div class="col-4">
                         <div class="custom-control custom-radio">
@@ -194,7 +208,7 @@
                         <input class="form-control" type="text" id="lon" name="lon" value="{{ gun.location.longitude }}" >
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary" type="button" onclick="reset_map()">Show</button>
+                        <button class="btn btn-primary" type="button" onclick="reset_map(null)">Centre</button>
                     </div>
                 </div>
                 <div class="row latlon">
@@ -214,7 +228,7 @@
                         <input class="form-control" type="text" name="northings" id="northings" value="">
                    </div>
                     <div class="col-md-2">
-                        <button class="btn btn-small btn-primary" type="button" onclick="BNG_convert('bronze')">Show</button>
+                        <button class="btn btn-small btn-primary" type="button" onclick="BNG_convert('bronze')">GoTo</button>
                     </div>
                 </div>
                 <div class="row bng">
@@ -223,9 +237,10 @@
                 <div class="row locate">
                     <button class="btn btn-primary mx-auto d-block" type="button" onclick="getLocation()">Current Location</button>
                 </div>
-
+{% endif %}
             </div>
             <div class="col-md-6">
+{% if user %}
             <div class="row"><div class="col-3">
                 <h3 class="bold">Photos</h3></div>
                 <div class="col-9">
@@ -244,6 +259,7 @@
                 </div>
             </div>
             </div>
+{% endif %} 
             <div class="imglist" id="imgs">
             {% for image in images %}
                 <a href="{{image.original|safe}}" data-fancybox="image-gallery" data-caption="cannon photo">

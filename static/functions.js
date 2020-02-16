@@ -288,11 +288,12 @@ function select_button ( cl) {
         );
         radio_button('geolocation','bng')
     }
-    function reset_map() {
-        let location = {
-            lat: parseFloat($('#lat').val()),
-            lng: parseFloat($('#lon').val())
-        };
+    function reset_map(location) {
+	if (! location) {
+	location = {
+	    lat: parseFloat($('#lat').val()),
+	    lng: parseFloat($('#lon').val())
+	};}
         map.setCenter(location);
         if (marker != null) {
             marker.setMap(null);
