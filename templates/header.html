@@ -69,7 +69,7 @@
                     <li class="nav-item dropdown {% if index == 5 %} active {% endif %}" id="nav-4">
                       <a class="nav-link dropdown-toggle" role="button" href="#" data-toggle="dropdown">Researcher</a>
                       <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Spreadsheet View</a>
+                        <a class="dropdown-item" href="#" onclick="makeApiCall()">Spreadsheet View</a>
                         <a class="dropdown-item" href="#">Form View</a>
                       </div>
                     </li>
@@ -124,6 +124,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
     <script src="/static/functions.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"></script>
     <script >
     dev = ('{{user_data.test }}' === 'True')?true:false || window.location.hostname == ('localhost')
     if (dev) {

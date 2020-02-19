@@ -20,6 +20,14 @@
 //#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //#SOFTWARE.
 
+var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+var SCOPES = "https://www.googleapis.com/auth/spreadsheets";
+var CLIENT_ID = '927628257279-n6qtj2jk165emkona4hhac9bulgh4jke.apps.googleusercontent.com';
+var API_KEY = 'AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg';
+
 (function ($, callback) {
     if (typeof $ === 'function') {
         callback($)
@@ -37,12 +45,18 @@
 	// Initialize Firebase
     function initFirebase(){
 	var config = {
-	  apiKey: "AIzaSyCtkhYNFASY1jLhLg0mJ1gVfBkiyWczzUE",
+	  apiKey: API_KEY,
 	  authDomain: "ultima-ratio-221014.firebaseapp.com",
 	  databaseURL: "https://ultima-ratio-221014.firebaseio.com",
 	  projectId: "ultima-ratio-221014",
 	  storageBucket: "ultima-ratio-221014.appspot.com",
-	  messagingSenderId: "927628257279"
+	  messagingSenderId: "927628257279",
+	  clientId: CLIENT_ID,
+	  scopes: [
+	     "email",
+	     "profile",
+	    ],
+	  discoveryDocs: DISCOVERY_DOCS
 	};
 	var app = firebase.initializeApp(config);
 	let ui = new firebaseui.auth.AuthUI(firebase.auth(app));
@@ -69,7 +83,10 @@
 		  signInOptions: [
 		    // Comment out any lines corresponding to providers you did not check in
 		    // the Firebase console.
-		    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+		    {
+			provider:firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+			scopes: config.scopes
+			},
 		    firebase.auth.EmailAuthProvider.PROVIDER_ID,
 		    {
 			provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -77,10 +94,11 @@
 			    'public_profile',
 			    'email',
 			],
-		    }
+		    },
 		    //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
 		    //firebase.auth.GithubAuthProvider.PROVIDER_ID,
-		    //firebase.auth.PhoneAuthProvider.PROVIDER_ID
+		    //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+		
 	      
 		  ],
 		  // Terms of service url.
@@ -378,8 +396,64 @@ function select_button ( cl) {
 	return null;
 	}
 	
-    
+    function makeApiCall() {
+	gapi.load('client:auth2', initClient);
+	}
+		
+    function onReady() {
+      let spreadsheetBody = {
+	// TODO: Add desired properties to the request body.
+      };
+      let request = gapi.client.sheets.spreadsheets.create({}, spreadsheetBody);
+      let spreadsheetUrl;
+      let spreadsheetId;
+      request.then(response => {
+	spreadsheetId = response.result.spreadsheetId;
+	spreadsheetUrl = response.result.spreadsheetUrl;
+	let params = {
+	    spreadsheetId: '1cv6qL_VukZUef9zEKDMNZOf9knUFRzfzydkx5DI1ndo',
+	    sheetId: 0,
+	};
+	let body = {
+	    destinationSpreadsheetId: spreadsheetId,   
+	};
+	request = gapi.client.sheets.spreadsheets.sheets.copyTo(params, body)
+	request.then( response => {
+	    let win = window.open(spreadsheetUrl, '_blank');
+	    win.focus();
+	}, function(reason){
+	console.error('error: ' + reason.result.error.message);
+	})
 	
+      }, function(reason) {
+	console.error('error: ' + reason.result.error.message);
+      });
+    }
+
+      /**
+       *  Initializes the API client library and sets up sign-in state
+       *  listeners.
+       */
+      function initClient() {
+	gapi.client.init({
+	  clientId: CLIENT_ID,
+	  discoveryDocs: DISCOVERY_DOCS,
+	  scope:SCOPES,
+	}).then( function() {
+	    let options = new gapi.auth2.SigninOptionsBuilder(
+		{'scope': SCOPES},
+		);
+	    let auth = gapi.auth2.getAuthInstance();
+	    let googleUser = auth.currentUser.get();
+	    googleUser.grant(options).then(
+		auth => {
+		  onReady();
+		}, function(error) {
+		  console.error(JSON.stringify(error, null, 2));
+		}
+	    )}
+	);
+      };
     
 
 

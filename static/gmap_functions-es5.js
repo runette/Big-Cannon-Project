@@ -68,7 +68,7 @@
     initMarkerClusterer();
     var w = map.getDiv().offsetWidth;
 
-    if (w >= 1000)   {
+    if (w >= 1000) {
       padding = {
         bottom: 0,
         left: 0,
@@ -135,8 +135,7 @@
       position: {
         lat: parseFloat(entry.latitude),
         lng: parseFloat(entry.longitude)
-      } // map: map,
-
+      }
     });
 
     if (getIcon(entry.quality)) {
@@ -192,17 +191,7 @@
       filename = entry['filename'];
     }
 
-    return [
-    '<div class="info" style="width: 300px;">',
-    '<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">',
-    '<img class="card-img" src="' + filename + '"  width="32px"/></div>',
-    '<div class="col-10"><div class="card-body"><div class="h6 card-title text-truncate">' + entry["site"] + '</div>',
-    '<div class="card-text"><p>', 
-    entry['category']=="Not Known"?"":entry['category'] + ", ",
-    entry["anchor_type"]=="Not Known"?"":entry["anchor_type"] ,
-    '</p></div></div></div>',
-    '</div></div>',
-    '</div>'].join('');
+    return ['<div class="info" style="width: 300px;">', '<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">', '<img class="card-img" src="' + filename + '"  width="32px"/></div>', '<div class="col-10"><div class="card-body"><div class="h6 card-title text-truncate">' + entry["site"] + '</div>', '<div class="card-text"><p>', entry['category'] == "Not Known" ? "" : entry['category'] + ", ", entry["anchor_type"] == "Not Known" ? "" : entry["anchor_type"], '</p></div></div></div>', '</div></div>', '</div>'].join('');
   }
 
   function getEntries() {
@@ -278,16 +267,7 @@
       filename = entry['filename'];
     }
 
-    return ['<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">',
-    '<img class="card-img" src="' + filename + '"  width="32px"/></div>',
-    '<div class="col-8"><div class="card-body"><div class="h5 card-title text-truncate">' + entry["site"] + '</div>',
-    '<div class="card-text"><p>', 
-    entry['category']=="Not Known"?"":entry['category'] + ", ",
-    entry["anchor_type"]=="Not Known"?"":entry["anchor_type"] ,
-    '</p><small class=text-muted>' + entry["names"] + '</small></div></div></div>',
-    '<div class="col-2 status">', '<span class="quality' + entry["quality"] + '"></span>',
-    '</div></div></div>'
-    ].join('');
+    return ['<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">', '<img class="card-img" src="' + filename + '"  width="32px"/></div>', '<div class="col-8"><div class="card-body"><div class="h5 card-title text-truncate">' + entry["site"] + '</div>', '<div class="card-text"><p>', entry['category'] == "Not Known" ? "" : entry['category'] + ", ", entry["anchor_type"] == "Not Known" ? "" : entry["anchor_type"], '</p><small class=text-muted>' + entry["names"] + '</small></div></div></div>', '<div class="col-2 status">', '<span class="quality' + entry["quality"] + '"></span>', '</div></div></div>'].join('');
   }
 
   function updateTableEntries(current_page) {
