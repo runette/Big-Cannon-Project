@@ -332,4 +332,28 @@ margin-bottom: 0;
   text: black;
 }
 
+.locate-control {
+  background: white;
+  display: block;
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+  top: 0px;
+  left: 0px;
+}
+
+.locate-selected {
+  color: var(--site-dark);
+}
+
+.locate-moved {
+  color: orange;
+}
+
 

@@ -119,9 +119,7 @@ function _createClass(Constructor, protoProps, staticProps) {
  */
 
 
-var ClusterIcon =
-/*#__PURE__*/
-function () {
+var ClusterIcon = /*#__PURE__*/function () {
   function ClusterIcon(cluster, styles) {
     _classCallCheck(this, ClusterIcon);
 
@@ -407,9 +405,7 @@ function () {
  */
 
 
-var Cluster =
-/*#__PURE__*/
-function () {
+var Cluster = /*#__PURE__*/function () {
   function Cluster(mc) {
     _classCallCheck(this, Cluster);
 
@@ -747,9 +743,7 @@ function () {
  */
 
 
-var MarkerClusterer =
-/*#__PURE__*/
-function () {
+var MarkerClusterer = /*#__PURE__*/function () {
   /**
    * Creates a MarkerClusterer object with the options specified in {@link MarkerClustererOptions}.
    * @constructor

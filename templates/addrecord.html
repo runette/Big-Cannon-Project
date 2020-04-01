@@ -26,41 +26,7 @@
                     </div>
                 </div>
         
-                <div id="map_canvas" class="map-container-inline" > </div>
-                <script>
-                    window.initMap = function () {
-                    
-                        map_icons = {
-                                'BRONZE': "/img/cannon_bronze.png",
-                                'GOLD': "/img/cannon_gold.png",
-                                'SILVER': "/img/cannon_silver.png"
-                            };
-
-                        marker_quality = "BRONZE"
-
-
-                        let location = {
-                            lat: 52.0,
-                            lng: 0.0
-                        };
-                        map = new google.maps.Map(document.getElementById('map_canvas'), {
-                            zoom: 12,
-                            center: location,
-                            mapTypeId: google.maps.MapTypeId.ROADMAP,
-                            zoomControl: true,
-                            mapTypeControl: false,
-                            scaleControl: true,
-                            streetViewControl: false,
-                            rotateControl: true,
-                            fullscreenControl: true
-                        });
-                        marker = null;
-                        //reset_map()
-                    };
-                </script>
-
-                
-    
+                <div id="map_canvas" class="map-container-inline" > </div>    
 
 
                 <div class="row latlon">
@@ -147,9 +113,17 @@
             </div>
 </div>
 
+<div id="locate"><button draggable="false" title="Locate" aria-label="Locate" type="button" class="gm-control-active locate-control">
+    <span class="material-icons" id="locate-icon">
+        gps_fixed
+        </span>
+</button> 
+</div>
+
 {% endblock %}
 
 {% block script %}
+<script src='/static/google-locate-control.js'></script>
 <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap&libraries=places"></script>
 <script src='/static/dialog.js' ></script>
 

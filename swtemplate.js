@@ -11,10 +11,16 @@
  * See https://goo.gl/2aRDsh
  */
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
+import {skipWaiting, clientsClaim} from 'workbox-core';
+import {precacheAndRoute} from 'workbox-precaching';
+import {registerRoute} from 'workbox-routing';
+import {StaleWhileRevalidate, CacheFirst, NetworkFirst} from 'workbox-strategies';
+import {CacheableResponsePlugin} from 'workbox-cacheable-response';
+import {ExpirationPlugin} from 'workbox-expiration';
 
-workbox.core.skipWaiting();
-workbox.core.clientsClaim();
+
+skipWaiting();
+clientsClaim();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
@@ -23,26 +29,26 @@ workbox.core.clientsClaim();
  */
 
 
- workbox.precaching.precacheAndRoute([]);
+precacheAndRoute(self.__WB_MANIFEST);
 
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
-workbox.routing.registerRoute(
+registerRoute(
   /^https:\/\/fonts\.googleapis\.com/,
-  new workbox.strategies.StaleWhileRevalidate({
+  new StaleWhileRevalidate({
     cacheName: 'google-fonts-stylesheets',
   })
 );
 
 // Cache the underlying font files with a cache-first strategy for 1 year.
-workbox.routing.registerRoute(
+registerRoute(
   /^https:\/\/fonts\.gstatic\.com/,
-  new workbox.strategies.CacheFirst({
+  new CacheFirst({
     cacheName: 'google-fonts-webfonts',
     plugins: [
-      new workbox.cacheableResponse.Plugin({
+      new CacheableResponsePlugin({
         statuses: [0, 200],
       }),
-      new workbox.expiration.Plugin({
+      new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 365,
         maxEntries: 31,
       }),
@@ -50,38 +56,38 @@ workbox.routing.registerRoute(
   })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
   '/database',
-  new workbox.strategies.NetworkFirst({
+  new NetworkFirst({
     cacheName: 'static-resources',
   })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
   '/',
-  new workbox.strategies.StaleWhileRevalidate({
+  new StaleWhileRevalidate({
     cacheName: 'static-resources',
   })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
   /http.*\.(?:js|css|mjs)$/,
-  new workbox.strategies.CacheFirst({
+  new CacheFirst({
     cacheName: 'libraries',
     plugins: [
-      new workbox.expiration.Plugin({
+      new ExpirationPlugin({
         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
       }),
     ],
   }),
 );
 
-workbox.routing.registerRoute(
+registerRoute(
   /\.(?:png|gif|jpg|jpeg|svg)$/,
-  new workbox.strategies.CacheFirst({
+  new CacheFirst({
     cacheName: 'images',
     plugins: [
-      new workbox.expiration.Plugin({
+      new ExpirationPlugin({
         maxEntries: 60,
         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
       }),

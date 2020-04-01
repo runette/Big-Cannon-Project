@@ -209,3 +209,43 @@ function close(folder) {
 } 
 
 function form_changed () {}; // needed to void error in map_reset
+
+window.initMap = function () {
+                    
+        map_icons = {
+                'BRONZE': "/img/cannon_bronze.png",
+                'GOLD': "/img/cannon_gold.png",
+                'SILVER': "/img/cannon_silver.png"
+            };
+
+        marker_quality = "BRONZE"
+
+
+        let location = {
+            lat: 52.0,
+            lng: 0.0
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'), {
+            zoom: 12,
+            center: location,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: false,
+            rotateControl: true,
+            fullscreenControl: true
+        });
+        marker = null;
+        let div = $('#locate')[0];
+            let options = {
+                div: div,
+                position: google.maps.ControlPosition.LEFT_TOP,
+                pan: false,
+                zoom: false,
+                zoomTo: 17
+            }
+            let locateControl = new google.maps.LocateControl(map, options);
+};
+
+

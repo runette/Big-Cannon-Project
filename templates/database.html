@@ -47,6 +47,13 @@
 
 <div class="fab" onClick="location.href='/new_record'" > + </div>
 
+<div id="locate"><button draggable="false" title="Locate" aria-label="Locate" type="button" class="gm-control-active locate-control">
+    <span class="material-icons" id="locate-icon">
+        gps_fixed
+        </span>
+</button> 
+</div>
+
 <!--end of main-content-->
 {% endblock %}
 
@@ -55,5 +62,7 @@
 <script src="/static/sweetalert.min.js"></script>
 <script src="/static/markerclusterer-es5.js" ></script>
 <script src="/static/gmap_functions-es5.js" ></script>
+<script src='/static/google-locate-control.js'></script>
 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAjR85QEAekYmsSyDPETXxprFpnEsdgjjU&amp;callback=initMap"></script>
+
 {% endblock %}

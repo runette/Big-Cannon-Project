@@ -22,6 +22,15 @@
     };
     window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
     window.infoWindow = new google.maps.InfoWindow();
+    var div = $('#locate')[0];
+    var options = {
+      div: div,
+      position: this.google.maps.ControlPosition.LEFT_BOTTOM,
+      pan: true,
+      zoom: true,
+      zoomTo: 17
+    };
+    var locateControl = new this.google.maps.LocateControl(map, options);
     callback($);
   };
 
@@ -135,7 +144,8 @@
       position: {
         lat: parseFloat(entry.latitude),
         lng: parseFloat(entry.longitude)
-      }
+      } // map: map,
+
     });
 
     if (getIcon(entry.quality)) {
@@ -184,6 +194,7 @@
   function generateContent(entry) {
     var filename,
         href = dataBase['entryPath'] + entry["anchor_id"];
+    ;
 
     if (!entry['filename']) {
       filename = dataBase['defaultThumb'];

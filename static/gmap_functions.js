@@ -16,6 +16,15 @@
             };
             window.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
             window.infoWindow = new google.maps.InfoWindow();
+            let div = $('#locate')[0];
+            let options = {
+                div: div,
+                position: this.google.maps.ControlPosition.LEFT_BOTTOM,
+                pan: true,
+                zoom: true,
+                zoomTo: 17
+            }
+            let locateControl = new this.google.maps.LocateControl(map, options);
             callback($);
         };
     if (!sessionStorage.getItem('database')) {
@@ -51,8 +60,8 @@
 
         $tableEntries = $('#table-entries'),
         $noData = $('.no-data'),
-        $anchorType = $('#anchor-type'),
-        $quality = $('#quality'),
+        $material = $('#material'),
+        $type = $('#type'),
         $order = $('#order'),
         arrEntries;
         window.dataBase = JSON.parse(sessionStorage.getItem('database'));
@@ -165,29 +174,15 @@
     }
 
     function generateContent(entry) {
-        var filename;
+        var filename,
+            href = dataBase['entryPath'] + entry["anchor_id"];;
         if (!entry['filename']) {
             filename = dataBase['defaultThumb'];
         }
         else {
             filename =  entry['filename'];
         }
-        return [
-            '<div class="info" style="width: 300px;">',
-            '<a href="' + (BaseUrl + '/database/entry?gun_id=' + entry.anchor_id) + '" style="text-decoration: none;">',
-            '<div class="info-inner" style="width: 100%;">',
-            '<div style="width: 30%;float: left;padding: 5px 0 0;">',
-            '<img src="' + filename + '" style="width: 100%; height: auto;">',
-            '</div>',
-            '<div style="overflow: hidden; padding-left: 10px;">',
-            '<p style="margin-bottom: 0;"><strong>Site: </strong>' + (entry.site == '' ? 'unknown' : entry.site) + '</p>',
-            '<p style="margin-bottom: 0;"><strong>Type: </strong>' + entry.anchor_type + '</p>',
-            entry.location ? '<p style="margin-bottom: 0;"><strong>Location: </strong>' + entry.location + '</p>' : "",
-            '</div>',
-            '</div>',
-            '</a>',
-            '</div>'
-        ].join('');
+        return ['<div class="info" style="width: 300px;">', '<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">', '<img class="card-img" src="' + filename + '"  width="32px"/></div>', '<div class="col-10"><div class="card-body"><div class="h6 card-title text-truncate">' + entry["site"] + '</div>', '<div class="card-text"><p>', entry['category'] == "Not Known" ? "" : entry['category'] + ", ", entry["anchor_type"] == "Not Known" ? "" : entry["anchor_type"], '</p></div></div></div>', '</div></div>', '</div>'].join('');
     }
 
     function getEntries() {
@@ -199,20 +194,21 @@
     }
 
     function applyFilter(entries) {
-        var anchorType = $anchorType.val(),
-            quality = $quality.val(),
+        var material = $material.val(),
+            type = $type.val(),
             order = $order.val(),
-            isSearchAnchorType = anchorType != '',
-            isSearchQuality = quality != '',
+            isSearchMaterial = material != '',
+            isSearchType = type != '',
             fiterredEntries;
 
-        sessionStorage.setItem("filter", JSON.stringify({type:anchorType, quality:quality, order:order}))
+        sessionStorage.setItem("filter", JSON.stringify({type: type,
+            material: material, order:order}))
 
         fiterredEntries = entries.filter(function (entry) {
-            if (isSearchAnchorType && entry.anchor_type !== anchorType) {
+            if (isSearchMaterial && entry.anchor_type !== material) {
                 return false;
             }
-            if (isSearchQuality && entry.quality !== quality) {
+            if (isSearchType && entry.category !== type) {
                 return false;
             }
 
@@ -260,16 +256,7 @@
             filename = entry['filename'];
         }
 
-        return [
-            '<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">',
-            '<img class="card-img" src="' + filename + '"  width="32px"/></div>',
-            '<div class="col-8"><div class="card-body"><div class="h5 card-title text-truncate">' + entry["site"] + '</div>',
-            '<div class="card-text">' + entry["anchor_type"] + '</div>',
-            '<div class="card-text"><small class=text-muted>' + entry["names"] + '</small></div></div></div>',
-            '<div class="col-2 status">',
-            '<span class="quality' + entry["quality"] + '"></span>',
-            '</div></div></div>',
-        ].join('');
+        return ['<div class="card " onClick="location.href=' + "'" + href + "'" + '"><div class="row no-gutters"><div class="col-2">', '<img class="card-img" src="' + filename + '"  width="32px"/></div>', '<div class="col-8"><div class="card-body"><div class="h5 card-title text-truncate">' + entry["site"] + '</div>', '<div class="card-text"><p>', entry['category'] == "Not Known" ? "" : entry['category'] + ", ", entry["anchor_type"] == "Not Known" ? "" : entry["anchor_type"], '</p><small class=text-muted>' + entry["names"] + '</small></div></div></div>', '<div class="col-2 status">', '<span class="quality' + entry["quality"] + '"></span>', '</div></div></div>'].join('');
     }
 
     function updateTableEntries(current_page) {

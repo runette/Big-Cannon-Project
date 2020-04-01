@@ -402,7 +402,9 @@ function select_button ( cl) {
 		
     function onReady() {
       let spreadsheetBody = {
-	// TODO: Add desired properties to the request body.
+	"properties":{
+	    "title": Date()
+	}
       };
       let request = gapi.client.sheets.spreadsheets.create({}, spreadsheetBody);
       let spreadsheetUrl;

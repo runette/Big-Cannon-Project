@@ -2,6 +2,6 @@ Flask
 googlemaps
 Jinja2
 simplejson
-urllib3
+urllib3 <1.25
 simpleNDB >=1.0.6
 google-python-cloud-debugger

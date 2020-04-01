@@ -5,5 +5,5 @@ module.exports = {
     "img/*.{png,svg,jpg,ico,gif}"
   ],
   "swDest": "sw.js",
-  "swSrc": "swtemplate.js",
+  "swSrc": "buildsw.js",
 };

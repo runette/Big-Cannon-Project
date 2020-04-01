@@ -84,8 +84,9 @@
                     let entryPath = sessionStorage.getItem('entryPath');
                     $('.bng').hide();
                     $('.locate').hide();
+                    $('#file-upload').click(function(){send_file()})
                     if (edit === "True") {
-                        $('#file-upload').click(function(){send_file()})
+                        
                         }
                     else {
                         $('input').prop("readonly", true);
@@ -270,7 +271,7 @@
                             trigger:'click',
                             delay: { "show": 100, "hide": 200 },
                             html: true,
-                            title: 'Link to Record <i class="fa fa-times float-right close"></i>'
+                            title: 'Link to Record <i class="material-icons float-right close">close</i>'
                          })
                         $(document).on("click", ".popover .close" , function(){
                             $(this).parents(".popover").popover('hide');
