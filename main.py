@@ -352,6 +352,15 @@ def img(path):
 def sw():
     return send_from_directory(root, 'sw.js')
 
+@app.route('/recording', methods=['GET'])
+def recording():
+    user_data = UserStatus(request.cookies.get("token"))
+    return render_template('recording.html',
+        user_data=user_data,
+        researcher=False,
+        index=1,
+        )
+
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
