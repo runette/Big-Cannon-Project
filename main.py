@@ -20,15 +20,23 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import jinja2, os, json, logging
-from data import Gun, MATRIX, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User, get_posts
+import os
+import json
+from data import Gun, MATRIX, GUN_TYPES, RECORD_QUALITIES, GUN_CATEGORIES, to_bool, UserStatus, to_int, BNG, geolocate, GeoPt, get_serving_url, User
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for
 from datetime import datetime
 from urllib.parse import urlparse
+from connexion import App
+import firebase_admin
 
 
 app = Flask(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
+firebase_admin.initialize_app()
+
+options = {"swagger_ui": False}
+api = App(__name__, options=options)
+api.add_api('swagger.yaml', strict_validation=True)
 
 
 try:
@@ -45,7 +53,6 @@ def main_handler():
     else:
         response = "index.html"
     user_data = UserStatus(request.cookies.get("token"))
-    user = user_data['user']
     return render_template(response,
             user_data=user_data,
             researcher=False,
@@ -179,12 +186,8 @@ def set_entry():
     if user:
         gun_id = to_int(request.form.get('id'))
         new_location = GeoPt(request.form.get('lat'), request.form.get('lon'))
-        gun = Gun.get_id(gun_id, user_data.namespace)
-        if user_data.local_user.standing != User.Standing.OBSERVER.value:
-            researcher = True
-        else:
-            researcher = False        
-        if not gun :
+        gun = Gun.get_id(gun_id, user_data.namespace)   
+        if not gun:
             gun = Gun(
                 gunid=gun_id,
                 name=user.email,
@@ -359,7 +362,7 @@ def recording():
         user_data=user_data,
         researcher=False,
         index=1,
-        )
+                           )
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

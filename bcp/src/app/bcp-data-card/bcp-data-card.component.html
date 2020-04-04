@@ -1,0 +1,21 @@
+
+<div class="info" >
+    <div class="card " routerLink="href">
+        <div class="row no-gutters"><div class="col-2">
+            <img class="card-img" src="{{record.images[0]}}"  width="32px"/>
+        </div>
+        <div class="col-10">
+            <div class="card-body">
+                <div class="h6 card-title text-truncate">
+                    {{record.name}}
+                </div>
+                <div class="card-text">
+                    <p>
+                        <span *ngIf="record.category && record.category != 'Not Known'">{{record.category}}, </span>
+                        <span *ngIf="record.material && record.material != 'Not Known'">{{record.material}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

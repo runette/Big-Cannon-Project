@@ -1,0 +1,60 @@
+
+ <form action="/set_entry" id="detail" method="post">
+    <div class="row p-3  bg-ur" >
+            <div class="media">
+                <a class="align-self-center mr-3 fancybox" href="record/images[0].original"><img src="record.images[0].s200" height="70px" alt=""></a>
+            </div>
+            <div class="media-body  p-2">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2>Gun ID : {{ record.gunid }}</h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="float-right" >
+                            <p class="text-muted" *ngIf="!edit"> Read-only </p>
+                            <button class="btn btn-secondary" type="button" onclick="link_here()" data-toggle="popover"  data-content="A permanent link to this record has been copied to the clipboard">Link here</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="tab-content" id="nav-tabContent">
+        <div class='tab-pane fade show active' id="list-bronze" role="tabpanel" aria-labelledby='list-bronze-list'>
+        </div>
+        <div div class='tab-pane fade' id="list-silver" role="tabpanel" aria-labelledby='list-silver-list'>
+        </div>
+        <div div class='tab-pane fade' id="list-gold" role="tabpanel" aria-labelledby='list-gold-list'>
+        </div>
+    </div>
+</form>
+<button mat-fab routerLink="/new_record" color="primary" ngClass='fab'>
+    <mat-icon color='accent' ngClass='fab-text'>
+        add
+    </mat-icon>
+</button>
+
+
+<div class="row fixed-bottom  bg-light ">
+<div class="col-3">
+  <span class="btm-nav float-left mx-3 my-1 px-3" onclick="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></span>
+  </div><div class="col-6">
+
+            <ul class="nav justify-content-center" data-toggle="" title="">
+            <li class="nav-item">
+                <a class="nav-link text-center btm-pill active" id="observer" role="tab" data-toggle="list"  href="#list-bronze" aria-controls="list-bronze" onclick="sessionStorage.setItem('view', 'observer')"><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-center btm-pill " id="reporter" role="tab" data-toggle="list"  href="#list-silver"  aria-controls="list-silver" onclick="sessionStorage.setItem('view', 'reporter')"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Reporter</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-center btm-pill " id="surveyor" role="tab" data-toggle="list"  href="#list-gold" aria-controls="list-gold" onclick="sessionStorage.setItem('view', 'surveyor')"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></a>
+            </li>
+            </ul>
+            </div>
+
+        <div class="col-3">
+  <span class=" btm-nav float-right mx-3 my-1 px-3" onclick="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </span>
+  </div>
+</div>
+
+

@@ -1,0 +1,101 @@
+<div class="map-container fill-remaining-space">
+<google-map height="100%"
+            width="100%"
+            [options]="options"
+            (tilesloaded)="loaded($event)"
+></google-map>
+<div class="bounding-box"></div>
+</div>
+<app-googlemap-locate
+            [options]="locateOptions"
+            [(map)]="map"
+></app-googlemap-locate>
+<button mat-fab routerLink="/new_record" color="primary" ngClass='fab'>
+    <mat-icon color='accent' ngClass='fab-text'>
+        add
+    </mat-icon>
+</button>
+
+<mat-toolbar class="map-nav-wide bg-ur" fxLayout="row" fxHide fxShow.gt-sm>
+    <button mat-button [matMenuTriggerFor]="typeMenu">Type <small class="text-muted" *ngIf=" data.gunCategory != 'All'">{{data.gunCategory}}</small> </button>
+    <button mat-button [matMenuTriggerFor]="materialMenu">Material <small class="text-muted" *ngIf=" data.material != 'All'">{{data.material}}</small></button>
+    <button mat-button [matMenuTriggerFor]="statusMenu">Status <small class="text-muted" *ngIf=" data.recordQuality != 'All'">{{data.recordQuality}}</small></button>
+    <button mat-button [matMenuTriggerFor]="orderMenu">Order <small class="text-muted" *ngIf=" data.order != 'Order'">{{data.order}}</small></button>
+    <mat-slide-toggle
+          class=""
+          [color]="'accent'"
+          [checked]="cluster"
+          (change)="setCluster($event)">
+        Ungrouped
+      </mat-slide-toggle>
+      <mat-slide-toggle
+          class=""
+          [color]="'accent'"
+          [checked]="data.ownRecords"
+          (change)="setOwn($event)">
+        All
+      </mat-slide-toggle>
+</mat-toolbar>
+
+<mat-expansion-panel class="map-nav bg-ur" fxLayout="row" fxShow fxHide.gt-sm>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-action-list>
+        <button mat-list-item [matMenuTriggerFor]="typeMenu">Type<small class="text-muted" *ngIf=" data.gunCategory != 'All'"> {{data.gunCategory}}</small> </button>
+        <button mat-list-item [matMenuTriggerFor]="materialMenu">Material<small class="text-muted" *ngIf=" data.material != 'All'"> {{data.material}}</small></button>
+        <button mat-list-item [matMenuTriggerFor]="statusMenu">Status<small class="text-muted" *ngIf=" data.recordQuality != 'All'"> {{data.recordQuality}}</small></button>
+        <button mat-list-item [matMenuTriggerFor]="orderMenu">Order <small class="text-muted" *ngIf=" data.order != 'Order'">{{data.order}}</small></button>
+    <mat-slide-toggle mat-list-item
+          class=""
+          [color]="'accent'"
+          [checked]="cluster"
+          (change)="setCluster($event)">
+        Ungrouped
+      </mat-slide-toggle>
+      <mat-slide-toggle mat-list-item
+          class=""
+          [color]="'accent'"
+          [checked]="data.ownRecords"
+          (change)="setOwn($event)">
+        All
+      </mat-slide-toggle>
+    </mat-action-list>
+</mat-expansion-panel>
+
+<div class="float-table-wide bg-ur" id="table-entries" fxLayout="row" fxHide fxShow.gt-sm>
+    <div class="w-100 p-1" *ngFor="let record of data.filteredData">
+        <app-bcp-data-card 
+        ></app-bcp-data-card>
+    </div>
+</div>
+
+<div class="float-table bg-ur" id="table-entries" fxLayout="row" fxShow fxHide.gt-sm>
+</div>
+
+<mat-menu #typeMenu="matMenu">
+    <div *ngFor="let item of FILTER_TEXT.GUN_CATEGORIES">
+        <button mat-menu-item (click)="setCategory(item)">{{item}}</button>
+    </div>
+</mat-menu>
+
+<mat-menu #materialMenu="matMenu">
+    <div *ngFor="let item of FILTER_TEXT.MATERIAL">
+        <button mat-menu-item (click)="setMaterial(item)">{{item}}</button>
+    </div>
+</mat-menu>
+
+<mat-menu #statusMenu="matMenu">
+    <div *ngFor="let item of FILTER_TEXT.RECORD_QUALITIES">
+        <button mat-menu-item (click)="setQuality(item)">{{item}}</button>
+    </div>
+</mat-menu>
+
+<mat-menu #orderMenu="matMenu">
+    <button mat-menu-item (click)="setOrder('Order')">Order</button>
+    <button mat-menu-item (click)="setOrder('Date Ascending')">Date Ascending</button>
+    <button mat-menu-item (click)="setOrder('Date Descending')">Date Descending</button>
+</mat-menu>

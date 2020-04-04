@@ -1,0 +1,35 @@
+// Color palettes from the Material Design spec.
+// See https://material.io/design/color/
+//
+// Contrast colors are hard-coded because it is too difficult (probably impossible) to
+// calculate them. These contrast colors are pulled from the public Material Design spec swatches.
+// While the contrast colors in the spec are not prescriptive, we use them for convenience.
+
+$site: (
+  50: #e3f4ff,
+  100: #bbe2ff,
+  200: #8dd0ff,
+  300: #56bdff,
+  400: #1dadff,
+  500: #009eff,
+  600: #008fff,
+  700: #007bff,
+  800: #1269ec,
+  900: #1f47cd,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,
+  )
+);
