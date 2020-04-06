@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {GoogleMapsModule} from '@angular/google-maps';
-//import { NgxAuthFirebaseUIModule } from '../../node_modules/ngx-auth-firebaseui/dist/ngx-auth-firebaseui';
+import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
 
@@ -79,7 +79,8 @@ import { BcpHelpComponent } from './bcp-help/bcp-help.component'
     MatInputModule,
     MatChipsModule,
     BrowserModule,
-    AngularFireModule.initializeApp(environment.firebase)
+    //AngularFireModule.initializeApp(environment.firebase),
+    NgxAuthFirebaseUIModule.forRoot(environment.firebaseui),
   ],
   providers: [],
   bootstrap: [AppComponent]
