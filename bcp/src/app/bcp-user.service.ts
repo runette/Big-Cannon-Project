@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,7 @@ export class BcpUserService {
   user: BcpUser;
   login: boolean = false;
 
-  constructor() { 
+  constructor(private auth: AngularFireAuth ) { 
     this.user = new BcpUser('1');
     this.login = true;
   }

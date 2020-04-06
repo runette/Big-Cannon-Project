@@ -1,11 +1,11 @@
-namespace google.maps {
+
 
     export class LocateControl {
-        public marker: Circle;
-        constructor (map: Map, args: LocateControlOptions, el: HTMLElement ) {
+        public marker: google.maps.Circle;
+        constructor (map: google.maps.Map, args: LocateControlOptions, el: HTMLElement ) {
             let options = args;
-            map.controls[options.position ? options.position : ControlPosition.BOTTOM_LEFT].push(el);
-            this.marker = new Circle({
+            map.controls[options.position ? options.position : google.maps.ControlPosition.BOTTOM_LEFT].push(el);
+            this.marker = new google.maps.Circle({
                 strokeColor: '#0000FF',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
@@ -21,7 +21,7 @@ namespace google.maps {
     }
 
     export interface LocateControlOptions {
-        position?: ControlPosition;
+        position?: google.maps.ControlPosition;
         zoom?: boolean;
         zoomTo?: number;
         pan?: boolean;
@@ -35,4 +35,4 @@ namespace google.maps {
     }
 
     export type LocateControlStatus = 'off' |  "on" | 'moved'
-}
+

@@ -5,6 +5,7 @@ import {GoogleMap} from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordStatus, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService } from '../bcp-map-data.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import {LocateControlOptions} from '../googlemap-locate/google-locate-control'
 
 @Component({
   selector: 'app-bcp-database',
@@ -27,7 +28,7 @@ export class BcpDatabaseComponent {
     rotateControl: true,
     fullscreenControl: false,
   } 
-  locateOptions: google.maps.LocateControlOptions= {
+  locateOptions: LocateControlOptions= {
     position: google.maps.ControlPosition.LEFT_BOTTOM,
     pan: true,
     zoom: true,

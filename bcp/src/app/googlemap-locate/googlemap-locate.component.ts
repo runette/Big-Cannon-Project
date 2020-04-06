@@ -1,6 +1,6 @@
 ///<reference types='googlemaps' />
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import './google-locate-control';
+import {LocateControl, LocateControlOptions, LocateControlStatus} from  './google-locate-control';
 
 @Component({
   selector: 'app-googlemap-locate',
@@ -13,12 +13,12 @@ export class GooglemapLocateComponent implements OnInit {
   private _map: google.maps.Map;
   
   @Input()
-  options: google.maps.LocateControlOptions
+  options: LocateControlOptions
 
-  status: google.maps.LocateControlStatus = 'off';
+  status: LocateControlStatus = 'off';
 
   private watch: number;
-  private control: google.maps.LocateControl;
+  private control: LocateControl;
   private position: Position;
 
   constructor() { }
@@ -30,7 +30,7 @@ export class GooglemapLocateComponent implements OnInit {
     if (map) {
       this._map = map;
       let status= this.status
-      this.control = new google.maps.LocateControl(map, this.options, this.div.nativeElement );
+      this.control = new LocateControl(map, this.options, this.div.nativeElement );
       map.addListener('dragstart', function(){
         status = "moved";
       });
