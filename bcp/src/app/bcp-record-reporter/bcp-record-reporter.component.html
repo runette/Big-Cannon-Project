@@ -1,0 +1,51 @@
+<div class="position-relative">
+    <div class="embed-responsive embed-responsive-16by9">
+        <object class="embed-responsive-item" #cannon data='../../assets/cannon_chart.svg' type="image/svg+xml"></object>
+   </div>
+    
+    <div class="overlap" >
+    <table  class="table table-sm table-dark table-striped mb-5">
+        <thead class="thead-dark">
+            <th >Measurements</th>
+            <th>
+                    <mat-slide-toggle name="scale" [(ngModel)]="gun.measurements.scale" (change)="scaleToggle($event)" >{{scale}} </mat-slide-toggle>
+            </th>
+        </thead>
+        <tbody class="small">
+        <tr>
+            <td >Length</td>
+            <td><input matInput class="w-100" type="text" name="length" id="length" placeholder="Length" (ngModelChange)="updateSvg()" [(ngModel)]="gun.measurements.length"></td>
+            </tr>
+            <tr>
+            <td>Base Ring Diameter</td>
+            <td><input class="w-100" type="text" name="base_ring" id="base_ring" placeholder="Base Ring"  [(ngModel)]="gun.measurements.baseRing"></td>
+            </tr>
+            <tr>
+            <td>Muzzle Diameter</td>
+            <td><input class="w-100" type="text" name="muzzle" id="muzzle" placeholder="Muzzle" [(ngModel)]="gun.measurements.muzzle"></td>
+            </tr>
+            <tr>
+            <td>Bore Diameter</td>
+            <td><input class="w-100" type="text" name="bore" id="bore" placeholder="Bore"  [(ngModel)]="gun.measurements.bore"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Position</td>
+            <td><input class="w-100" type="text" name="trunnion_position" id="trunnion_position" placeholder="Trunnion to BR"  [(ngModel)]="gun.measurements.trunnionPosition"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Width</td>
+            <td><input class="w-100" type="text" name="trunnion_width" id="trunnion_width" placeholder="Trunnion Width"  [(ngModel)]="gun.measurements.trunnionWidth"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Diameter</td>
+            <td><input class="w-100" type="text" name="trunnion_diameter" id="trunnion_diameter" placeholder="Trunnion Dia"  [(ngModel)]="gun.measurements.trunnionDiameter"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Offset</td>
+            <td><input class="w-100" type="text" name="trunnion_offset" id="trunnion_offset" placeholder="Trunnion Offset"  [(ngModel)]="gun.measurements.trunnionOffset"></td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    </div>
+     

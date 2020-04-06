@@ -45,45 +45,6 @@ try:
 except ImportError:
     pass
 
-@app.route('/')
-def main_handler():
-    base_url = request.host
-    if base_url == "www.biggun.site":
-        response = "index2.html"
-    else:
-        response = "index.html"
-    user_data = UserStatus(request.cookies.get("token"))
-    return render_template(response,
-            user_data=user_data,
-            researcher=False,
-            index=1,
-                           )
-
-@app.route('/about')
-def about():
-    user_data = UserStatus(request.cookies.get("token"))
-    return render_template('about.html',
-                           index=2,
-                           user_data=user_data,
-                           researcher=False,
-                           )
-
-@app.route('/database')
-def database():
-    user_data = UserStatus(request.cookies.get("token"))
-    user = user_data['user']
-    if user and user_data.local_user.standing != User.Standing.OBSERVER.value:
-        researcher = True
-    else:
-        researcher = False
-    return render_template("database.html",
-                           user_data=user_data,
-                           matrix=MATRIX,
-                           gun_types=GUN_TYPES,
-                           index=3,
-                           researcher=researcher,
-                           )
-
 
 @app.route('/map_fetch', methods=['POST'])
 def fetch_map():
@@ -131,53 +92,18 @@ def fetch_map_2():
     })
     return json.dumps(map)
 
+@app.route('/database')
+def database():
+    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+
 @app.route('/database/entry')
 def fetch_entry():
-    user_data = UserStatus(request.cookies.get("token"))
-    user = user_data['user']
-    gun_id = to_int(request.args.get('gun_id'))
-    index = 3
-    try:
-        gun = Gun.get_id(gun_id, user_data.namespace)
-        if user and user.user_id == gun.user_id:
-            edit = True
-        elif user_data.local_user.standing != User.Standing.OBSERVER.value:
-            edit = True
-        else:
-            edit = False
-        if user and user_data.local_user.standing != User.Standing.OBSERVER.value:
-            researcher = True
-        else:
-            researcher = False
-        if gun.moulding_code is None:
-            gun.moulding_code = []
-        return render_template('detail.html',
-                           user_data=user_data,
-                           user=user_data.user,
-                           gun=gun,
-                           user_name=User.get_by_id(gun.user_id).fire_user['name'],
-                           gun_types=GUN_TYPES,
-                           qualities_text=RECORD_QUALITIES,
-                           qualities=Gun.Quality,
-                           gun_categories=GUN_CATEGORIES,
-                           index=index,
-                           edit=edit,
-                           researcher=researcher,
-                               )
-    except Exception as e:
-        gun = Gun.get_id(gun_id, None)
-        return render_template('no_login.html',
-                           user_data=user_data,
-                           user=None,
-                           gun=gun,
-                           index=index,
-                           standing=User.Standing,
-                           gun_types=GUN_TYPES,
-                           qualities_text=RECORD_QUALITIES,
-                           qualities=Gun.Quality,
-                           gun_categories=GUN_CATEGORIES,
-                           edit=False
-                               )
+    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+
+@app.route('/new_record')
+def new_record():
+    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+    
 
 @app.route('/set_entry', methods=['POST'])
 def set_entry():
@@ -281,24 +207,6 @@ def LlConvert():
     })
     return response
 
-@app.route('/new_record', methods=['GET'])
-def new_record():
-    user_data = UserStatus(request.cookies.get("token"))
-    user = user_data['user']
-    if user:
-        return render_template('addrecord.html',
-                               user_data= user_data,
-                               index= 4,
-                               edit=True
-                               )
-    else:
-        return render_template('no_login.html',
-                               user_data=user_data,
-                               index=4,
-                               edit=False,
-                               gun=None
-                               )
-
 @app.route("/get_location", methods=['POST'])
 def get_location():
     user_data = UserStatus(request.cookies.get("token"))
@@ -357,12 +265,16 @@ def sw():
 
 @app.route('/recording', methods=['GET'])
 def recording():
-    user_data = UserStatus(request.cookies.get("token"))
-    return render_template('recording.html',
-        user_data=user_data,
-        researcher=False,
-        index=1,
-                           )
+    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+
+
+@app.route('/<path:path>', methods=['GET'])
+def all(path):
+    return send_from_directory(os.path.join(root, 'static'), path)
+
+@app.route('/')
+def home():
+    return send_from_directory(os.path.join(root, 'static'), 'index.html')
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

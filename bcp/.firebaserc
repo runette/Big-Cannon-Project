@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "ultima-ratio-221014": {
+      "hosting": {
+        "bcp": [
+          "ultima-ratio-221014"
+        ]
+      }
+    }
+  }
+}

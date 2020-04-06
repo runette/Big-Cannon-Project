@@ -1,13 +1,14 @@
 
- <form action="/set_entry" id="detail" method="post">
-    <div class="row p-3  bg-ur" >
+<div class="container py-5">
+    <form  #detail="ngForm">
+        <div class="row p-3  bg-ur" >
             <div class="media">
-                <a class="align-self-center mr-3 fancybox" href="record/images[0].original"><img src="record.images[0].s200" height="70px" alt=""></a>
+                <a class="align-self-center mr-3 fancybox" *ngIf="gun" [href]="gun.images[0].original"><img [src]="gun.images[0].s200" height="70px" alt=""></a>
             </div>
             <div class="media-body  p-2">
                 <div class="row">
                     <div class="col-sm-6">
-                        <h2>Gun ID : {{ record.gunid }}</h2>
+                        <h2 *ngIf="gun">Gun ID : {{ gun.gunid }}</h2>
                     </div>
                     <div class="col-sm-6">
                         <div class="float-right" >
@@ -18,43 +19,42 @@
                 </div>
             </div>
         </div>
-    <div class="tab-content" id="nav-tabContent">
-        <div class='tab-pane fade show active' id="list-bronze" role="tabpanel" aria-labelledby='list-bronze-list'>
+        <div class="tab-content" id="nav-tabContent">
+            <bcp-record-observer *ngIf="currentScreen == 'observer'"
+                [gun]="gun"
+            ></bcp-record-observer>
+            <bcp-record-reporter *ngIf="currentScreen == 'reporter'"
+                [gun]="gun"
+            ></bcp-record-reporter>
+            <bcp-record-surveyor *ngIf="currentScreen == 'surveyor'"
+                [gun]="gun"
+            ></bcp-record-surveyor>
         </div>
-        <div div class='tab-pane fade' id="list-silver" role="tabpanel" aria-labelledby='list-silver-list'>
+    </form>
+    <button mat-fab routerLink="/new_record" color="primary" ngClass='fab'>
+        <mat-icon color='accent' ngClass='fab-text'>
+            add
+        </mat-icon>
+    </button>
+
+
+    <div class="row fixed-bottom  bg-light ">
+        <div class="col-3">
+            <span class="btm-nav float-left mx-3 my-1 px-3" onclick="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></span>
         </div>
-        <div div class='tab-pane fade' id="list-gold" role="tabpanel" aria-labelledby='list-gold-list'>
+        <div class="col-6">
+            <div class="mx-auto">
+                <mat-button-toggle-group appearance="legacy" [(value)]="currentScreen"> 
+                    <mat-button-toggle  id="observer" role="tab" aria-controls="list-observer" value="observer" ><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></mat-button-toggle>
+                    <mat-button-toggle id="reporter" role="tab" aria-controls="list-reporter" value="reporter"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Reporter</span></mat-button-toggle>
+                    <mat-button-toggle id="surveyor" role="tab" aria-controls="list-surveyor" value="surveyor"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></mat-button-toggle>
+                </mat-button-toggle-group>
+            </div> 
+        </div>     
+        <div class="col-3">
+            <span class=" btm-nav float-right mx-3 my-1 px-3" onclick="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </span>
         </div>
     </div>
-</form>
-<button mat-fab routerLink="/new_record" color="primary" ngClass='fab'>
-    <mat-icon color='accent' ngClass='fab-text'>
-        add
-    </mat-icon>
-</button>
-
-
-<div class="row fixed-bottom  bg-light ">
-<div class="col-3">
-  <span class="btm-nav float-left mx-3 my-1 px-3" onclick="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></span>
-  </div><div class="col-6">
-
-            <ul class="nav justify-content-center" data-toggle="" title="">
-            <li class="nav-item">
-                <a class="nav-link text-center btm-pill active" id="observer" role="tab" data-toggle="list"  href="#list-bronze" aria-controls="list-bronze" onclick="sessionStorage.setItem('view', 'observer')"><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-center btm-pill " id="reporter" role="tab" data-toggle="list"  href="#list-silver"  aria-controls="list-silver" onclick="sessionStorage.setItem('view', 'reporter')"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Reporter</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-center btm-pill " id="surveyor" role="tab" data-toggle="list"  href="#list-gold" aria-controls="list-gold" onclick="sessionStorage.setItem('view', 'surveyor')"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></a>
-            </li>
-            </ul>
-            </div>
-
-        <div class="col-3">
-  <span class=" btm-nav float-right mx-3 my-1 px-3" onclick="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </span>
-  </div>
 </div>
 
 

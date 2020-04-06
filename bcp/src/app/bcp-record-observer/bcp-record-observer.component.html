@@ -1,0 +1,267 @@
+<div class="row">
+    <div class="col-md-6">
+        <table  class="table table-striped">
+            <thead class="thead-dark">
+            <th colspan='4' scope="row">Basic Information</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td >Type of Gun</td>
+                <td colspan="3"> 
+                    <div class="border border-light">
+                        <mat-select [(ngModel)]="gun.category" name="category">
+                            <mat-option *ngFor="let category of DATA_VALUES.GUN_CATEGORIES" [value]="category">
+                              {{category}}
+                            </mat-option>
+                          </mat-select>  
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Material</td>
+                <td colspan="3"> 
+                    <div class="border border-light">
+                        <mat-select [(ngModel)]="gun.material" name="material">
+                            <mat-option *ngFor="let material of DATA_VALUES.MATERIAL" [value]="material">
+                              {{material}}
+                            </mat-option>
+                          </mat-select>  
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td >Short Desc</td>
+                <td colspan="3">
+                    <textarea class="w-100" rows="2" name="description" placeholder="Description" [(ngModel)]="gun.description">{{ gun.description }}</textarea> </td>
+            </tr>
+            <tr>
+                <td >Author</td>
+                <td><input class="form-control" type="text" name="name" value="{{gun.name }}" placeholder="Name" readonly style="max-width:10em;"></td>
+                <td>Date <span class="d-none d-md-inline">Recorded</span></td>
+                <td class="">{{gun.date | date:'shortDate'}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table *ngIf="user" class="table table-striped">
+            <tbody>
+            <tr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <mat-slide-toggle [(ngModel)]="gun.markings" name="markings">Markings?</mat-slide-toggle>
+                    </div>
+                    <div class="col-sm-6">
+                        <mat-slide-toggle [(ngModel)]="gun.interpretations" name="interpretations">Information board?</mat-slide-toggle>
+                    </div>
+                </div>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped" *ngIf="user.login">
+            <tbody>
+                <tr *ngIf="gun.markings">
+                    <td>
+                        Describe the Markings
+                    </td>
+                    <td>
+                        <textarea class="w-100" name="mark_details" rows='2' placeholder="Details" [(ngModel)]="gun.markDetails">{{gun.markDetails}}</textarea>
+                    </td>
+                </tr>
+                <tr  *ngIf="gun.interpretations">
+                    <td>
+                        What does the board say?
+                    </td>
+                    <td>
+                        <textarea class="w-q00" rows='2' name="inter_details"  placeholder="Details" [(ngModel)]="gun.interDetails">{{gun.interDetails}}</textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+
+    <div class="col-md-6">
+        <table  class="table table-striped">
+            <thead class="thead-dark">
+                <th colspan='2' scope="row">Context</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td><textarea class="w-100" rows='1' name="display_name" id="display_name" placeholder="Give a name to the site" [(ngModel)]="gun.displayName">{{gun.displayName}}{</textarea></td>
+                </tr>
+                <tr>
+                    <td>Location</td>
+                    <td>
+                        <mat-select [(ngModel)]="gun.site" name="site">
+                            <mat-option *ngFor="let site of gun.geocode.places" [value]="site.name">
+                                {{site.name}}
+                            </mat-option>
+                            <mat-option *ngFor="let site of gun.geocode.geolocation" [value]="site.formatted_address">
+                                {{site.formatted_address}}
+                            </mat-option>
+                        </mat-select>  
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Description of Cannon Location</td>
+                    <td><textarea class="w-100" rows='2' name="context" placeholder="Describe context" [(ngModel)]="gun.context">{{gun.context}}</textarea></td>
+                </tr>
+                <tr *ngIf="user.login">
+                    <td colspan='2'>
+                        <mat-slide-toggle [(ngModel)]="gun.collection" name="collection"><small class="text-wrap">Is this gun part of a  museum, gallery or collection or on the grounds of a heritage site like a castle or recognised archeological site?</small></mat-slide-toggle>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped" *ngIf="user.login && gun.collection">
+            <tbody>
+                <tr >
+                    <td>Name of Museum / Gallery / Heritage Site / Collection</td>
+                    <td><textarea class="w-100" rows='1' name="coll_name" placeholder="Collection name" [(ngModel)]="gun.collName">{{gun.collName}}</textarea></td>
+
+                </tr>
+                <tr >
+                    <td>Collection Ref</td>
+                    <td><input class="w-100" type="text" name="coll_ref" placeholder="Collection reference" [(ngModel)]="gun.collRef"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--- <div class="row bg-light pt-3">
+<div class="col-md-6">
+<h3 class="bold">Location</h3>
+<div id="map_canvas" class="map-container-inline" > </div>
+<script>
+    window.initMap = function () {
+        map_icons = {
+                'BRONZE': "/img/cannon_bronze.png",
+                'GOLD': "/img/cannon_gold.png",
+                'SILVER': "/img/cannon_silver.png"
+            };
+
+        marker_quality = "{{gun.quality.name}}";
+        let location;
+        if ( {{user is not none | lower}}) {
+            location = {
+                lat: parseFloat($('#lat').val()),
+                lng: parseFloat($('#lon').val())
+                };
+        } else {
+            location = {
+            lat: {{ gun.location.latitude }},
+            lng: {{ gun.location.longitude }}
+            };
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'), {
+            zoom: 12,
+            center: location,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: false,
+            rotateControl: true,
+            fullscreenControl: true
+        });
+        marker = null;
+        reset_map(location)
+    };
+</script>
+{% if user %}
+<div class="row">
+    <div class="col-4">
+        <div class="custom-control custom-radio">
+            <input type="radio" name="geolocation" class="custom-control-input" id="latlon" checked onchange="radio_button('geolocation','latlon')" >
+            <label class="custom-control-label" for="latlon">Lat/Lon</label>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="custom-control custom-radio">
+            <input type="radio" name="geolocation" class="custom-control-input" id="bng"  onchange="LL_convert('#detail')" >
+            <label class="custom-control-label" for="bng">Grid Ref</label>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="custom-control custom-radio">
+            <input type="radio" name="geolocation" class="custom-control-input" id="locate"  onchange="radio_button('geolocation',  'locate')" >
+            <label class="custom-control-label" for="locate">Device Location</label>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row latlon">
+    <div class="col-md-2">
+        Lat
+    </div> <div class="col-md-3">
+        <input class="form-control" type="text" id="lat" name="lat" value="{{ gun.location.latitude }}" >
+    </div> <div class="col-md-2">
+        Long
+    </div> <div class="col-md-3">
+        <input class="form-control" type="text" id="lon" name="lon" value="{{ gun.location.longitude }}" >
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary" type="button" onclick="reset_map(null)">Centre</button>
+    </div>
+</div>
+<div class="row latlon">
+    <small class="text-muted mx-auto">All Lat/lon coordinates must be in WGS84</small>
+</div>
+<div class="row bng">
+    <div class="col-md-2">
+        East
+    </div>
+    <div class="col-md-3">
+        <input class="form-control" type="text" name="eastings" id="eastings" value="" >
+    </div>
+    <div class="col-md-2">
+        North
+    </div>
+    <div class="col-md-3">
+        <input class="form-control" type="text" name="northings" id="northings" value="">
+   </div>
+    <div class="col-md-2">
+        <button class="btn btn-small btn-primary" type="button" onclick="BNG_convert('bronze')">GoTo</button>
+    </div>
+</div>
+<div class="row bng">
+    <small class="text-muted mx-auto">Conversion provided by British Geological Survey <a href="https://www.bgs.ac.uk/data/webservices/convertForm.cfm#bngToLatLng">link</a></small>
+</div>
+<div class="row locate">
+    <button class="btn btn-primary mx-auto d-block" type="button" onclick="getLocation()">Current Location</button>
+</div>
+{% endif %}
+</div>
+<div class="col-md-6">
+{% if user %}
+<div class="row"><div class="col-3">
+<h3 class="bold">Photos</h3></div>
+<div class="col-9">
+<div class="progress hidden" >
+<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+</div></div><div class="row">
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <button type="button" class="btn btn-primary" id="file-upload" >Upload</span>
+    </div>
+
+<div class="custom-file">
+    <input type="file" id="file-name" multiple accept="image/jpeg, image/png, image/bmp, image/eps, image/gif, image/tiff, JPEG, PNG, GOF,EPS,TIFF" class="custom-file-input update-ignore" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+    <label class="custom-file-label text-truncate" for="inputGroupFile01">Choose file</label>
+</div>
+</div>
+</div>
+{% endif %} 
+<div class="imglist" id="imgs">
+{% for image in images %}
+<a href="{{image.original|safe}}" data-fancybox="image-gallery" data-caption="cannon photo">
+    <img src="{{image.s200|safe}}" alt="" />
+</a>
+{% endfor %}
+</div>
+</div> 
+</div> --->

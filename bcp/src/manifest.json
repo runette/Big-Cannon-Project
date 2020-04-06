@@ -1,0 +1,21 @@
+{
+  "short_name": "Cannons",
+  "name": "Big Cannon Project",
+  "icons": [
+    {
+      "src": "/img/gun-map-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/img/gun-map-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#e3f2fd",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#e3f2fd"
+}

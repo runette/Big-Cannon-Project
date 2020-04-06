@@ -1,0 +1,197 @@
+<div class="container">
+    <mat-accordion class="example-headers-align">
+        <mat-expansion-panel >
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h3 class="bg-primary text-white p-1">MOULDING CODE</h3> 
+                </mat-panel-title>
+                <mat-panel-description>
+                    <textarea class="bg-site w-auto"  rows="1" name="moulding" id="moulding" onclick="event.stopPropagation()" [(ngModel)]="gun.mouldingCode"></textarea>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+                <div class="row">
+                    <div class="card">
+                        <img src="../../assets/mouldings.png" class="card-img-top mx-auto" alt="..." style="max-width: 600px">
+                        <div class="card-body">
+                            <p class="card-text text-center bold">
+                                Add the Moulding codes for each ring in order - from the Base Ring to the Muzzle - using the RIng Divider "/" between each ring. To delete or change, edit the text above directly.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>A</h1><p><small>Astragal</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/A.png">
+                    </button>
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>B</h1><p><small>Band</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/B.png">
+                    </button>
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>S</h1><p><small>Slope</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/S.png">   
+                    </button> 
+                </div>
+                <div class="row">
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>F</h1><p><small>Fillet</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/F.png">
+                    </button> 
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>O</h1><p><small>Ogee</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/O.png">
+                    </button> 
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>Q</h1><p><small>Quadrant</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/Q.png">
+                    </button> 
+                </div>
+                <div class="row">
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>C</h1><p><small>Concave</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/C.png">
+                    </button> 
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>/</h1><small>Ring Divider</small></span>
+                    </button> 
+                    <button mat-button class="image-checkbox col-4 text-center ">
+                        <span class=""><h1>X</h1><small>None</small></span>
+                    </button>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel aria-label="Muzzle Codes">
+                <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h3 class="bg-primary text-white p-1">MUZZLE CODE</h3> 
+                </mat-panel-title>
+                <mat-panel-description>
+                    <h3 class="bg-primary text-white p-1">{{gun.muzzleCode}}</h3>
+                </mat-panel-description>
+                </mat-expansion-panel-header>
+                <mat-button-toggle-group name="muzzle" [(ngModel)]="gun.muzzleCode">
+                    <div class="row">
+                        <mat-button-toggle class="image-checkbox col-4 text-center" value="R">
+                            <span class=""><h1>R</h1><p><small>Tulip</small></p></span>
+                            <img class="img-fluid"  width="400px" src="../../assets/R.png">
+                        </mat-button-toggle>
+                        <mat-button-toggle class="image-checkbox col-4 text-center" value="F">
+                            <span class=""><h1>F</h1><p><small>Flared Cone</small></p></span>
+                            <img class="img-fluid"  width="400px" src="../../assets/F.png">
+                        </mat-button-toggle>
+                        <mat-button-toggle class="image-checkbox col-4 text-center" value="T">
+                            <span class=""><h1>T</h1><p><small>Tapered Cone</small></p></span>
+                            <img class="img-fluid"  width="400px" src="../../assets/T.png">
+                        </mat-button-toggle>
+                    </div>
+                    <div class="row">
+                        <mat-button-toggle class="image-checkbox col-4 text-center" value="P">
+                            <span class=""><h1>P</h1><p><small>Cylinder</small></p></span>
+                            <img class="img-fluid"  width="400px" src="../../assets/P.png">
+                        </mat-button-toggle>
+                        <mat-button-toggle class="image-checkbox col-4 text-center" value="E">
+                            <span class=""><h1>E</h1><p><small>Coronice</small></p></span>
+                            <img class="img-fluid"  width="400px" src="../../assets/E.png">
+                        </mat-button-toggle>
+                        <mat-button-toggle class="image-checkbox col-4 text-center" value="X">
+                            <span class=""><h1>X</h1><p><small>None</small></p></span>
+                        </mat-button-toggle>
+                    </div>
+                </mat-button-toggle-group>  
+            </mat-expansion-panel>
+            <mat-expansion-panel aria-label="Cascable Codes">
+                <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h3 class="bg-primary text-white p-1">CASCABLE CODE</h3> 
+                </mat-panel-title>
+                <mat-panel-description>
+                    <h3 class="bg-primary text-white p-1">{{gun.casCode}}</h3>
+                </mat-panel-description>
+                </mat-expansion-panel-header>
+                <mat-button-toggle-group name="cascable" [(ngModel)]="gun.casCode">
+                <div class="row">
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="K">
+                        <span class=""><h1>K</h1><p><small>Conical</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/K.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="O">
+                        <span class=""><h1>O</h1><p><small>Spherical</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/Sph.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="U">
+                        <span class=""><h1>U</h1><p><small>Concave</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/U.png">
+                    </mat-button-toggle>
+                </div>
+                <div class="row">
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="D">
+                        <span class=""><h1>D</h1><small>Flat</small></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/Flat.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="X">
+                        <span class=""><h1>X</h1><small>None</small></span>
+                    </mat-button-toggle>
+                    <div class=" col-4 nopad text-center " fxHide.gt-sm>
+                        
+                    </div>
+                    <div class=" col-4 nopad text-center " fxHide.gt-sm>
+                        
+                    </div>
+                </div>
+            </mat-button-toggle-group>  
+        </mat-expansion-panel>
+        <mat-expansion-panel aria-label="Button Codes">
+            <mat-expansion-panel-header>
+            <mat-panel-title>
+                <h3 class="bg-primary text-white p-1">BUTTON CODE</h3> 
+            </mat-panel-title>
+            <mat-panel-description>
+                <h3 class="bg-primary text-white p-1">{{gun.buttonCode}}</h3>
+            </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-button-toggle-group name="button" [(ngModel)]="gun.buttonCode">
+                <div class="row">
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="N">
+                        <span class=""><h1>N</h1><p><small>Knob</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/N.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="L">
+                        <span class=""><h1>L</h1><p><small>Knob with Loop</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/L.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="G">
+                        <span class=""><h1>G</h1><p><small>Spherical</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/G.png">
+                    </mat-button-toggle>
+                </div>
+                <div class="row">
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="C">
+                        <span class=""><h1>C</h1><p><small>Cylinder</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/Cyl.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="H">
+                        <span class=""><h1>H</h1><p><small>Horizontal Ring</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/H.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="V">
+                        <span class=""><h1>V</h1><p><small>Vertical Ring</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/V.png">
+                    </mat-button-toggle>
+                </div>
+                <div class="row">
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="E">
+                        <span class=""><h1>E</h1><p><small>Exended Knob</small></p></span>
+                        <img class="img-fluid"  width="400px" src="../../assets/Ext.png">
+                    </mat-button-toggle>
+                    <mat-button-toggle class="image-checkbox col-4 text-center" value="X">
+                        <span class=""><h1>X</h1><small>None</small></span>
+                    </mat-button-toggle>
+                    <div class=" col-4 nopad text-center " fxHide.gt-sm>
+                        
+                    </div>
+                </div>
+            </mat-button-toggle-group>  
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>
+ 

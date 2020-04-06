@@ -21,7 +21,12 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-auth-firebaseui/assets/",
+                "output": "./src/assets/"
+              }
             ],
             "styles": [
               "styles/site_theme.scss",
@@ -119,6 +124,10 @@
               "devServerTarget": "bcp:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {}
         }
       }
     }

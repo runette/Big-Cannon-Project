@@ -68,7 +68,8 @@
 
 <div class="float-table-wide bg-ur" id="table-entries" fxLayout="row" fxHide fxShow.gt-sm>
     <div class="w-100 p-1" *ngFor="let record of data.filteredData">
-        <app-bcp-data-card 
+        <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
+            [record]="record" 
         ></app-bcp-data-card>
     </div>
 </div>

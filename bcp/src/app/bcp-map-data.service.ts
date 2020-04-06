@@ -23,10 +23,42 @@ export class BcpMapDataService {
   constructor() { 
     this.data= [{
       gunid: 10102,
-      name: "Test Gun",
+      site: "Test Gun",
       location: new google.maps.LatLng(52.0,0.0),
-      
-      images:["https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media"],
+      category: "Breech Loading",
+      material: "Cast Iron",
+      images:[{
+        original: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media",
+        s200: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media",
+        s32: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media"
+      },
+      {
+        original: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media",
+        s200: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media"
+      },
+    ],
+    description:"a short description",
+    name: "Paul Harwood",
+    date: new Date(),
+    displayName: "A Test Gun",
+    context: "The Context",
+    collection: true,
+    collName: "The Collection",
+    collRef: "02-33-54",
+    markings: true,
+    markDetails: "The Markeings",
+    interpretations: true,
+    interDetails: "The Interpretations",
+    country: "UK",
+    geocode: {places:[{name:"places name"}], geolocation:[{formatted_address: " geolocation result"}]},
+    user_id: "string",
+    status: "Auto",
+    measurements: {length: 10, scale: false},
+    mouldingCode: "ABC",
+    muzzleCode: "B",
+    casCode: "C",
+    buttonCode: "D",
+
     }];
     this.setFilter();
   }
@@ -92,15 +124,56 @@ export class BcpMapDataService {
   private setFilter():void {
     this.filteredData = this.data
   }
+
 }
 
 export interface DataItem {
   gunid: number;
-  images: string[];
+  images: {[key:string]:string}[];
   name?: string;
   location?: google.maps.LatLng;
   material?: Material;
   category?: GunCategory;
+  description?:string;
+  date?: Date;
+  site?: string;
+  displayName?: string;
+  context?: string;
+  collection?: boolean;
+  collName?: string;
+  collRef?: string;
+  markings?: boolean;
+  markDetails?: string;
+  interpretations?: boolean;
+  interDetails?: string;
+  country?: string;
+  geocode?: Geocode;
+  user_id?: string;
+  status?: RecordStatus;
+  measurements?: Measurements;
+  mouldingCode?: string;
+  muzzleCode?: string;
+  casCode?: string;
+  buttonCode?: string;
 }
 
 export type MapData = DataItem[];
+
+export interface Measurements {
+  scale: boolean;
+  length?: number;
+  baseRing?: number;
+  muzzle?: number;
+  bore?: number;
+  trunnionPosition?: number;
+  trunnionWidth?: number;
+  trunnionDiameter?: number;
+  trunnionOffset?: number;
+}
+
+export interface Geocode{
+  places: [{[key:string]:string}];
+  geolocation: [{[key:string]:string}];
+  default?: string;
+  country?: string;
+}
