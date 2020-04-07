@@ -38,7 +38,8 @@ import {BcpRecordObserverComponent} from './bcp-record-observer/bcp-record-obser
 import { BcpRecordReporterComponent } from './bcp-record-reporter/bcp-record-reporter.component';
 import { BcpRecordSurveyorComponent } from './bcp-record-surveyor/bcp-record-surveyor.component';
 import { BcpList2stringPipe } from './bcp-list2string.pipe';
-import { BcpHelpComponent } from './bcp-help/bcp-help.component'
+import { BcpHelpComponent } from './bcp-help/bcp-help.component';
+import { BcpLoginComponent } from './bcp-login/bcp-login.component'
  
 
 @NgModule({
@@ -55,6 +56,7 @@ import { BcpHelpComponent } from './bcp-help/bcp-help.component'
     BcpRecordSurveyorComponent,
     BcpList2stringPipe,
     BcpHelpComponent,
+    BcpLoginComponent,
   ],
   imports: [
     BrowserModule,

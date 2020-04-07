@@ -170,7 +170,7 @@ class Gun(Model):
             try:
                 thumbnail = gun.get_images()[0].get("s32")
             except:
-                thumbnail = "/img/32x32.png"
+                pass
             try:
                 name = [user for user in users if user.user_id == gun.user_id][0].fire_user['name']
             except Exception as e:
@@ -187,14 +187,16 @@ class Gun(Model):
                     name = gun.name
             try:
                 line = {}
-                line.update({'thumbnail': thumbnail, 'author': name})
+                line.update({'thumbnail': thumbnail, 'owner': name})
                 for item in gun.items():
                     if item[0] == 'location':
                         line.update({'lat': item[1].latitude, 'lng': gun.location.longitude})
                     elif item[0] in MATRIX:
                         line.update({item[0]: MATRIX[item[0]][item[1]]})
                     elif item[0] == 'date':
-                        line.update({'date': gun.date.strftime('%d %b %Y')})
+                        line.update({'date': gun.date.timestamp() * 1000})
+                    elif item[0] == 'date':
+                        line.update(json.loads(item[1]))
                     else:
                         line.update({item[0]: item[1]})
                 map_data.append(line)

@@ -21,12 +21,7 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "node_modules/ngx-auth-firebaseui/assets/",
-                "output": "./src/assets/"
-              }
+              "src/assets"
             ],
             "styles": [
               "styles/site_theme.scss",

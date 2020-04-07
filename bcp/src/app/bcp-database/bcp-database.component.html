@@ -4,7 +4,7 @@
             [options]="options"
             (tilesloaded)="loaded($event)"
 ></google-map>
-<div class="bounding-box"></div>
+<div class="bounding-box" fxHide fxShow.gt-sm></div>
 </div>
 <app-googlemap-locate
             [options]="locateOptions"
@@ -66,15 +66,20 @@
     </mat-action-list>
 </mat-expansion-panel>
 
-<div class="float-table-wide bg-ur" id="table-entries" fxLayout="row" fxHide fxShow.gt-sm>
+<div class="float-table-wide bg-ur" id="table-entries" fxHide fxShow.gt-sm>
     <div class="w-100 p-1" *ngFor="let record of data.filteredData">
-        <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
-            [record]="record" 
-        ></app-bcp-data-card>
+            <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
+                [record]="record" 
+            ></app-bcp-data-card>
     </div>
 </div>
 
-<div class="float-table bg-ur" id="table-entries" fxLayout="row" fxShow fxHide.gt-sm>
+<div class="float-table bg-ur" id="table-entries" fxShiw fxHide.gt-sm>
+    <div class="w-100 p-1" *ngFor="let record of data.filteredData">
+            <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
+                [record]="record" 
+            ></app-bcp-data-card>
+    </div>
 </div>
 
 <mat-menu #typeMenu="matMenu">

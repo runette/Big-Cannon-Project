@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import {  Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp-filter-values.service';
-
+import {BcpUserService} from './bcp-user.service'
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { database } from 'firebase';
 
 
 @Injectable({
@@ -20,8 +24,18 @@ export class BcpMapDataService {
 
   private data : MapData;
 
-  constructor() { 
-    this.data= [{
+  constructor(private user: BcpUserService, private auth: AngularFireAuth, private http: HttpClient) { 
+
+    auth.auth.onAuthStateChanged( user => {
+      if (user) {
+        this.getMapData().subscribe( response => {
+          this.data = this.loadMapData(response['entries'] as [{[key:string]: any}]);
+          this.setFilter();
+        })
+      }
+    });
+
+    /* this.filteredData= [{
       gunid: 10102,
       site: "Test Gun",
       location: new google.maps.LatLng(52.0,0.0),
@@ -58,9 +72,8 @@ export class BcpMapDataService {
     muzzleCode: "B",
     casCode: "C",
     buttonCode: "D",
+    }];  */
 
-    }];
-    this.setFilter();
   }
 
   set material(value: Material) {
@@ -122,15 +135,42 @@ export class BcpMapDataService {
 
 
   private setFilter():void {
-    this.filteredData = this.data
+    this.filteredData=this.data;
+  }
+
+  private getMapData(): Observable<object>{
+    return this.apiPost(this.user.token, 'http://localhost:8000/_ah/api/bcp/fetch_map')
+  }
+
+  private apiPost(token: string, url:string, body: {} = {}): Observable<object> {
+    return this.http.post(
+      url, body,{
+        headers: {
+        'Authorization': `Bearer ${token}`
+        },
+        responseType: 'json'
+  })};
+
+  private loadMapData(data: [{[key:string]:any}]) : MapData {
+    let mapData : MapData = [];
+    for ( let i = 0; i < data.length; i++) {
+      mapData[i] = {};
+      if (data[i].hasOwnProperty('lat')) mapData[i].location = new google.maps.LatLng(data[i].lat, data[i].lng);
+      if (data[i].hasOwnProperty('date')) mapData[i].date = new Date(data[i].date);
+      let keys = ['gunid', 'material','quality', 'description', 'owner', 'site', 'displayName', 'context', 'collection', 'collName', 'collRef', 'images', 'markings', 'markDetails', 'interpretations', 'interDetails', 'country', 'geocode', 'userId', 'status', 'measurements', 'mouldingCode', 'muzzleCode', 'casCode', 'buttonCode', 'category' ];
+      let items = ['gunid', 'type','quality', 'description', 'owner', 'site', 'display_name', 'context', 'collection', 'coll_name', 'coll-ref', 'images', 'markings', 'mark_details', 'interpretations', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category' ];
+      
+      for (let j = 0; j < items.length; j++) if (data[i].hasOwnProperty(items[j])) mapData[i][keys[j]] = data[i][items[j]]
+    }
+    return mapData
   }
 
 }
 
 export interface DataItem {
-  gunid: number;
-  images: {[key:string]:string}[];
-  name?: string;
+  gunid?: number;
+  images?: {[key:string]:string}[];
+  owner?: string;
   location?: google.maps.LatLng;
   material?: Material;
   category?: GunCategory;
@@ -155,6 +195,7 @@ export interface DataItem {
   muzzleCode?: string;
   casCode?: string;
   buttonCode?: string;
+  thumbnail?:string
 }
 
 export type MapData = DataItem[];

@@ -11,18 +11,30 @@
         type: http
         scheme: bearer
         bearerFormat: JWT
-        x-bearerInfoFunc: api.AuthApi.decode_token
+        x-bearerInfoFunc: api.auth_api.AuthApi.decode_token
 
   security:
     - jwt: []
 
   servers:
-    - url: https://localhost:8000/_ah/api/qr8
+    - url: http://localhost:8080/_ah/api/bcp
 
   paths:
-    /fetch_map_2:
+    /fetch_map:
       post:
         operationId: api.MapApi.fetch_map
+
+        responses:
+          200:
+            description: Fectch the Map data
+            content:
+              application/json:
+                schema:
+                  type: object
+    
+    /fetch_user:
+      post:
+        operationId: api.UserApi.fetch_user
 
         responses:
           200:

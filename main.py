@@ -28,16 +28,21 @@ from datetime import datetime
 from urllib.parse import urlparse
 from connexion import App
 import firebase_admin
+from flask_cors import CORS
+import logging
+
 
 
 app = Flask(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
 firebase_admin.initialize_app()
 
-options = {"swagger_ui": False}
+options = {"swagger_ui": True}
 api = App(__name__, options=options)
 api.add_api('swagger.yaml', strict_validation=True)
-
+# add CORS support
+CORS(api.app)
+logging.getLogger('flask_cors').level = logging.DEBUG
 
 try:
     import googleclouddebugger
@@ -285,6 +290,7 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
     if 'WINGDB_ACTIVE' in os.environ:
-        app.debug = False
+        api.debug = False
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-        app.run(host='localhost', port=8080, use_reloader=True)
+        #app.run(host='localhost', port=8080, use_reloader=True)
+        api.run(host='localhost', port=8000)

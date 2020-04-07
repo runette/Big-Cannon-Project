@@ -12,14 +12,14 @@ class AuthApi:
         Returns uid or None
         """
         if is_devserver():
-            user = {"uid": "01010101"}
+            response = {"uid": "01010101", 'fire_user': {'name': 'dev user'}}
         else:
             try:
-                decoded_token = auth.verify_id_token(jwt)
-                user = {'uid': decoded_token['uid']}
-            except ValueError:
-                user = None
-        return user
+                fire_user = auth.verify_id_token(jwt)
+                response = {'uid': fire_user['uid'], 'fire_user': fire_user}
+            except ValueError as e:
+                response = None
+        return response
 
     @staticmethod
     def get_token(body):

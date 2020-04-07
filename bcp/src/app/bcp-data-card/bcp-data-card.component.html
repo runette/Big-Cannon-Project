@@ -1,19 +1,21 @@
 
 <div class="info" >
     <div class="card">
-        <div class="row no-gutters"><div class="col-2">
-            <img class="card-img m-1" src="{{record.images[0].s32}}"  width="32px"/>
-        </div>
-        <div class="col-10">
-            <div class="card-body">
-                <div class="h6 card-title text-truncate">
-                    {{record.displayName}}
-                </div>
-                <div class="card-text">
-                    <p>
-                        <small class="text-mute" *ngIf="record.category && record.category != 'Not Known'">{{record.category}}, </small>
-                        <small class="text-mute" *ngIf="record.material && record.material != 'Not Known'">{{record.material}}</small>
-                    </p>
+        <div class="row no-gutters">
+            <div class="col-2">
+                <img class="card-img m-1" src="{{record.thumbnail ? record.thumbnail : '../assets/32x32.png'}"  width="32px"/>
+            </div>
+            <div class="col-10">
+                <div class="card-body">
+                    <div class="h6 card-title text-truncate">
+                        {{record.displayName}}
+                    </div>
+                    <div class="card-text">
+                        <p>
+                            <small class="text-mute" *ngIf="record.category && record.category != 'Not Known'">{{record.category}}, </small>
+                            <small class="text-mute" *ngIf="record.material && record.material != 'Not Known'">{{record.material}}</small>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
