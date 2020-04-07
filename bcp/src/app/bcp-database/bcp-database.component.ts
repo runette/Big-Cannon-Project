@@ -38,6 +38,10 @@ export class BcpDatabaseComponent {
   @ViewChild(GoogleMap, {static: false}) my_map: GoogleMap;
 
   cluster: boolean= false;
+  here: boolean=false;
+  hereText:string="All";
+  ownText:string="Everyone";
+  clusterText:string="Ungrouped";
 
   constructor(public FILTER_TEXT: BcpFilterValuesService, public data: BcpMapDataService) { }
 
@@ -50,14 +54,17 @@ export class BcpDatabaseComponent {
 
   setCategory (cat: GunCategory) {
     this.data.gunCategory = cat;
+    this.data.setFilter();
   }
 
   setMaterial (mat: Material) {
     this.data.material = mat;
+    this.data.setFilter();
   }
 
   setQuality (qual: RecordQuality) {
     this.data.recordQuality = qual;
+    this.data.setFilter();
   }
 
   setOrder (order: Order) {
@@ -66,10 +73,17 @@ export class BcpDatabaseComponent {
 
   setCluster ($event: MatSlideToggleChange) {
     this.cluster = $event.checked;
+    if ($event.checked) this.clusterText="Grouped"; else this.clusterText="Ungrouped";
   }
 
   setOwn ($event: MatSlideToggleChange) {
     this.data.ownRecords = $event.checked;
+    if ($event.checked) this.ownText="Mine"; else this.ownText="Everyone";
+  }
+
+  setHere($event: MatSlideToggleChange) {
+    this.here = $event.checked;
+    if ($event.checked) this.hereText="Here"; else this.hereText="All";
   }
 
 }

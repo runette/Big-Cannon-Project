@@ -26,6 +26,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
@@ -83,6 +84,7 @@ import { BcpLoginComponent } from './bcp-login/bcp-login.component'
     BrowserModule,
     //AngularFireModule.initializeApp(environment.firebase),
     NgxAuthFirebaseUIModule.forRoot(environment.firebaseui),
+    MatGridListModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

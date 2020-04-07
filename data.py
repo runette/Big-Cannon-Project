@@ -195,8 +195,13 @@ class Gun(Model):
                         line.update({item[0]: MATRIX[item[0]][item[1]]})
                     elif item[0] == 'date':
                         line.update({'date': gun.date.timestamp() * 1000})
-                    elif item[0] == 'date':
-                        line.update(json.loads(item[1]))
+                    elif item[0] == 'geocode':
+                        line.update({'geocode': json.loads(item[1])})
+                    elif item[0] == 'images':
+                        images = []
+                        for image in item[1]:
+                            images.append(json.loads(image))
+                        line.update({item[0]: images})
                     else:
                         line.update({item[0]: item[1]})
                 map_data.append(line)

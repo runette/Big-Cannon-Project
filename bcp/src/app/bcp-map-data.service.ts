@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import {  Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp-filter-values.service';
 import {BcpUserService} from './bcp-user.service'
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { database } from 'firebase';
+import {BcpApiService} from './bcp-api.service';
 
 
 @Injectable({
@@ -24,55 +22,13 @@ export class BcpMapDataService {
 
   private data : MapData;
 
-  constructor(private user: BcpUserService, private auth: AngularFireAuth, private http: HttpClient) { 
+  constructor(private user: BcpUserService, private auth: AngularFireAuth, private api: BcpApiService) { 
 
     auth.auth.onAuthStateChanged( user => {
       if (user) {
-        this.getMapData().subscribe( response => {
-          this.data = this.loadMapData(response['entries'] as [{[key:string]: any}]);
-          this.setFilter();
-        })
+        this.getMapData()
       }
     });
-
-    /* this.filteredData= [{
-      gunid: 10102,
-      site: "Test Gun",
-      location: new google.maps.LatLng(52.0,0.0),
-      category: "Breech Loading",
-      material: "Cast Iron",
-      images:[{
-        original: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media",
-        s200: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media",
-        s32: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media"
-      },
-      {
-        original: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media",
-        s200: "https://www.googleapis.com/download/storage/v1/b/ultima-ratio-221014.appspot.com/o/prod%2F24%2FIMG_20190313_144734.jpg%2Foriginal?generation=1552481422926554&alt=media"
-      },
-    ],
-    description:"a short description",
-    name: "Paul Harwood",
-    date: new Date(),
-    displayName: "A Test Gun",
-    context: "The Context",
-    collection: true,
-    collName: "The Collection",
-    collRef: "02-33-54",
-    markings: true,
-    markDetails: "The Markeings",
-    interpretations: true,
-    interDetails: "The Interpretations",
-    country: "UK",
-    geocode: {places:[{name:"places name"}], geolocation:[{formatted_address: " geolocation result"}]},
-    user_id: "string",
-    status: "Auto",
-    measurements: {length: 10, scale: false},
-    mouldingCode: "ABC",
-    muzzleCode: "B",
-    casCode: "C",
-    buttonCode: "D",
-    }];  */
 
   }
 
@@ -134,22 +90,34 @@ export class BcpMapDataService {
   }
 
 
-  private setFilter():void {
-    this.filteredData=this.data;
+  public setFilter():void {
+    this.filteredData=this.data.filter(item => {
+      return  (this.gunCategory === 'All' || item.category == this.gunCategory) && 
+              (this.material === 'All' || item.material == this.material) && 
+              (this.recordQuality === 'All' || item.quality == this.recordQuality) &&
+              (this.recordStatus === 'All'|| item.status == this.recordStatus) &&
+              (!this.ownRecords || item.user_id == this.user.user.fireUserData.uid) 
+    })
+    this.filteredData.sort( (a,b) => {
+      if (this.order === 'Order') return a.gunid - b.gunid;
+      if (this.order === "Date Ascending") return (a.date.getMilliseconds() - b.date.getMilliseconds())/10000;
+      if (this.order === "Date Descending") return (b.date.getMilliseconds() - a.date.getMilliseconds())/10000;
+    })
   }
 
-  private getMapData(): Observable<object>{
-    return this.apiPost(this.user.token, 'http://localhost:8000/_ah/api/bcp/fetch_map')
+  
+  public getMapData(): void{
+    this.auth.idToken.subscribe(token => {
+      this.api.apiPost(token, this.api.FETCH_MAP ).subscribe(response => {
+          this.data = this.loadMapData(response['entries'] as [{[key:string]: any}]);
+          this.setFilter();
+      },
+      error => {})
+    },
+    error => {})
   }
 
-  private apiPost(token: string, url:string, body: {} = {}): Observable<object> {
-    return this.http.post(
-      url, body,{
-        headers: {
-        'Authorization': `Bearer ${token}`
-        },
-        responseType: 'json'
-  })};
+
 
   private loadMapData(data: [{[key:string]:any}]) : MapData {
     let mapData : MapData = [];
@@ -157,8 +125,8 @@ export class BcpMapDataService {
       mapData[i] = {};
       if (data[i].hasOwnProperty('lat')) mapData[i].location = new google.maps.LatLng(data[i].lat, data[i].lng);
       if (data[i].hasOwnProperty('date')) mapData[i].date = new Date(data[i].date);
-      let keys = ['gunid', 'material','quality', 'description', 'owner', 'site', 'displayName', 'context', 'collection', 'collName', 'collRef', 'images', 'markings', 'markDetails', 'interpretations', 'interDetails', 'country', 'geocode', 'userId', 'status', 'measurements', 'mouldingCode', 'muzzleCode', 'casCode', 'buttonCode', 'category' ];
-      let items = ['gunid', 'type','quality', 'description', 'owner', 'site', 'display_name', 'context', 'collection', 'coll_name', 'coll-ref', 'images', 'markings', 'mark_details', 'interpretations', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category' ];
+      let keys = ['gunid', 'material','quality', 'description', 'owner', 'site', 'displayName', 'context', 'collection', 'collName', 'collRef', 'images', 'markings', 'markDetails', 'interpretations', 'interDetails', 'country', 'geocode', 'userId', 'status', 'measurements', 'mouldingCode', 'muzzleCode', 'casCode', 'buttonCode', 'category', 'thumbnail' ];
+      let items = ['gunid', 'type','quality', 'description', 'owner', 'site', 'display_name', 'context', 'collection', 'coll_name', 'coll-ref', 'images', 'markings', 'mark_details', 'interpretations', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category' , 'thumbnail'];
       
       for (let j = 0; j < items.length; j++) if (data[i].hasOwnProperty(items[j])) mapData[i][keys[j]] = data[i][items[j]]
     }
@@ -195,7 +163,8 @@ export interface DataItem {
   muzzleCode?: string;
   casCode?: string;
   buttonCode?: string;
-  thumbnail?:string
+  thumbnail?:string;
+  quality?: RecordQuality;
 }
 
 export type MapData = DataItem[];

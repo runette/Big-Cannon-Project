@@ -1,9 +1,9 @@
 <mat-sidenav-container fullscreen>
   <mat-sidenav-content fxLayout="column">
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" class="fixed-top">
       <button mat-button routerLink="/">
         <div class="navbar-brand">
-          <img class="img-responsive m0 p0" height="50" src="/img/ultima-ratio-logo.jpg">
+          <img class="img-responsive m0 p0" height="50" src="../assets/ultima-ratio-logo.jpg">
         </div>
       </button>
       <div fxLayout="row" fxHide fxShow.gt-xs>
@@ -27,5 +27,6 @@
     </mat-menu>
 
     <router-outlet></router-outlet>
+    <div class="w-100" style="font-size:50%;" > <p class="text-center">Website <mat-icon style="font-size:50%;">copyright</mat-icon> <a href="https://runette.co.uk" target="_blank">Runette Software Ltd 2020</a></p></div>
   </mat-sidenav-content>
 </mat-sidenav-container>

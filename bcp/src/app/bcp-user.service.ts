@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase/app';
-import {Observable} from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import {BcpApiService} from './bcp-api.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -13,20 +13,10 @@ export class BcpUserService {
   login: boolean = false;
   token: string;
 
-  constructor(private auth: AngularFireAuth, private http: HttpClient) {
+  constructor(private auth: AngularFireAuth, private api: BcpApiService) {
     auth.auth.onAuthStateChanged( user => {
       if (user) {
-        user.getIdToken().then( token => this.token = token);
-        this.getUser(this.token).subscribe( response => {
-          this.user = new BcpUser(user, response)
-        }),
-        error => {
-          this.user = null;
-          this.login = false;
-          console.error(error)
-          return
-        }
-        this.login = true
+          this.getUser(user)
       } else {
         this.user = null;
         this.login = false;
@@ -34,16 +24,15 @@ export class BcpUserService {
     });
   }
 
-  private getUser(token: string): Observable<object> {
-    return this.http.post(
-      `http://localhost:8000/_ah/api/bcp/fetch_user`,{
-
-      },{
-        headers: {
-        'Authorization': `Bearer ${token}`
-        },
-        responseType: 'json'
-  })};
+  public getUser(user): void{
+    this.auth.idToken.subscribe(token => {
+      this.api.apiPost(token, this.api.FETCH_USER ).subscribe(response => {
+        this.user = new BcpUser(user, response);
+      },
+      error => {})
+    },
+    error => {})
+  }
 }
 
 export class BcpUser {

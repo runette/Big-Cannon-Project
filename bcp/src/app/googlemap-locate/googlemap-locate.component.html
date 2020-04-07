@@ -1,4 +1,4 @@
-<div #div><button draggable="false" title="Locate" aria-label="Locate" type="button" class="gm-control-active locate-control">
+<div #div><button draggable="false" title="Locate" aria-label="Locate" type="button" class="gm-control-active locate-control" (click)="onClick()">
     <mat-icon [ngClass]="{
         'locate-control': true,
     'locate-selected': status == 'on',

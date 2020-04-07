@@ -45,17 +45,20 @@ export class GooglemapLocateComponent implements OnInit {
 
   onClick(){
     if(navigator.geolocation && this.status === 'off' ) {
+        let marker = this.control.marker;
+        let options = this.options;
+        let map = this.map;
         this.status = 'on';
         let position = this.position;
         this.watch = navigator.geolocation.watchPosition(function(my_position) {
             position = my_position;
             let latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            this.control.marker.setMap(this._map);
-            this.control.marker.setCenter(latlng);
-            this.control.marker.setRadius(position.coords.accuracy); 
-            if (this.options.pan && status !== 'moved') this.map.setCenter(latlng);
-            if (this.options.zoom && status !== 'moved') this.map.setZoom( this.options.zoomTo ? this.options.zoomTo : 17)
-        }, function(e) { console.log(e.message)},this.options.locationOptions);
+            marker.setMap(map);
+            marker.setCenter(latlng);
+            marker.setRadius(position.coords.accuracy); 
+            if (options.pan && status !== 'moved') map.setCenter(latlng);
+            if (options.zoom && status !== 'moved') map.setZoom( this.options.zoomTo ? this.options.zoomTo : 17)
+        }, function(e) { console.log(e.message)},options.locationOptions);
     } else if (status == 'on' ) {
         status = 'off';
         navigator.geolocation.clearWatch(this.watch);

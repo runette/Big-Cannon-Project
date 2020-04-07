@@ -28,7 +28,9 @@
     position: absolute;
     width: 62%;
     top:70px;
-    left:3%
+    left:3%;
+    display:block !important;
+
         }
 .fab {
     width: 50px;
@@ -70,4 +72,13 @@
         
     .float-table {
         position: initial;
+    }
+
+    small {
+        line-height: 85%;
+        overflow: hidden;
+    }
+
+    .toggle-content{
+        font-size: 14px;
     }

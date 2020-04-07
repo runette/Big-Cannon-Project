@@ -1,3 +1,4 @@
+<!--- The Map -->
 <div class="map-container fill-remaining-space">
 <google-map height="100%"
             width="100%"
@@ -10,31 +11,59 @@
             [options]="locateOptions"
             [(map)]="map"
 ></app-googlemap-locate>
+
+<!---  The FAB -->
 <button mat-fab routerLink="/new_record" color="primary" ngClass='fab'>
     <mat-icon color='accent' ngClass='fab-text'>
         add
     </mat-icon>
 </button>
 
+<!-- The Filter Bar-->
 <mat-toolbar class="map-nav-wide bg-ur" fxLayout="row" fxHide fxShow.gt-sm>
-    <button mat-button [matMenuTriggerFor]="typeMenu">Type <small class="text-muted" *ngIf=" data.gunCategory != 'All'">{{data.gunCategory}}</small> </button>
-    <button mat-button [matMenuTriggerFor]="materialMenu">Material <small class="text-muted" *ngIf=" data.material != 'All'">{{data.material}}</small></button>
-    <button mat-button [matMenuTriggerFor]="statusMenu">Status <small class="text-muted" *ngIf=" data.recordQuality != 'All'">{{data.recordQuality}}</small></button>
-    <button mat-button [matMenuTriggerFor]="orderMenu">Order <small class="text-muted" *ngIf=" data.order != 'Order'">{{data.order}}</small></button>
-    <mat-slide-toggle
-          class=""
-          [color]="'accent'"
-          [checked]="cluster"
-          (change)="setCluster($event)">
-        Ungrouped
-      </mat-slide-toggle>
-      <mat-slide-toggle
-          class=""
-          [color]="'accent'"
-          [checked]="data.ownRecords"
-          (change)="setOwn($event)">
-        All
-      </mat-slide-toggle>
+    <div class="row">
+        <div class="col-2">
+            <button mat-button [matMenuTriggerFor]="typeMenu"><div class="row">Type</div><div class="row"><small class="text-muted" *ngIf=" data.gunCategory != 'All'">{{data.gunCategory}}</small></div></button>
+        </div>
+        <div class="col-2">
+            <button mat-button [matMenuTriggerFor]="materialMenu"><div class="row">Material</div><div class="row"> <small class="text-muted" *ngIf=" data.material != 'All'">{{data.material}}</small></div></button>
+        </div>
+        <div class="col-2">
+            <button mat-button [matMenuTriggerFor]="statusMenu"><div class="row">Status</div><div class="row"><small class="text-muted" *ngIf=" data.recordQuality != 'All'">{{data.recordQuality}}</small></div> </button>
+        </div>
+        <div class="col-2">
+            <button mat-button [matMenuTriggerFor]="orderMenu"><div class="row">Order</div><div class="row"><small class="text-muted" *ngIf=" data.order != 'Order'">{{data.order}}</small></div> </button>
+        </div>
+        <div class="col-2">
+            <mat-slide-toggle
+                class=""
+                [color]="'accent'"
+                [checked]="here"
+                (change)="setHere($event)">
+                <span class="toggle-content">{{hereText}}</span>
+            </mat-slide-toggle>
+        </div>
+        <div class="col-2">
+            <div class="row">
+                <mat-slide-toggle
+                    class=""
+                    [color]="'accent'"
+                    [checked]="cluster"
+                    (change)="setCluster($event)">
+                    <span class="toggle-content">{{clusterText}}</span>
+                </mat-slide-toggle>
+            </div>
+            <div class="row">   
+                <mat-slide-toggle
+                    class=""
+                    [color]="'accent'"
+                    [checked]="data.ownRecords"
+                    (change)="setOwn($event)">
+                    <span class="toggle-content">{{ownText}}</span>
+                </mat-slide-toggle>
+            </div>
+        </div>
+      </div>
 </mat-toolbar>
 
 <mat-expansion-panel class="map-nav bg-ur" fxLayout="row" fxShow fxHide.gt-sm>
@@ -66,6 +95,7 @@
     </mat-action-list>
 </mat-expansion-panel>
 
+<!-- The Entry Table -->
 <div class="float-table-wide bg-ur" id="table-entries" fxHide fxShow.gt-sm>
     <div class="w-100 p-1" *ngFor="let record of data.filteredData">
             <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
@@ -82,6 +112,7 @@
     </div>
 </div>
 
+<!-- The Filter Menus -->
 <mat-menu #typeMenu="matMenu">
     <div *ngFor="let item of FILTER_TEXT.GUN_CATEGORIES">
         <button mat-menu-item (click)="setCategory(item)">{{item}}</button>
