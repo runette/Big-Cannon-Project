@@ -3,6 +3,7 @@ import {  Material, GunCategory, RecordStatus, RecordQuality, Order } from './bc
 import {BcpUserService} from './bcp-user.service'
 import { AngularFireAuth } from '@angular/fire/auth';
 import {BcpApiService} from './bcp-api.service';
+import {Subject} from 'rxjs';
 
 
 @Injectable({
@@ -19,6 +20,7 @@ export class BcpMapDataService {
   private _boundingBox: google.maps.LatLngBounds;
 
   filteredData: MapData;
+  $newData: Subject<string>;
 
   private data : MapData;
 
@@ -29,6 +31,8 @@ export class BcpMapDataService {
         this.getMapData()
       }
     });
+
+    this.$newData = new Subject<string>();
 
   }
 
@@ -103,6 +107,7 @@ export class BcpMapDataService {
       if (this.order === "Date Ascending") return (a.date.getMilliseconds() - b.date.getMilliseconds())/10000;
       if (this.order === "Date Descending") return (b.date.getMilliseconds() - a.date.getMilliseconds())/10000;
     })
+    this.$newData.next("yes");
   }
 
   

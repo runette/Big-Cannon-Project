@@ -16,7 +16,7 @@ export class BcpUserService {
   constructor(private auth: AngularFireAuth, private api: BcpApiService) {
     auth.auth.onAuthStateChanged( user => {
       if (user) {
-          this.getUser(user)
+          this.getUser(user);
       } else {
         this.user = null;
         this.login = false;
@@ -28,6 +28,7 @@ export class BcpUserService {
     this.auth.idToken.subscribe(token => {
       this.api.apiPost(token, this.api.FETCH_USER ).subscribe(response => {
         this.user = new BcpUser(user, response);
+        this.login = true;
       },
       error => {})
     },

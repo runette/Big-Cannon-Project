@@ -41,8 +41,10 @@
     "@angular/platform-browser": "~9.1.0",
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
+    "@google/markerclustererplus": "^5.0.3",
     "firebase": "^7.13.2",
     "ngx-auth-firebaseui": "^4.0.3",
+    "ngx-lightbox": "^2.1.2",
     "rxjs": "^6.5.5",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
@@ -71,6 +73,7 @@
     "firebase-tools": "^8.0.0",
     "fuzzy": "^0.1.3",
     "inquirer": "^6.2.2",
-    "inquirer-autocomplete-prompt": "^1.0.1"
+    "inquirer-autocomplete-prompt": "^1.0.1",
+    "workbox-sw": "^5.1.3"
   }
 }

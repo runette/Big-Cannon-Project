@@ -27,6 +27,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {MatRadioModule} from '@angular/material/radio';
 
 
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
@@ -40,7 +41,7 @@ import { BcpRecordReporterComponent } from './bcp-record-reporter/bcp-record-rep
 import { BcpRecordSurveyorComponent } from './bcp-record-surveyor/bcp-record-surveyor.component';
 import { BcpList2stringPipe } from './bcp-list2string.pipe';
 import { BcpHelpComponent } from './bcp-help/bcp-help.component';
-import { BcpLoginComponent } from './bcp-login/bcp-login.component'
+import { BcpLoginComponent } from './bcp-login/bcp-login.component';
  
 
 @NgModule({
@@ -85,6 +86,7 @@ import { BcpLoginComponent } from './bcp-login/bcp-login.component'
     //AngularFireModule.initializeApp(environment.firebase),
     NgxAuthFirebaseUIModule.forRoot(environment.firebaseui),
     MatGridListModule,
+    MatRadioModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
