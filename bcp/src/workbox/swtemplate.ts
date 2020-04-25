@@ -1,17 +1,16 @@
-/**
- */
 /// <reference lib="webworker" />
 import {skipWaiting, clientsClaim} from 'workbox-core';
-import {precacheAndRoute} from 'workbox-precaching';
+import {precacheAndRoute, cleanupOutdatedCaches} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst, NetworkFirst} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 
-declare const self: any;
+declare const self: ServiceWorkerGlobalScope;
 
 skipWaiting();
 clientsClaim();
+cleanupOutdatedCaches();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
