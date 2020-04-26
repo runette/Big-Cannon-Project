@@ -6,3 +6,5 @@ urllib3 <1.25
 simpleNDB
 google-python-cloud-debugger
 connexion
+firebase_admin
+flask_cors

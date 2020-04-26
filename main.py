@@ -99,15 +99,15 @@ def fetch_map_2():
 
 @app.route('/database')
 def database():
-    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+    return send_from_directory(os.path.join(root, 'dist'), 'index.html')
 
 @app.route('/database/entry')
 def fetch_entry():
-    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+    return send_from_directory(os.path.join(root, 'dist'), 'index.html')
 
 @app.route('/new_record')
 def new_record():
-    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+    return send_from_directory(os.path.join(root, 'dist'), 'index.html')
     
 
 @app.route('/set_entry', methods=['POST'])
@@ -260,26 +260,19 @@ def privacy():
 def tor():
     return redirect("https://app.termly.io/document/terms-and-conditions/39c09e25-344b-49a8-95d2-d817738d36aa", code=302)
 
-@app.route('/img/<path:path>', methods=['GET'])
-def img(path):
-    return send_from_directory(os.path.join(root, 'img'), path)
-
-@app.route('/sw.js', methods=['GET'])
-def sw():
-    return send_from_directory(root, 'sw.js')
 
 @app.route('/recording', methods=['GET'])
 def recording():
-    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+    return send_from_directory(os.path.join(root, 'dist'), 'index.html')
 
 
 @app.route('/<path:path>', methods=['GET'])
 def all(path):
-    return send_from_directory(os.path.join(root, 'static'), path)
+    return send_from_directory(os.path.join(root, 'dist'), path)
 
 @app.route('/')
 def home():
-    return send_from_directory(os.path.join(root, 'static'), 'index.html')
+    return send_from_directory(os.path.join(root, 'dist'), 'index.html')
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
@@ -292,5 +285,5 @@ if __name__ == '__main__':
     if 'WINGDB_ACTIVE' in os.environ:
         api.debug = False
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-        #app.run(host='localhost', port=8080, use_reloader=True)
-        api.run(host='localhost', port=8000)
+        app.run(host='localhost', port=8080, use_reloader=True)
+        #api.run(host='localhost', port=8000)

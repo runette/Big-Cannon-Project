@@ -12,7 +12,7 @@ module.exports = {
     // With this, we eagerly load the es2015
     // bundles and we only load/cache the es5 bundles when requested
     // i.e., on browsers that need them
-    `**/*-es5.*.js`,
+    `**/*-es5.js*`,
   ],
   // Allows to avoid using cache busting for Angular files because Angular already takes care of that!
   dontCacheBustURLsMatching: new RegExp(".+.[a-f0-9]{20}..+"),
