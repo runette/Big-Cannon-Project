@@ -1,4 +1,3 @@
-/// <reference lib="webworker" />
 import {skipWaiting, clientsClaim} from 'workbox-core';
 import {precacheAndRoute, cleanupOutdatedCaches} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
