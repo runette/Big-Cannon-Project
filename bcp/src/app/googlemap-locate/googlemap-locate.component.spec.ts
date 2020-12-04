@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GooglemapLocateComponent } from './googlemap-locate.component';
 
@@ -6,7 +6,7 @@ describe('GooglemapLocateComponent', () => {
   let component: GooglemapLocateComponent;
   let fixture: ComponentFixture<GooglemapLocateComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GooglemapLocateComponent ]
     })

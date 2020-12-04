@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BcpDataCardComponent } from './bcp-data-card.component';
 
@@ -6,7 +6,7 @@ describe('BcpDataCardComponent', () => {
   let component: BcpDataCardComponent;
   let fixture: ComponentFixture<BcpDataCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BcpDataCardComponent ]
     })
