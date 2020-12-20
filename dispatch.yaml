@@ -1,0 +1,5 @@
+dispatch:
+  # Rule for e2e testing service
+  - url: "*/stage/*"
+    service: stageing
+  
