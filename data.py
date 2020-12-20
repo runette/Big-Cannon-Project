@@ -20,9 +20,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import json, types, sys
+import json
 from enum import Enum
-from datetime import datetime
 import logging
 import googlemaps
 from simplendb.ndb import Model, Query, Key, GeoPt, ndb
@@ -118,96 +117,63 @@ class Gun(Model):
         self.Property("button_code", ndb.StringProperty)
         self.Property('category', ndb.EnumProperty, enum=Gun.Categories, default=Gun.Categories.NOT_KNOWN)
 
+
     @classmethod
     def map_data(cls, namespace):
         result = cls.query(order=['gunid'], namespace=namespace).fetch()
         users = User.query().fetch()
         map_data = []
         for gun in result:
-            try:
-                thumbnail = gun.get_images()[0].get("s32")
-            except:
-                thumbnail = "/img/32x32.png"
-            try:
-                name = [user for user in users if user.user_id == gun.user_id][0].fire_user['name']
-            except Exception as e:
-                id = ""
-                for user in users:
-                    fu = user.fire_user
-                    if fu['email'] in gun.name :
-                        id = fu['user_id']
-                if id != "" :
-                    gun.user_id = id
-                    gun.put()
-                    name = User.get_by_id(gun.user_id).fire_user['name']
-                else :
-                    name = gun.name
-            try:
-                map_data.append({
-                    "anchor_id": gun.gunid,
-                    "description": gun.description,
-                    "latitude": gun.location.latitude,
-                    "longitude": gun.location.longitude,
-                    "anchor_type": GUN_TYPES[gun.type.value],
-                    "location": gun.context,
-                    "names": name,
-                    'filename': thumbnail,
-                    'quality': gun.quality.value,
-                    'nationality': gun.country,
-                    'site': gun.display_name,
-                    'category': GUN_CATEGORIES[gun.category.value],
-                })
-            except Exception as e:
-                logging.error(str(e))
+            data = gun.api_data(users)
+            if data:
+                map_data.append(data)
         return map_data
-    
-    @classmethod
-    def map_data_2(cls, namespace):
-        result = cls.query(order=['gunid'], namespace=namespace).fetch()
-        users = User.query().fetch()
-        map_data = []
-        for gun in result:
-            try:
-                thumbnail = gun.get_images()[0].get("s32")
-            except:
-                pass
-            try:
-                name = [user for user in users if user.user_id == gun.user_id][0].fire_user['name']
-            except Exception as e:
-                id = ""
-                for user in users:
-                    fu = user.fire_user
-                    if fu['email'] in gun.name :
-                        id = fu['user_id']
-                if id != "" :
-                    gun.user_id = id
-                    gun.put()
-                    name = User.get_by_id(gun.user_id).fire_user['name']
-                else :
-                    name = gun.name
-            try:
-                line = {}
-                line.update({'thumbnail': thumbnail, 'owner': name})
-                for item in gun.items():
-                    if item[0] == 'location':
-                        line.update({'lat': item[1].latitude, 'lng': gun.location.longitude})
-                    elif item[0] in MATRIX:
-                        line.update({item[0]: MATRIX[item[0]][item[1]]})
-                    elif item[0] == 'date':
-                        line.update({'date': gun.date.timestamp() * 1000})
-                    elif item[0] == 'geocode':
-                        line.update({'geocode': json.loads(item[1])})
-                    elif item[0] == 'images':
-                        images = []
-                        for image in item[1]:
+
+    def api_data(self, users):
+        try:
+            thumbnail = self.get_images()[0].get("s32")
+        except:
+            thumbnail = ""
+        try:
+            name = [user for user in users if user.user_id == self.user_id][0].fire_user['name']
+        except Exception as e:
+            id = ""
+            for user in users:
+                fu = user.fire_user
+                if fu['email'] in self.name:
+                    id = fu['user_id']
+            if id != "" :
+                self.user_id = id
+                self.put()
+                name = User.get_by_id(self.user_id).fire_user['name']
+            else :
+                name = self.name
+        try:
+            line = {}
+            line.update({'thumbnail': thumbnail, 'owner': name})
+            for item in self.items():
+                if item[0] == 'location':
+                    line.update({'lat': item[1].latitude, 'lng': self.location.longitude})
+                elif item[0] in MATRIX:
+                    line.update({item[0]: MATRIX[item[0]][item[1]]})
+                elif item[0] == 'date':
+                    line.update({'date': self.date.timestamp() * 1000})
+                elif item[0] == 'geocode':
+                    line.update({'geocode': json.loads(item[1])})
+                elif item[0] == 'images':
+                    images = []
+                    for image in item[1]:
+                        try:
                             images.append(json.loads(image))
-                        line.update({item[0]: images})
-                    else:
-                        line.update({item[0]: item[1]})
-                map_data.append(line)
-            except Exception as e:
-                logging.error(str(e))
-        return map_data    
+                        except:
+                            images.append({"original": image, "s32": image + '=s32', "s200": image + "=s200"})
+                    line.update({item[0]: images})
+                else:
+                    line.update({item[0]: item[1]})
+            return line
+        except Exception as e:
+            logging.error("Error in Gun API Data for gunid : " + str(self.gunid) + " - " + str(e))
+            return None
 
     @classmethod
     def get_next(cls, namespace):
@@ -225,7 +191,6 @@ class Gun(Model):
         IMAGE_DEFAULTS = [{"s200":"/img/70x70.png", "original":""}]
         images= []
         try:
-            test = self.images[0]
             for image in self.images:
                 try:
                     images.append(json.loads(image))
@@ -336,7 +301,7 @@ def UserStatus (id_token):
             user.put()
         if user.fire_user['name'] != result['user']['name']:
             user.fire_user = json.dumps(result['user'])
-            a = user.put()
+            user.put()
         result['local_user'] = user
         result['test'] = user.test_user
         result['namespace'] = None
@@ -360,3 +325,30 @@ def get_posts():
         logging.error(str(e))
         return
 
+
+class MapData(object):
+    _instance = None
+    _test_mapdata = None
+    _prod_mapdata = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(MapData, cls).__new__(cls)
+            cls._dev_mapdata = Gun.map_data("test")
+            cls._prod_mapdata = Gun.map_data(None)
+        return cls._instance
+
+    async def update(self, namespace: str):
+        await self.co_update(namespace)
+
+    async def co_update(self, namespace: str):
+        if namespace == "test":
+            self._dev_mapdata = Gun.map_data("test")
+        else:
+            self._prod_mapdata = Gun.map_data(None)
+
+    def get(self, namespace: str):
+        if namespace == "test":
+            return self._dev_mapdata
+        else:
+            return self._prod_mapdata

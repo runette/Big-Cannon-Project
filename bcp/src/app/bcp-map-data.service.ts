@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {  Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp-filter-values.service';
-import {BcpUserService} from './bcp-user.service'
+import { Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp-filter-values.service';
+import { BcpUserService } from './bcp-user.service'
 import { AngularFireAuth } from '@angular/fire/auth';
-import {BcpApiService} from './bcp-api.service';
-import {Subject} from 'rxjs';
+import { BcpApiService } from './bcp-api.service';
+import { Subject } from 'rxjs';
 
 
 @Injectable({
@@ -20,20 +20,13 @@ export class BcpMapDataService {
   private _boundingBox: google.maps.LatLngBounds;
 
   filteredData: MapData;
-  $newData: Subject<string>;
+  $newData: Subject<boolean>;
 
   private data : MapData;
 
   constructor(private user: BcpUserService, private auth: AngularFireAuth, private api: BcpApiService) { 
-
-    auth.auth.onAuthStateChanged( user => {
-      if (user) {
-        this.getMapData()
-      }
-    });
-
-    this.$newData = new Subject<string>();
-
+    this.getMapData()
+    this.$newData = new Subject<boolean>();
   }
 
   set material(value: Material) {
@@ -100,14 +93,30 @@ export class BcpMapDataService {
               (this.material === 'All' || item.material == this.material) && 
               (this.recordQuality === 'All' || item.quality == this.recordQuality) &&
               (this.recordStatus === 'All'|| item.status == this.recordStatus) &&
-              (!this.ownRecords || item.user_id == this.user.user.fireUserData.uid) 
+              (!this.ownRecords || item.userId == this.user.user.getValue().fireUserData.uid) 
     })
     this.filteredData.sort( (a,b) => {
-      if (this.order === 'Order') return a.gunid - b.gunid;
-      if (this.order === "Date Ascending") return (a.date.getMilliseconds() - b.date.getMilliseconds())/10000;
-      if (this.order === "Date Descending") return (b.date.getMilliseconds() - a.date.getMilliseconds())/10000;
+      if (this.order === 'Order') return b.gunid - a.gunid;
+      if (this.order === "Latest First") return b.gunid - a.gunid;
+      if (this.order === "Oldest First") return a.gunid - b.gunid;
     })
-    this.$newData.next("yes");
+    this.$newData.next(true);
+  }
+
+  public add(indata: any) {
+    let record = this.loadDataitem(indata); 
+    this.data.push(record);
+    this.filteredData.push(record);
+    this.$newData.next(true);
+  }
+
+  public update(indata: any) {
+    let data = this.data;
+    let filteredData = this.filteredData;
+    let record = this.loadDataitem(indata); 
+    data.forEach(function(item, i) {if (item.gunid == record.gunid ) data[i] = record});
+    filteredData.forEach(function(item, i) {if (item.gunid == record.gunid ) filteredData[i] = record});
+    this.$newData.next(true);
   }
 
   
@@ -127,22 +136,30 @@ export class BcpMapDataService {
   private loadMapData(data: [{[key:string]:any}]) : MapData {
     let mapData : MapData = [];
     for ( let i = 0; i < data.length; i++) {
-      mapData[i] = {};
-      if (data[i].hasOwnProperty('lat')) mapData[i].location = new google.maps.LatLng(data[i].lat, data[i].lng);
-      if (data[i].hasOwnProperty('date')) mapData[i].date = new Date(data[i].date);
-      let keys = ['gunid', 'material','quality', 'description', 'owner', 'site', 'displayName', 'context', 'collection', 'collName', 'collRef', 'images', 'markings', 'markDetails', 'interpretations', 'interDetails', 'country', 'geocode', 'userId', 'status', 'measurements', 'mouldingCode', 'muzzleCode', 'casCode', 'buttonCode', 'category', 'thumbnail' ];
-      let items = ['gunid', 'type','quality', 'description', 'owner', 'site', 'display_name', 'context', 'collection', 'coll_name', 'coll-ref', 'images', 'markings', 'mark_details', 'interpretations', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category' , 'thumbnail'];
-      
-      for (let j = 0; j < items.length; j++) if (data[i].hasOwnProperty(items[j])) mapData[i][keys[j]] = data[i][items[j]]
+      mapData[i] = this.loadDataitem(data[i]);
     }
     return mapData
   }
 
+  loadDataitem(data: any): DataItem {
+    let dataItem: DataItem = {};
+    if (data.hasOwnProperty('lat'))
+      dataItem.location = new google.maps.LatLng(data.lat, data.lng);
+    if (data.hasOwnProperty('date'))
+      dataItem.date = new Date(data.date);
+    let keys = ['gunid', 'material','quality', 'description', 'owner', 'site', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'userId', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category', 'thumbnail' ];
+    let items = ['gunid', 'type','quality', 'description', 'owner', 'site', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category' , 'thumbnail'];
+    for (let j = 0; j < items.length; j++)
+      if (data.hasOwnProperty(items[j]))
+        dataItem[keys[j]] = data[items[j]]
+    return dataItem
+  }
+  
 }
 
 export interface DataItem {
   gunid?: number;
-  images?: {[key:string]:string}[];
+  images?: [{[key:string]:string}];
   owner?: string;
   location?: google.maps.LatLng;
   material?: Material;
@@ -150,24 +167,24 @@ export interface DataItem {
   description?:string;
   date?: Date;
   site?: string;
-  displayName?: string;
+  display_name?: string;
   context?: string;
   collection?: boolean;
-  collName?: string;
-  collRef?: string;
+  coll_name?: string;
+  coll_ref?: string;
   markings?: boolean;
-  markDetails?: string;
-  interpretations?: boolean;
-  interDetails?: string;
+  mark_details?: string;
+  interpretation?: boolean;
+  inter_details?: string;
   country?: string;
   geocode?: Geocode;
-  user_id?: string;
+  userId?: string;
   status?: RecordStatus;
   measurements?: Measurements;
-  mouldingCode?: string;
-  muzzleCode?: string;
-  casCode?: string;
-  buttonCode?: string;
+  moulding_code?: string[];
+  muzzle_code?: string;
+  cas_code?: string;
+  button_code?: string;
   thumbnail?:string;
   quality?: RecordQuality;
 }
@@ -177,13 +194,13 @@ export type MapData = DataItem[];
 export interface Measurements {
   scale: boolean;
   length?: number;
-  baseRing?: number;
+  base_ring?: number;
   muzzle?: number;
   bore?: number;
-  trunnionPosition?: number;
-  trunnionWidth?: number;
-  trunnionDiameter?: number;
-  trunnionOffset?: number;
+  trunnion_position?: number;
+  trunnion_width?: number;
+  trunnion_diameter?: number;
+  trunnion_offset?: number;
 }
 
 export interface Geocode{

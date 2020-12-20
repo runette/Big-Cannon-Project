@@ -1,7 +1,7 @@
-@import '~@angular/material/theming';
+
 @import '../../../styles/site_theme.scss';
 
-@include angular-material-theme($bcp-app-theme);
+@include angular-material-color($bcp-app-theme);
 
 $primary: mat-color(map-get($bcp-app-theme, primary));
 $accent: mat-color(map-get($bcp-app-theme, accent));
@@ -14,11 +14,11 @@ $accent: mat-color(map-get($bcp-app-theme, accent));
     }
     
 .para01 {
-    background-image: url("/img/gun-map-768.jpg");
+    background-image: url("/assets/gun-map-768.jpg");
     }
     
 .para02 {
-    background-image: url("/img/cannon_measuring.jpg");
+    background-image: url("/assets/cannon_measuring.jpg");
     }
     
 .jumbotron {

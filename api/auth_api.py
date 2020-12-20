@@ -11,15 +11,13 @@ class AuthApi:
         Verifies for FireBase uid linked to supplied JWT token
         Returns uid or None
         """
-        if is_devserver():
-            response = {"uid": "01010101", 'fire_user': {'name': 'dev user'}}
-        else:
-            try:
-                fire_user = auth.verify_id_token(jwt)
-                response = {'uid': fire_user['uid'], 'fire_user': fire_user}
-            except ValueError as e:
-                response = None
-        return response
+        if jwt == "null":
+            return {"uid": "0000"}
+        try:
+            fire_user = auth.verify_id_token(jwt)
+            return {'uid': fire_user['uid'], 'fire_user': fire_user}
+        except ValueError as e:
+            return None
 
     @staticmethod
     def get_token(body):

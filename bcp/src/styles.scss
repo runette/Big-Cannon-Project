@@ -3,12 +3,12 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
 
 @import '~@angular/material/theming';
 @import '../styles/site_theme.scss';
 
-@include angular-material-theme($bcp-app-theme);
+@include angular-material-color($bcp-app-theme);
 
 $primary: mat-color(map-get($bcp-app-theme, primary));
 $accent: mat-color(map-get($bcp-app-theme, accent));
@@ -61,4 +61,31 @@ background-color: $primary;
    width: unset;
    line-height: unset;
    vertical-align: unset;
+}
+
+.arrow {
+  border: solid $accent;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
 }

@@ -12,6 +12,10 @@ export class BcpApiService {
 
   FETCH_USER = `${environment.apiUrl}/fetch_user`;
   FETCH_MAP = `${environment.apiUrl}/fetch_map`;
+  GET_LOCATION = `${environment.apiUrl}/get_location`;
+  ADDPHOTO = `${environment.apiUrl}/add_photo`;
+  ADDRECORD = `${environment.apiUrl}/add_record`;
+  SETRECORD = `${environment.apiUrl}/set_record`;
 
   constructor(private auth: AngularFireAuth, private http: HttpClient) { }
 
@@ -24,7 +28,7 @@ export class BcpApiService {
     return this.http.post(
       url, body,{
         headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${ token ? token : "null"}`
         },
         responseType: 'json'
   })};

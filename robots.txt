@@ -1,5 +1,4 @@
 User-agent: *
 Disallow: /database
 Disallow: /database/
-Disallow: /static/
-Disallow: /img/
+Disallow: /assets/

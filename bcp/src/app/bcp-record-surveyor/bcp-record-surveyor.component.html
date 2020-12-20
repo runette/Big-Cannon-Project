@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [formGroup]="gunForm">
     <mat-accordion class="example-headers-align">
         <mat-expansion-panel >
             <mat-expansion-panel-header>
@@ -6,7 +6,7 @@
                     <h3 class="bg-primary text-white p-1">MOULDING CODE</h3> 
                 </mat-panel-title>
                 <mat-panel-description>
-                    <textarea class="bg-site w-auto"  rows="1" name="moulding" id="moulding" onclick="event.stopPropagation()" [(ngModel)]="gun.mouldingCode"></textarea>
+                    <textarea [disabled]="! edit" class="bg-site w-auto"  rows="1" name="moulding" id="moulding" onclick="event.stopPropagation()" [(value)]="mouldings" (input)="mouldingEdit($event)"></textarea>
                 </mat-panel-description>
             </mat-expansion-panel-header>
                 <div class="row">
@@ -20,42 +20,42 @@
                     </div>
                 </div>
                 <div class="row">
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('A')">
                         <span class=""><h1>A</h1><p><small>Astragal</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/A.png">
                     </button>
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('B')">
                         <span class=""><h1>B</h1><p><small>Band</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/B.png">
                     </button>
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('S')">
                         <span class=""><h1>S</h1><p><small>Slope</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/S.png">   
                     </button> 
                 </div>
                 <div class="row">
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('F')">
                         <span class=""><h1>F</h1><p><small>Fillet</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/F.png">
                     </button> 
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('O')">
                         <span class=""><h1>O</h1><p><small>Ogee</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/O.png">
                     </button> 
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('Q')">
                         <span class=""><h1>Q</h1><p><small>Quadrant</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/Q.png">
                     </button> 
                 </div>
                 <div class="row">
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('C')">
                         <span class=""><h1>C</h1><p><small>Concave</small></p></span>
                         <img class="img-fluid"  width="400px" src="../../assets/C.png">
                     </button> 
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('/')">
                         <span class=""><h1>/</h1><small>Ring Divider</small></span>
                     </button> 
-                    <button mat-button class="image-checkbox col-4 text-center ">
+                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('X')">
                         <span class=""><h1>X</h1><small>None</small></span>
                     </button>
                 </div>
@@ -66,10 +66,10 @@
                     <h3 class="bg-primary text-white p-1">MUZZLE CODE</h3> 
                 </mat-panel-title>
                 <mat-panel-description>
-                    <h3 class="bg-primary text-white p-1">{{gun.muzzleCode}}</h3>
+                    <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  *ngIf="gunForm.value.muzzle_code" [value]="gunForm.value.muzzle_code"></textarea>
                 </mat-panel-description>
                 </mat-expansion-panel-header>
-                <mat-button-toggle-group name="muzzle" [(ngModel)]="gun.muzzleCode">
+                <mat-button-toggle-group name="muzzle" formControlName="muzzle_code">
                     <div class="row">
                         <mat-button-toggle class="image-checkbox col-4 text-center" value="R">
                             <span class=""><h1>R</h1><p><small>Tulip</small></p></span>
@@ -105,10 +105,10 @@
                     <h3 class="bg-primary text-white p-1">CASCABLE CODE</h3> 
                 </mat-panel-title>
                 <mat-panel-description>
-                    <h3 class="bg-primary text-white p-1">{{gun.casCode}}</h3>
+                    <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  *ngIf="gunForm.value.cas_code" [value]="gunForm.value.cas_code"></textarea>
                 </mat-panel-description>
                 </mat-expansion-panel-header>
-                <mat-button-toggle-group name="cascable" [(ngModel)]="gun.casCode">
+                <mat-button-toggle-group name="cascable" formControlName="cas_code">
                 <div class="row">
                     <mat-button-toggle class="image-checkbox col-4 text-center" value="K">
                         <span class=""><h1>K</h1><p><small>Conical</small></p></span>
@@ -146,10 +146,10 @@
                 <h3 class="bg-primary text-white p-1">BUTTON CODE</h3> 
             </mat-panel-title>
             <mat-panel-description>
-                <h3 class="bg-primary text-white p-1">{{gun.buttonCode}}</h3>
+                <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding" *ngIf="gunForm.value.button_code" [value]="gunForm.value.button_code"></textarea>
             </mat-panel-description>
             </mat-expansion-panel-header>
-            <mat-button-toggle-group name="button" [(ngModel)]="gun.buttonCode">
+            <mat-button-toggle-group name="button" formControlName="button_code">
                 <div class="row">
                     <mat-button-toggle class="image-checkbox col-4 text-center" value="N">
                         <span class=""><h1>N</h1><p><small>Knob</small></p></span>

@@ -1,21 +1,29 @@
-import { Component, OnInit, Input, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { ControlContainer, NgForm, NgModel } from '@angular/forms';
+import { Component, OnInit, Input, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
-import {BcpFilterValuesService} from '../bcp-filter-values.service';
-import {BcpUserService, BcpUser, BcpUserStanding} from '../bcp-user.service'
+import { BcpFilterValuesService } from '../bcp-filter-values.service';
+import { BcpUser, BcpUserService } from '../bcp-user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'bcp-record-reporter',
   templateUrl: './bcp-record-reporter.component.html',
-  styleUrls: ['./bcp-record-reporter.component.css'],
-  viewProviders: [ { provide: ControlContainer, useExisting: NgForm } ]
+  styleUrls: ['./bcp-record-reporter.component.css']
 })
-export class BcpRecordReporterComponent implements OnInit, AfterViewInit {
+export class BcpRecordReporterComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  @Input()
+  gunForm: FormGroup;
+
+  edit: boolean;
+
+  currentUser: BcpUser;
+  
   _gun: DataItem;
   @Input()
   set gun(gun: DataItem) {
     this._gun=gun;
+    this.updateForm();
     if (this.cannonSvg) this.updateSvg();
   };
 
@@ -23,17 +31,24 @@ export class BcpRecordReporterComponent implements OnInit, AfterViewInit {
     return this._gun
   }
 
-  scale: string = 'metres';
+  scale: number = 1;
+
+  keys = ['length','base_ring', 'muzzle', 'bore', 'trunnion_position', 'trunnion_width', 'trunnion_diameter', 'trunnion_offset'];
+  elements = ['length-text','br-text','muzzle-text','bore-text','tp-text','tw-text','td-text','to-text'];
+  formSubscription: Subscription;
+  userSubscription: Subscription;
 
   @ViewChild('cannon', {static:true}) cannon :ElementRef;
-  @ViewChild(NgModel, {static: false}) model: NgModel;
   private cannonSvg: any;
 
-
-  constructor(public DATA_VALUES: BcpFilterValuesService, public user: BcpUserService ) { }
+  constructor(public DATA_VALUES: BcpFilterValuesService,
+              public user: BcpUserService ) { 
+                this.userSubscription = user.user.subscribe(user => this.onUserChange(user));
+  }
 
   ngOnInit(): void {
-    
+    this.formSubscription = this.gunForm.valueChanges.subscribe(event => this.formChanged(event));
+    this.updateForm();
   }
 
   ngAfterViewInit() : void {
@@ -41,33 +56,53 @@ export class BcpRecordReporterComponent implements OnInit, AfterViewInit {
       this.cannonSvg = this.cannon.nativeElement.contentDocument;
       this.updateSvg()
     }
-    this.model.update.subscribe( () => { if (this.cannonSvg) this.updateSvg()});
   }
 
+  ngOnDestroy(): void {
+    this.formSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
+  }
+
+  onUserChange(user: BcpUser): void{
+    this.currentUser = user;
+  }
 
   scaleToggle($event){
-    if ($event.checked) {
-      this.scale = "mm";
-      let keys = Object.keys(this.gun.measurements);
-      keys.forEach(key => this.gun.measurements[key]*= 1000 )
+    if (! $event.checked) {
+        this.scale = 1;
       } else {
-        this.scale = "metres";
-      let keys = Object.keys(this.gun.measurements);
-      keys.forEach(key => this.gun.measurements[key]*= 0.001 )
+        this.scale = 1000;
       };
+      this.updateForm();
       this.updateSvg();
     }
+
+  formChanged($event){
+    this.keys.forEach(key => this.gun.measurements[key] = Math.round(parseFloat(this.gunForm.value[key]) * this.scale));
+    this.updateSvg();
+  }
   
   updateSvg(): void {
-    this.cannonSvg.getElementById('length-text').firstElementChild.innerHTML = this.gun.measurements['length'] ? this.gun.measurements['length'] : 0;
-    this.cannonSvg.getElementById('br-text').firstElementChild.innerHTML = this.gun.measurements['baseRing'] ? this.gun.measurements['baseRing'] : 0;
-    this.cannonSvg.getElementById('muzzle-text').firstElementChild.innerHTML = this.gun.measurements['muzzle'] ? this.gun.measurements['muzzle'] : 0;
-    this.cannonSvg.getElementById('bore-text').firstElementChild.innerHTML = this.gun.measurements['bore'] ? this.gun.measurements['bore'] : 0;
-    this.cannonSvg.getElementById('tp-text').firstElementChild.innerHTML =  this.gun.measurements['trunnionPosition'] ? this.gun.measurements['trunnionPosition'] : 0 ;
-    this.cannonSvg.getElementById('tw-text').firstElementChild.innerHTML = this.gun.measurements['trunnionWidth'] ? this.gun.measurements['trunnionWidth'] : 0 ;
-    this.cannonSvg.getElementById('td-text').firstElementChild.innerHTML = this.gun.measurements['trunnionDiameter'] ? this.gun.measurements['trunnionDiameter']: 0 ;
-    this.cannonSvg.getElementById('to-text').firstElementChild.innerHTML = this.gun.measurements['trunnionOffset'] ? this.gun.measurements['trunnionOffset'] : 0 ;
-    }; 
-  
+    for (let i = 0; i< this.keys.length; i++){
+      this.cannonSvg.getElementById(this.elements[i]).firstElementChild.innerHTML = this.gunForm.value[this.keys[i]] ? this.gunForm.value[this.keys[i]] : "";
+    };
+  }
 
+  updateForm(){
+    if (this.currentUser && this.currentUser.fireUserData && this.gun) {
+      this.edit = this.currentUser.fireUserData.uid == this.gun.userId ? true : false || this.currentUser.standing != "OBSERVER";
+    }
+    if(this.gunForm) 
+      this.keys.forEach(key => {this.gunForm.patchValue({
+          [key]: this.gun[key]
+        }, {
+          emitEvent: false
+        });
+        if (this.edit) 
+          this.gunForm.controls[key].enable({emitEvent: false}) 
+        else 
+          this.gunForm.controls[key].disable({emitEvent: false}) 
+      }
+      )
+  }
 }

@@ -38,7 +38,98 @@
 
         responses:
           200:
-            description: Fectch the Map data
+            description: Fectch the user data
+            content:
+              application/json:
+                schema:
+                  type: object
+
+    /get_location:
+      post:
+        operationId: api.LocationApi.get_location
+        
+        requestBody:
+          description: A new location
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - lat
+                  - lng
+                properties:
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+
+        responses:
+          200:
+            description: Fetch the location data
+            content:
+              application/json:
+                schema:
+                  type: object
+                  
+    /add_photo:
+      post:
+        operationId: api.GunApi.add_photo
+        
+        requestBody:
+          description: A new photo
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+        responses:
+          200:
+            description: Add a Photo
+            content:
+              application/json:
+                schema:
+                  type: object
+
+    /add_record:
+      post:
+        operationId: api.GunApi.add_record
+        
+        requestBody:
+          description: A new record
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+        responses:
+          200:
+            description: Add a new record
+            content:
+              application/json:
+                schema:
+                  type: object
+
+    /set_record:
+      post:
+        operationId: api.GunApi.set_record
+        
+        requestBody:
+          description: An updated record
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+        responses:
+          200:
+            description: update a record
             content:
               application/json:
                 schema:

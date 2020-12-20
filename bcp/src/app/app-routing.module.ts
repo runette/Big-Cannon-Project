@@ -7,6 +7,8 @@ import {BcpNewRecordComponent} from './bcp-new-record/bcp-new-record.component';
 import {BcpRecordDetailComponent} from './bcp-record-detail/bcp-record-detail.component';
 import {BcpHelpComponent} from './bcp-help/bcp-help.component';
 import {BcpLoginComponent} from './bcp-login/bcp-login.component';
+import {BcpPrivacyComponent} from './bcp-privacy/bcp-privacy.component';
+import {BcpTorComponent} from './bcp-tor/bcp-tor.component';
 
 
 const routes: Routes = [
@@ -16,6 +18,8 @@ const routes: Routes = [
 { path: 'database/entry', component: BcpRecordDetailComponent},
 { path: 'recording', component: BcpHelpComponent},
 { path: 'login', component: BcpLoginComponent},
+{ path: 'privacy', component: BcpPrivacyComponent},
+{ path: 'tor', component: BcpTorComponent},
 ];
 
 @NgModule({

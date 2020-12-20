@@ -111,7 +111,7 @@
     </div>
 </div>
 
-<div class="float-table bg-ur" id="table-entries" fxShiw fxHide.gt-sm>
+<div class="float-table bg-ur" id="table-entries" fxShow fxHide.gt-sm>
     <div class="w-100 p-1" *ngFor="let record of data.filteredData">
             <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
                 [record]="record" 
@@ -140,6 +140,6 @@
 
 <mat-menu #orderMenu="matMenu">
     <button mat-menu-item (click)="setOrder('Order')">Order</button>
-    <button mat-menu-item (click)="setOrder('Date Ascending')">Date Ascending</button>
-    <button mat-menu-item (click)="setOrder('Date Descending')">Date Descending</button>
+    <button mat-menu-item (click)="setOrder('Latest First')">Latest First</button>
+    <button mat-menu-item (click)="setOrder('Oldest First')">Oldest First</button>
 </mat-menu>

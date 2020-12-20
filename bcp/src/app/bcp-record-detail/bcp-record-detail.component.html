@@ -1,46 +1,51 @@
 
 <div class="container pt-5 pb-5">
-    <form  #detail="ngForm">
+    <form  [formGroup]="gunForm" >
         <div class="row p-3  bg-ur" >
-            <div class="media">
-                <a class="align-self-center mr-3 fancybox" *ngIf="gun" [href]="gun.images[0].original"><img [src]="gun.images[0].s200" height="70px" alt=""></a>
+            <div class="col-2">
+                <a class="align-self-center mr-3" *ngIf="gun && gun.images[0]" [href]="gun.images[0].original"><img [src]="gun.images[0].s200" height="70px" alt=""></a>
             </div>
-            <div class="media-body  p-2">
+            <div class="col-10 p-2">
                 <div class="row">
                     <div class="col-sm-6">
-                        <h2 *ngIf="gun">Gun ID : {{ gun.gunid }}</h2>
+                        <h2 *ngIf="gun; else waiting">Gun ID : {{ gun.gunid }}</h2>
+                        <ng-template #waiting>Waitting for data ...</ng-template>
+                        <h5 *ngIf="! currentUser" >For more information on this gun - Login</h5>
                     </div>
                     <div class="col-sm-6">
-                        <div class="float-right" >
+                        <div class="float-end" >
                             <p class="text-muted" *ngIf="!edit"> Read-only </p>
-                            <button class="btn btn-secondary" type="button" onclick="link_here()" data-toggle="popover"  data-content="A permanent link to this record has been copied to the clipboard">Link here</button>
+                            <button class="btn btn-secondary" type="button" (click)="link_here()" data-toggle="popover"  data-content="A permanent link to this record has been copied to the clipboard">Link here</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="tab-content" id="nav-tabContent">
+        <div class="tab-content" *ngIf="gun" id="nav-tabContent">
             <bcp-record-observer *ngIf="currentScreen == 'observer'"
                 [gun]="gun"
+                [gunForm]="gunForm"
             ></bcp-record-observer>
             <bcp-record-reporter *ngIf="currentScreen == 'reporter'"
                 [gun]="gun"
+                [gunForm]="gunForm"
             ></bcp-record-reporter>
             <bcp-record-surveyor *ngIf="currentScreen == 'surveyor'"
                 [gun]="gun"
+                [gunForm]="gunForm"
             ></bcp-record-surveyor>
         </div>
     </form>
-    <button mat-fab routerLink="/new_record" color="primary" ngClass='fab'>
+    <button mat-fab  color="primary" ngClass='fab' (click)="submit()">
         <mat-icon color='accent' ngClass='fab-text'>
-            add
+            {{fabIcon}}
         </mat-icon>
     </button>
 
 
     <div class="row fixed-bottom  bg-light ">
         <div class="col-3">
-            <span class="btm-nav float-left mx-3 my-1 px-3" onclick="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></span>
+            <button mat-raised-button color="primary" class="float-start mx-3  px-3" (click)="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></button>
         </div>
         <div class="col-6">
             <div class="mx-auto">
@@ -52,7 +57,7 @@
             </div> 
         </div>     
         <div class="col-3">
-            <span class=" btm-nav float-right mx-3 my-1 px-3" onclick="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </span>
+            <button mat-raised-button color="primary" class="float-end mx-3  px-3" (click)="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </button>
         </div>
     </div>
 </div>

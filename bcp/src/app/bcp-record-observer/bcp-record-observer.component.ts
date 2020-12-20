@@ -1,27 +1,62 @@
 ///<reference types='googlemaps' />
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { ControlContainer, NgForm } from '@angular/forms';
+import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
-import {BcpFilterValuesService} from '../bcp-filter-values.service';
-import {BcpUserService, BcpUser, BcpUserStanding} from '../bcp-user.service';
-import {GoogleMap} from '@angular/google-maps';
+import { BcpFilterValuesService}  from '../bcp-filter-values.service';
+import { BcpUser, BcpUserService } from '../bcp-user.service';
+import { GalleryItem, ImageItem } from 'ng-gallery';
+import { Subscription } from 'rxjs';
+import { BcpPhotosComponent } from '../bcp-photos/bcp-photos.component';
+
 
 @Component({
   selector: 'bcp-record-observer',
   templateUrl: './bcp-record-observer.component.html',
-  styleUrls: ['./bcp-record-observer.component.css'],
-  viewProviders: [ { provide: ControlContainer, useExisting: NgForm } ]
+  styleUrls: ['./bcp-record-observer.component.css']
 })
-export class BcpRecordObserverComponent implements OnInit {
+export class BcpRecordObserverComponent implements OnInit, OnDestroy {
+
+  private _gun: DataItem
+  @ViewChild(BcpPhotosComponent) photo: BcpPhotosComponent;
 
   @Input()
-  gun: DataItem;
+  gunForm: FormGroup;
 
-  map: google.maps.Map;
-  @ViewChild(GoogleMap, {static: false}) my_map: GoogleMap;
+  edit: boolean;
 
-  locationView: string = "latLng";
-  marker: google.maps.Marker
+  @Input()
+  set gun(value: DataItem) { 
+    this._gun = value;
+    this.updateGun();
+  }
+
+  get gun(): DataItem { return this._gun};
+
+  currentUser: BcpUser;
+
+  images: GalleryItem[] = [];
+
+  formSubscription: Subscription;
+  userSubscription: Subscription;
+
+  keys =[
+    'location',
+    'material',
+    'category',
+    'description',
+    'site',
+    'display_name',
+    'context',
+    'collection',
+    'coll_name',
+    'coll_ref',
+    'markings',
+    'mark_details',
+    'interpretation',
+    'inter_details',
+    'country',
+  ]
+
 
   options = {
     zoom: 12,
@@ -35,65 +70,62 @@ export class BcpRecordObserverComponent implements OnInit {
     center:{lat:0, lng:0}
 }
 
-  constructor(public DATA_VALUES: BcpFilterValuesService, public user: BcpUserService ) { }
+  constructor(public DATA_VALUES: BcpFilterValuesService,
+              public user: BcpUserService) {
+                this.userSubscription = user.user.subscribe(user => this.onUserChange(user));
+               }
 
   ngOnInit(): void {
+    this.updateGun();
+    this.formSubscription = this.gunForm.valueChanges.subscribe(event => this.formChanged(event));
   }
-  
-  loaded($event) {
-    if (!this.map) {
-      this.map = this.my_map._googleMap;
-      this.map.setCenter(this.gun.location);
-      let options: google.maps.ReadonlyMarkerOptions = {
-        draggable: true,
+
+  ngOnDestroy(): void {
+    this.formSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
+  }
+
+  onUserChange(user: BcpUser): void{
+    this.currentUser = user;
+  }
+
+  updateGun(): void {
+    if (this.currentUser && this.currentUser.fireUserData && this.gun) {
+      this.edit = this.currentUser.fireUserData.uid == this.gun.userId ? true : false || this.currentUser.standing != "OBSERVER";
+    }
+    if(this.gunForm) 
+      this.keys.forEach(key => {this.gunForm.patchValue({
+          [key]: this.gun[key]
+        }, {
+          emitEvent: false
+        });
+        if (this.edit) 
+          this.gunForm.controls[key].enable({emitEvent: false}) 
+        else 
+          this.gunForm.controls[key].disable({emitEvent: false}) 
       }
-      let icon: google.maps.Icon = {'url':''};
-      if (this.gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-      else if (this.gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-      else if (this.gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-      this.marker=new google.maps.Marker(options);
-      this.marker.setPosition(this.gun.location);
-      this.marker.setIcon(icon);
-      this.marker.setMap(this.map);
+      )
+    this.images = []
+    for (let image of this.gun.images) {
+      this.images.push(new ImageItem({src: image.original, thumb: image.s200}));
     }
   }
 
-  locationViewChange($event) {
-    this.locationView = $event.value
+  formChanged(event: any) {
+    this.keys.forEach(key => 
+      this.gun[key] = this.gunForm.value[key]
+    );
   }
 
-  getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
-    } else {
-          alert("Geolocation is not supported by this browser.");
+  locationUpdate($event){
+    if (this.edit) {
+      this.gunForm.patchValue({location:$event})
     }
   }
 
-  private showPosition(position: Position) {
-    this.gun.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude );
-    this.resetMap;
-  }
-
-  private showError(error) {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-          alert( "User denied the request for Geolocation.");
-          break;
-      case error.POSITION_UNAVAILABLE:
-          alert( "Location information is unavailable.");
-          break;
-      case error.TIMEOUT:
-          alert("The request to get user location timed out.");
-          break;
-      case error.UNKNOWN_ERROR:
-          alert("An unknown error occurred.");
-          break;
-    }
-  }
-
-  resetMap(): void {
-    this.map.setCenter(this.gun.location);
-    this.marker.setPosition(this.gun.location);
+  acceptPhoto(files: FileList){
+    let folderName: string = "prod";
+    if (this.currentUser && this.currentUser.test_user) folderName = "dev";
+    this.photo.send_file(files,`/${folderName}/${this.gun.gunid}`, this.gun.gunid)
   }
 }

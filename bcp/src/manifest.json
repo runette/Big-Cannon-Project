@@ -3,12 +3,12 @@
   "name": "Big Cannon Project",
   "icons": [
     {
-      "src": "/img/gun-map-192.png",
+      "src": "/assets/gun-map-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/img/gun-map-512.png",
+      "src": "/assets/gun-map-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

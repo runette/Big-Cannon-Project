@@ -1,13 +1,17 @@
-runtime: python37
+runtime: python38
 instance_class: F4
 automatic_scaling:
   min_instances: 0
 
 handlers:
 
+- url: /_ah/api/.*
+  script: auto
+  secure: always
+
 - url: /sw\.js
-  static_files : sw.js
-  upload: sw\.js
+  static_files : dist/sw.js
+  upload: dist/sw\.js
   expiration: "1s"
 
 - url: /robots\.txt
@@ -15,16 +19,14 @@ handlers:
   upload: robots\.txt
   
 - url: /(.*\..*)$
-  static_files: static/\1
-  upload: static/.*\..*$
+  static_files: dist/\1
+  upload: dist/.*\..*$
   
-- url: /static
-  static_dir: static
+- url: /assets
+  static_dir: dist/assets
   expiration: "1s"
 
-- url: /img
-  static_dir: img
-
-- url: .*
-  script: auto
+- url: /.*
+  static_files: dist/index.html
+  upload: dist/index.html
   secure: always

@@ -1,0 +1,32 @@
+<h3 class="bold">Location</h3>
+<div id="map_canvas" class="map-container-inline" > 
+        <google-map width="100%"
+                    height="100%"
+                    [options]="options"
+                    (tilesloaded)="loaded($event)"
+        >
+        </google-map>
+</div>
+<div class="row " >
+    <button mat-raised-button type="button" class="mx-auto w-50" color="accent"  (click)="getLocation()">Use Current Location</button>
+</div>
+<div class="row " >
+    <div class="col-md-2">
+        Lat
+    </div> 
+    <div class="col-md-3">
+        <input class="form-control" type="text" id="lat" name="lat" [(ngModel)]="displayLoc.lat" (input)="dirtyLoc()">
+    </div> 
+    <div class="col-md-2">
+        Long
+    </div> 
+    <div class="col-md-3">
+        <input class="form-control" type="text" id="lon" name="lon" [(ngModel)]="displayLoc.lng" (input)="dirtyLoc()">
+    </div>
+    <div class="col-md-2">
+        <button mat-raised-button color="accent" type="button" class="" type="button" cdkFocusInitial (click)="set()">{{buttonTitle}}</button>
+    </div>
+</div>
+<div class="row " >
+    <small class="text-muted mx-auto">All Lat/lon coordinates must be in WGS84</small>
+</div>

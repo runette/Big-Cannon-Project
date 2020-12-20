@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { User } from 'firebase/app';
 import {BcpApiService} from './bcp-api.service';
+import {Observable, BehaviorSubject} from 'rxjs';
 
 
 @Injectable({
@@ -9,41 +9,46 @@ import {BcpApiService} from './bcp-api.service';
 })
 export class BcpUserService {
 
-  user: BcpUser;
+  user: BehaviorSubject<BcpUser> = new BehaviorSubject<BcpUser>(null);
   login: boolean = false;
   token: string;
+  current_user: any;
+  current_respose: any;
 
   constructor(private auth: AngularFireAuth, private api: BcpApiService) {
-    auth.auth.onAuthStateChanged( user => {
+    auth.user.subscribe( user => {
       if (user) {
           this.getUser(user);
       } else {
-        this.user = null;
+        this.user.next(null);
         this.login = false;
       }
     });
   }
 
   public getUser(user): void{
-    this.auth.idToken.subscribe(token => {
-      this.api.apiPost(token, this.api.FETCH_USER ).subscribe(response => {
-        this.user = new BcpUser(user, response);
-        this.login = true;
+    if (user != this.current_user) {
+      this.auth.idToken.subscribe(token => {
+        this.api.apiPost(token, this.api.FETCH_USER ).subscribe(response => {
+          this.user.next(new BcpUser(user, response));
+          this.login = true;
+          this.current_respose = response;
+        },
+        error => {})
       },
       error => {})
-    },
-    error => {})
+    }
   }
 }
 
 export class BcpUser {
   name: string;
   id: string;
-  fireUserData?: User;
+  fireUserData?: any;
   standing: BcpUserStanding;
   test_user: boolean;
 
-  constructor(user : User, buser: {[key:string]:any}) {
+  constructor(user : any, buser: {[key:string]:any}) {
     this.id = buser.uid;
     this.fireUserData = user;
     this.name = buser.name;

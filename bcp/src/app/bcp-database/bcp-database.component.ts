@@ -1,6 +1,6 @@
 ///<reference types='googlemaps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
-import { Component, ViewChild, OnInit} from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordStatus, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
@@ -15,7 +15,7 @@ import MarkerClusterer from '@google/markerclustererplus';
   templateUrl: './bcp-database.component.html',
   styleUrls: ['./bcp-database.component.scss']
 })
-export class BcpDatabaseComponent implements OnInit{
+export class BcpDatabaseComponent implements OnInit, AfterViewInit{
   options: google.maps.MapOptions = {
     zoom: 2,
     center: {lat: 0, lng: 0},
@@ -62,15 +62,18 @@ export class BcpDatabaseComponent implements OnInit{
     this.data.$newData.subscribe({
       next: () => this.loadMarkers()
     });
-    this.selectedMarker=[]
+    this.selectedMarker=[];
+  }
+  ngAfterViewInit() {
     
   }
 
 
   loaded($event) {
     if (!this.map) {
-      this.map = this.my_map._googleMap;
+      this.map = this.my_map.googleMap;
       this.mc = new MarkerClusterer(this.map, [], this.clusterOptions );
+      this.loadMarkers();
     }
   }
 
@@ -134,7 +137,7 @@ export class BcpDatabaseComponent implements OnInit{
         marker.setIcon(icon);
         marker.addListener('click', function (e) {
           selectedMarker[0] = data.filteredData.find(item => item.location == this.getPosition())
-          mapMarker._marker = this;
+          mapMarker.marker = this;
           mapInfo.open(mapMarker);
       });
         markers.push(marker)};

@@ -1,1 +1,53 @@
-<p>bcp-new-record works!</p>
+<div class="container pt-5 pb-5" *ngIf="currentUser else notlogedin">
+    <mat-horizontal-stepper labelPosition="right"  #stepper>
+        <mat-step errorMessage="Name is required.">
+            <ng-template matStepLabel>Enter Location</ng-template>
+            <form id="location-entry">
+                <h3 class="bold text-center">Enter the location of the gun</h3>
+                <p><small class="text-muted "> Enter co-ordinates, move the cannon on the map below to the right place or use your current location</small></p>
+                <small class="text-muted "><a href="/recording">How to Record a Cannon</a> </small>
+                <app-bcp-gmap
+                [options]="options"
+                [location]="location"
+                (newLocation$)="locationUpdate($event)"
+
+            >
+            </app-bcp-gmap>
+                <button type="button" class="btn btn-primary mx-auto d-block" (click)="acceptPosition()">Accept</button>
+            </form>
+        </mat-step>
+
+        <mat-step  errorMessage="Location Name is Required.">
+            <ng-template matStepLabel>Pick the Correct Site</ng-template>
+            <h3 class="bold">Enter the correct Site Name for the location of the gun</h3>
+            <small class="text-muted"> We use a standard set of location IDs provided by Google Maps to mark the nearest landmark. Pick the Most appropriate"</small>
+            <div class="mx-auto my-5 w-50" *ngIf="geocode">
+                <mat-select name="newsite"  [(ngModel)]="site">
+                    <mat-option *ngFor="let site of geocode.places" [value]="site.name">
+                        {{site.name}}
+                    </mat-option>
+                    <mat-option *ngFor="let site of geocode.geolocation" [value]="site.formatted_address">
+                        {{site.formatted_address}}
+                    </mat-option>
+                </mat-select>
+            </div> 
+            <div class="d-block row">
+                <button class="btn btn-primary mx-auto d-block w-50" (click)="acceptSite()">Accept</button>
+            </div>
+        </mat-step>
+
+        <mat-step errorMessage="One Photo is Required">
+            <ng-template matStepLabel>Upload A Photo</ng-template>
+            <app-bcp-photos 
+            (newImage$)="acceptPhoto($event)"
+            ></app-bcp-photos>
+        </mat-step>
+    </mat-horizontal-stepper>
+</div>
+<ng-template #notlogedin>
+    <div class="container pt-5 pb-5">
+        <div class="jumbotron jumbotron-fluid text-center bg-ur" >
+            <h1 class="display-4">You must be logged in to create new Records</h1>
+        </div>
+    </div>
+</ng-template>

@@ -11,7 +11,7 @@ var DATABASE_URL = "https://ultima-ratio-221014.firebaseio.com";
 var STORAGE_BUCKET = "ultima-ratio-221014.appspot.com"
 
 export const environment = {
-  production: false,
+  production: true,
   firebase: {
 	  apiKey: API_KEY,
 	  authDomain: AUTH_DOMAIN,
@@ -30,5 +30,5 @@ export const environment = {
     projectId: PROJECT_ID,
     storageBucket: STORAGE_BUCKET,
   },
-apiUrl: 'http://localhost:8000/_ah/api/bcp/fetch_map'
+apiUrl: 'https://v2.bigcannonproject.org/_ah/api/bcp'
 }

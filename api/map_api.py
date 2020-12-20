@@ -1,17 +1,21 @@
 import json
-from data import Gun, User
+from data import Gun, User, MapData
+from flask import Response
 
 class MapApi:
     @staticmethod
     def fetch_map(user):
         user_data = User.get_by_id(user)
-        if user_data.test_user:
+        if user_data and user_data.test_user:
             namespace = 'test'
         else:
             namespace = None
-        entries = Gun.map_data_2(namespace)
+        entries = MapData().get(namespace)
         map = {
             "entries": entries
         }
         success = True
-        return map, (200 if success else 500)
+        response = Response()
+        response.content_type = 'application/json'
+        response.set_data(json.dumps(map))
+        return response, (200 if success else 500)

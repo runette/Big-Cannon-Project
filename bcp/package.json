@@ -20,7 +20,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "./build.sh",
+    "build": "./build.sh --prod=true",
+    "IntTest": "./build.sh --configuration=itest",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -42,7 +43,9 @@
     "@angular/platform-browser-dynamic": "^11.0.3",
     "@angular/router": "^11.0.3",
     "@google/markerclustererplus": "^5.1.3",
+    "component": "^1.1.0",
     "firebase": "^8.1.2",
+    "ng-gallery": "^5.0.0",
     "ngx-auth-firebaseui": "^5.0.1",
     "ngx-lightbox": "^2.2.2",
     "rxjs": "^6.6.3",
@@ -62,6 +65,7 @@
     "@angular/cli": "^11.0.3",
     "@angular/compiler-cli": "^11.0.3",
     "@angular/language-service": "^11.0.3",
+    "@angular/localize": "^11.0.3",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.19.8",
