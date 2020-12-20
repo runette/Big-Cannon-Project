@@ -1,5 +1,6 @@
 runtime: python38
 instance_class: F4
+service: stageing
 automatic_scaling:
   min_instances: 0
 
