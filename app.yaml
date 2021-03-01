@@ -3,7 +3,7 @@ instance_class: F4
 service: stageing
 automatic_scaling:
   min_instances: 0
-
+entrypoint: gunicorn -b :8080 -w 1 main:app
 handlers:
 
 - url: /_ah/api/.*

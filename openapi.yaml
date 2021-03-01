@@ -17,7 +17,7 @@
     - jwt: []
 
   servers:
-    - url: http://localhost:8080/_ah/api/bcp
+    - url: /_ah/api
 
   paths:
     /fetch_map:

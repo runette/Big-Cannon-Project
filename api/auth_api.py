@@ -1,6 +1,5 @@
 import json
 from firebase_admin import auth
-from defs import is_devserver
 import logging
 
 
@@ -9,7 +8,7 @@ class AuthApi:
     def decode_token(jwt):
         """
         Verifies for FireBase uid linked to supplied JWT token
-        Returns uid or None
+        Returns uid or '0000'
         """
         if jwt == "null":
             return {"uid": "0000"}

@@ -30,9 +30,9 @@ import logging
 firebase_admin.initialize_app()
 mapdata = MapData()
 
-options = {"swagger_ui": True}
+options = {"swagger_ui": False}
 app = App(__name__, options=options)
-app.add_api('swagger.yaml', strict_validation=True)
+app.add_api('openapi.yaml', strict_validation=True)
 # add CORS support
 CORS(app.app)
 logging.getLogger('flask_cors').level = logging.DEBUG

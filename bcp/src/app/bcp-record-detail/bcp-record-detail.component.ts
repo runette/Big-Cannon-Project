@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DataItem, MapData } from '../bcp-map-data.service';
 import { BcpMapDataService } from '../bcp-map-data.service';

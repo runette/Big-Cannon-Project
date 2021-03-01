@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import {environment} from '../environments/environment';
-import { AngularFireAuth } from '@angular/fire/auth';
 
 
 @Injectable({
@@ -17,12 +16,7 @@ export class BcpApiService {
   ADDRECORD = `${environment.apiUrl}/add_record`;
   SETRECORD = `${environment.apiUrl}/set_record`;
 
-  constructor(private auth: AngularFireAuth, private http: HttpClient) { }
-
-  public getToken():Promise<string> {
-    let thisToken: string;
-    return this.auth.idToken.toPromise();
-  }
+  constructor( private http: HttpClient) { }
 
   public apiPost(token: string, url:string, body: {} = {}): Observable<object> {
     return this.http.post(

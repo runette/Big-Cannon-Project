@@ -47,5 +47,5 @@ export const environment = {
     projectId: PROJECT_ID,
     storageBucket: STORAGE_BUCKET,
   },
-  apiUrl: 'http://localhost:8000/_ah/api/bcp'
+  apiUrl: 'http://localhost:8000/_ah/api'
 }

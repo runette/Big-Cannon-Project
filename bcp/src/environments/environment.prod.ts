@@ -30,5 +30,5 @@ export const environment = {
     projectId: PROJECT_ID,
     storageBucket: STORAGE_BUCKET,
   },
-apiUrl: 'https://v2.bigcannonproject.org/_ah/api/bcp'
+apiUrl: 'https://stageing-dot-ultima-ratio-221014.nw.r.appspot.com/_ah/api'
 }
