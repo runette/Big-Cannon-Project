@@ -79,12 +79,13 @@
                       <a class="nav-link" id="login"  role="button" data-toggle="modal" data-target="#login-modal"> {{user_data.url_linktext}}</a>
                     </li>
                     <li id="test-badge" class="d-none">
-                      <span class="badge badge-warning">Test</span>
+                      <span class="badge badge-warning">{% if user_data.train %} Training {% else %} Test {% endif %}</span>
                     </li>
                 </ul>
           </div>
             <div class="nav navbar-nav navbar-right" id="top-button">
-
+                <a href="http://eepurl.com/hrRxUf" class="nav-link">Newsletter</a>
+                <a href="https://stageing-dot-ultima-ratio-221014.nw.r.appspot.com/" class="nav-link">New Version</a>
             </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
