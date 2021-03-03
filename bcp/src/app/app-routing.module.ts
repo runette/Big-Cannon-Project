@@ -9,6 +9,7 @@ import {BcpHelpComponent} from './bcp-help/bcp-help.component';
 import {BcpLoginComponent} from './bcp-login/bcp-login.component';
 import {BcpPrivacyComponent} from './bcp-privacy/bcp-privacy.component';
 import {BcpTorComponent} from './bcp-tor/bcp-tor.component';
+import {BcpV2Component} from './bcp-v2/bcp-v2.component'
 
 
 const routes: Routes = [
@@ -20,6 +21,7 @@ const routes: Routes = [
 { path: 'login', component: BcpLoginComponent},
 { path: 'privacy', component: BcpPrivacyComponent},
 { path: 'tor', component: BcpTorComponent},
+{ path: 'v2', component: BcpV2Component}
 ];
 
 @NgModule({

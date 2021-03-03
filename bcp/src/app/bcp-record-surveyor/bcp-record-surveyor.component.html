@@ -1,197 +1,51 @@
-<div class="container" [formGroup]="gunForm">
-    <mat-accordion class="example-headers-align">
-        <mat-expansion-panel >
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3 class="bg-primary text-white p-1">MOULDING CODE</h3> 
-                </mat-panel-title>
-                <mat-panel-description>
-                    <textarea [disabled]="! edit" class="bg-site w-auto"  rows="1" name="moulding" id="moulding" onclick="event.stopPropagation()" [(value)]="mouldings" (input)="mouldingEdit($event)"></textarea>
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-                <div class="row">
-                    <div class="card">
-                        <img src="../../assets/mouldings.png" class="card-img-top mx-auto" alt="..." style="max-width: 600px">
-                        <div class="card-body">
-                            <p class="card-text text-center bold">
-                                Add the Moulding codes for each ring in order - from the Base Ring to the Muzzle - using the RIng Divider "/" between each ring. To delete or change, edit the text above directly.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('A')">
-                        <span class=""><h1>A</h1><p><small>Astragal</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/A.png">
-                    </button>
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('B')">
-                        <span class=""><h1>B</h1><p><small>Band</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/B.png">
-                    </button>
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('S')">
-                        <span class=""><h1>S</h1><p><small>Slope</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/S.png">   
-                    </button> 
-                </div>
-                <div class="row">
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('F')">
-                        <span class=""><h1>F</h1><p><small>Fillet</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/F.png">
-                    </button> 
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('O')">
-                        <span class=""><h1>O</h1><p><small>Ogee</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/O.png">
-                    </button> 
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('Q')">
-                        <span class=""><h1>Q</h1><p><small>Quadrant</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/Q.png">
-                    </button> 
-                </div>
-                <div class="row">
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('C')">
-                        <span class=""><h1>C</h1><p><small>Concave</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/C.png">
-                    </button> 
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('/')">
-                        <span class=""><h1>/</h1><small>Ring Divider</small></span>
-                    </button> 
-                    <button mat-button class="image-checkbox col-4 text-center " (click)="mouldingChange('X')">
-                        <span class=""><h1>X</h1><small>None</small></span>
-                    </button>
-                </div>
-            </mat-expansion-panel>
-            <mat-expansion-panel aria-label="Muzzle Codes">
-                <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3 class="bg-primary text-white p-1">MUZZLE CODE</h3> 
-                </mat-panel-title>
-                <mat-panel-description>
-                    <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  *ngIf="gunForm.value.muzzle_code" [value]="gunForm.value.muzzle_code"></textarea>
-                </mat-panel-description>
-                </mat-expansion-panel-header>
-                <mat-button-toggle-group name="muzzle" formControlName="muzzle_code">
-                    <div class="row">
-                        <mat-button-toggle class="image-checkbox col-4 text-center" value="R">
-                            <span class=""><h1>R</h1><p><small>Tulip</small></p></span>
-                            <img class="img-fluid"  width="400px" src="../../assets/R.png">
-                        </mat-button-toggle>
-                        <mat-button-toggle class="image-checkbox col-4 text-center" value="F">
-                            <span class=""><h1>F</h1><p><small>Flared Cone</small></p></span>
-                            <img class="img-fluid"  width="400px" src="../../assets/F.png">
-                        </mat-button-toggle>
-                        <mat-button-toggle class="image-checkbox col-4 text-center" value="T">
-                            <span class=""><h1>T</h1><p><small>Tapered Cone</small></p></span>
-                            <img class="img-fluid"  width="400px" src="../../assets/T.png">
-                        </mat-button-toggle>
-                    </div>
-                    <div class="row">
-                        <mat-button-toggle class="image-checkbox col-4 text-center" value="P">
-                            <span class=""><h1>P</h1><p><small>Cylinder</small></p></span>
-                            <img class="img-fluid"  width="400px" src="../../assets/P.png">
-                        </mat-button-toggle>
-                        <mat-button-toggle class="image-checkbox col-4 text-center" value="E">
-                            <span class=""><h1>E</h1><p><small>Coronice</small></p></span>
-                            <img class="img-fluid"  width="400px" src="../../assets/E.png">
-                        </mat-button-toggle>
-                        <mat-button-toggle class="image-checkbox col-4 text-center" value="X">
-                            <span class=""><h1>X</h1><p><small>None</small></p></span>
-                        </mat-button-toggle>
-                    </div>
-                </mat-button-toggle-group>  
-            </mat-expansion-panel>
-            <mat-expansion-panel aria-label="Cascable Codes">
-                <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3 class="bg-primary text-white p-1">CASCABLE CODE</h3> 
-                </mat-panel-title>
-                <mat-panel-description>
-                    <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  *ngIf="gunForm.value.cas_code" [value]="gunForm.value.cas_code"></textarea>
-                </mat-panel-description>
-                </mat-expansion-panel-header>
-                <mat-button-toggle-group name="cascable" formControlName="cas_code">
-                <div class="row">
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="K">
-                        <span class=""><h1>K</h1><p><small>Conical</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/K.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="O">
-                        <span class=""><h1>O</h1><p><small>Spherical</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/Sph.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="U">
-                        <span class=""><h1>U</h1><p><small>Concave</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/U.png">
-                    </mat-button-toggle>
-                </div>
-                <div class="row">
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="D">
-                        <span class=""><h1>D</h1><small>Flat</small></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/Flat.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="X">
-                        <span class=""><h1>X</h1><small>None</small></span>
-                    </mat-button-toggle>
-                    <div class=" col-4 nopad text-center " fxHide.gt-sm>
-                        
-                    </div>
-                    <div class=" col-4 nopad text-center " fxHide.gt-sm>
-                        
-                    </div>
-                </div>
-            </mat-button-toggle-group>  
-        </mat-expansion-panel>
-        <mat-expansion-panel aria-label="Button Codes">
-            <mat-expansion-panel-header>
-            <mat-panel-title>
-                <h3 class="bg-primary text-white p-1">BUTTON CODE</h3> 
-            </mat-panel-title>
-            <mat-panel-description>
-                <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding" *ngIf="gunForm.value.button_code" [value]="gunForm.value.button_code"></textarea>
-            </mat-panel-description>
-            </mat-expansion-panel-header>
-            <mat-button-toggle-group name="button" formControlName="button_code">
-                <div class="row">
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="N">
-                        <span class=""><h1>N</h1><p><small>Knob</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/N.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="L">
-                        <span class=""><h1>L</h1><p><small>Knob with Loop</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/L.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="G">
-                        <span class=""><h1>G</h1><p><small>Spherical</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/G.png">
-                    </mat-button-toggle>
-                </div>
-                <div class="row">
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="C">
-                        <span class=""><h1>C</h1><p><small>Cylinder</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/Cyl.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="H">
-                        <span class=""><h1>H</h1><p><small>Horizontal Ring</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/H.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="V">
-                        <span class=""><h1>V</h1><p><small>Vertical Ring</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/V.png">
-                    </mat-button-toggle>
-                </div>
-                <div class="row">
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="E">
-                        <span class=""><h1>E</h1><p><small>Exended Knob</small></p></span>
-                        <img class="img-fluid"  width="400px" src="../../assets/Ext.png">
-                    </mat-button-toggle>
-                    <mat-button-toggle class="image-checkbox col-4 text-center" value="X">
-                        <span class=""><h1>X</h1><small>None</small></span>
-                    </mat-button-toggle>
-                    <div class=" col-4 nopad text-center " fxHide.gt-sm>
-                        
-                    </div>
-                </div>
-            </mat-button-toggle-group>  
-        </mat-expansion-panel>
-    </mat-accordion>
-</div>
- 
+<div class="position-relative" [formGroup]="gunForm">
+    <div class="embed-responsive embed-responsive-16by9">
+        <object class="embed-responsive-item w-100" #cannon data='../../assets/cannon_chart.svg' type="image/svg+xml"></object>
+   </div>
+    
+    <div class="overlap" >
+    <table  class="table table-sm table-dark table-hover mb-5">
+        <thead class="bg-dark">
+            <th >Measurements</th>
+            <th>
+                    mm<mat-slide-toggle name="scale" colour="accent" (change)="scaleToggle($event)"> </mat-slide-toggle>metre
+            </th>
+        </thead>
+        <tbody class="small">
+        <tr>
+            <td >Length</td>
+            <td><input matInput class="w-100" type="text" name="length" id="length" placeholder="Length" formControlName="length"></td>
+            </tr>
+            <tr>
+            <td>Base Ring Diameter</td>
+            <td><input class="w-100" type="text" name="base_ring" id="base_ring" placeholder="Base Ring"  formControlName="base_ring"></td>
+            </tr>
+            <tr>
+            <td>Muzzle Diameter</td>
+            <td><input class="w-100" type="text" name="muzzle" id="muzzle" placeholder="Muzzle" formControlName="muzzle"></td>
+            </tr>
+            <tr>
+            <td>Bore Diameter</td>
+            <td><input class="w-100" type="text" name="bore" id="bore" placeholder="Bore"  formControlName="bore"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Position</td>
+            <td><input class="w-100" type="text" name="trunnion_position" id="trunnion_position" placeholder="Trunnion to BR"  formControlName="trunnion_position"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Width</td>
+            <td><input class="w-100" type="text" name="trunnion_width" id="trunnion_width" placeholder="Trunnion Width"  formControlName="trunnion_width"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Diameter</td>
+            <td><input class="w-100" type="text" name="trunnion_diameter" id="trunnion_diameter" placeholder="Trunnion Dia"  formControlName="trunnion_diameter"></td>
+            </tr>
+            <tr>
+            <td>Trunnion Offset</td>
+            <td><input class="w-100" type="text" name="trunnion_offset" id="trunnion_offset" placeholder="Trunnion Offset"  formControlName="trunnion_offset"></td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    </div>
+     

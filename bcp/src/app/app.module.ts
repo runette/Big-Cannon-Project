@@ -31,7 +31,9 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
- 
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatTooltipModule} from '@angular/material/tooltip';
+
 
 
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
@@ -50,6 +52,7 @@ import { BcpGmapComponent } from './bcp-gmap/bcp-gmap.component';
 import { BcpPhotosComponent } from './bcp-photos/bcp-photos.component';
 import { BcpPrivacyComponent } from './bcp-privacy/bcp-privacy.component';
 import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
+import { BcpV2Component } from './bcp-v2/bcp-v2.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +73,7 @@ import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
     BcpPhotosComponent,
     BcpPrivacyComponent,
     BcpTorComponent,
+    BcpV2Component,
   ],
   imports: [
     BrowserModule,
@@ -102,6 +106,8 @@ import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
     GalleryModule,
     MatProgressBarModule,
     AngularFireStorageModule,
+    MatBadgeModule,
+    MatTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

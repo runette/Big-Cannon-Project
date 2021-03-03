@@ -7,12 +7,17 @@
         </div>
       </button>
       <div fxLayout="row" fxHide fxShow.gt-xs>
-          <button mat-button routerLink="/database">Database</button>
-          <button mat-button routerLink="/new_record">New Record</button>
+          <button mat-button routerLink="/database" matTooltip="Access the Gun database">Database</button>
+          <button mat-button routerLink="/new_record" matTooltip="Create a New Record">New Record</button>
+          <button mat-button routerLink="/v2" matTooltip="Details of the Version 2 Beta">About Version 2</button>
       </div>
       <span class="fill-remaining-space"></span>
+      <p></p>
+      <div fxLayout="row" fxHide fxShow.gt-xs>
+        <a mat-button href="http://eepurl.com/hrRxUf" target="_blank" matTooltip="Subscribe to our Newsletter">Newsletter</a>
+    </div>
       <button mat-button routerLink="login">
-        <mat-icon>account_circle</mat-icon>
+        <mat-icon [matBadge]="badgeText" [matBadgeColor]="badgeColor" matTooltip="User Profile">account_circle</mat-icon>
       </button> 
       <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-xs>
       <mat-icon>menu</mat-icon>
@@ -21,8 +26,10 @@
     
     <mat-menu x-position="before" #menu>
       <mat-action-list>
-        <button mat-list-item routerLink="/database">Database</button>
-        <button mat-list-item routerLink="/new_record">New Record</button>
+        <button mat-list-item routerLink="/database" matTooltip="Access the Gun database">Database</button>
+        <button mat-list-item routerLink="/new_record" matTooltip="Create a New Record">New Record</button>
+        <button mat-button routerLink="/v2" matTooltip="Details of the Version 2 Beta">About Version 2</button>
+        <a mat-button href="http://eepurl.com/hrRxUf" target="_blank" matTooltip="Subscribe to our Newsletter">Newsletter</a>
       </mat-action-list>
     </mat-menu>
     <router-outlet class="pt-5"></router-outlet>

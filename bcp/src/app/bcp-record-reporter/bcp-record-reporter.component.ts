@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { FormGroup} from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
@@ -10,13 +10,12 @@ import { Subscription } from 'rxjs';
   templateUrl: './bcp-record-reporter.component.html',
   styleUrls: ['./bcp-record-reporter.component.css']
 })
-export class BcpRecordReporterComponent implements OnInit, AfterViewInit, OnDestroy {
-
+export class BcpRecordReporterComponent implements OnInit, OnDestroy {
+ 
   @Input()
   gunForm: FormGroup;
 
   edit: boolean;
-
   currentUser: BcpUser;
   
   _gun: DataItem;
@@ -24,38 +23,31 @@ export class BcpRecordReporterComponent implements OnInit, AfterViewInit, OnDest
   set gun(gun: DataItem) {
     this._gun=gun;
     this.updateForm();
-    if (this.cannonSvg) this.updateSvg();
   };
 
   get gun(): DataItem {
     return this._gun
   }
 
-  scale: number = 1;
-
-  keys = ['length','base_ring', 'muzzle', 'bore', 'trunnion_position', 'trunnion_width', 'trunnion_diameter', 'trunnion_offset'];
-  elements = ['length-text','br-text','muzzle-text','bore-text','tp-text','tw-text','td-text','to-text'];
   formSubscription: Subscription;
   userSubscription: Subscription;
 
-  @ViewChild('cannon', {static:true}) cannon :ElementRef;
-  private cannonSvg: any;
+  keys =[
+    'muzzle_code',
+    'cas_code',
+    'button_code',
+  ]
+
+  mouldings: string;
 
   constructor(public DATA_VALUES: BcpFilterValuesService,
-              public user: BcpUserService ) { 
-                this.userSubscription = user.user.subscribe(user => this.onUserChange(user));
-  }
+              public user: BcpUserService ) {
+                this.userSubscription= user.user.subscribe(user => this.onUserChange(user));
+               }
 
   ngOnInit(): void {
     this.formSubscription = this.gunForm.valueChanges.subscribe(event => this.formChanged(event));
     this.updateForm();
-  }
-
-  ngAfterViewInit() : void {
-    this.cannon.nativeElement.onload = () => {
-      this.cannonSvg = this.cannon.nativeElement.contentDocument;
-      this.updateSvg()
-    }
   }
 
   ngOnDestroy(): void {
@@ -65,27 +57,6 @@ export class BcpRecordReporterComponent implements OnInit, AfterViewInit, OnDest
 
   onUserChange(user: BcpUser): void{
     this.currentUser = user;
-  }
-
-  scaleToggle($event){
-    if (! $event.checked) {
-        this.scale = 1;
-      } else {
-        this.scale = 1000;
-      };
-      this.updateForm();
-      this.updateSvg();
-    }
-
-  formChanged($event){
-    this.keys.forEach(key => this.gun.measurements[key] = Math.round(parseFloat(this.gunForm.value[key]) * this.scale));
-    this.updateSvg();
-  }
-  
-  updateSvg(): void {
-    for (let i = 0; i< this.keys.length; i++){
-      this.cannonSvg.getElementById(this.elements[i]).firstElementChild.innerHTML = this.gunForm.value[this.keys[i]] ? this.gunForm.value[this.keys[i]] : "";
-    };
   }
 
   updateForm(){
@@ -104,5 +75,30 @@ export class BcpRecordReporterComponent implements OnInit, AfterViewInit, OnDest
           this.gunForm.controls[key].disable({emitEvent: false}) 
       }
       )
+    this.mouldings = "";
+    for (let c of this.gun.moulding_code)
+        this.mouldings += c;
   }
+
+  formChanged(event){
+    this.keys.forEach(key => 
+      this.gun[key] = this.gunForm.value[key]
+    );
+  }
+
+  mouldingChange(event){
+    this.mouldings += event
+    this.gun.moulding_code.push(event);
+  }
+
+  mouldingEdit(event){
+    if (this.edit) {
+      this.mouldings = event.currentTarget.value;
+      this.gun.moulding_code = [];
+      for (let c of event.currentTarget.value) {
+        this.gun.moulding_code.push(c);
+      }
+    }
+  }
+
 }

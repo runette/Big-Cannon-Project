@@ -47,6 +47,7 @@ export class BcpUser {
   fireUserData?: any;
   standing: BcpUserStanding;
   test_user: boolean;
+  train_user: boolean;
 
   constructor(user : any, buser: {[key:string]:any}) {
     this.id = buser.uid;
@@ -54,6 +55,7 @@ export class BcpUser {
     this.name = buser.name;
     this.standing = buser.standing as BcpUserStanding;
     this.test_user = buser.test;
+    this.train_user = buser.train;
   }
 
 }

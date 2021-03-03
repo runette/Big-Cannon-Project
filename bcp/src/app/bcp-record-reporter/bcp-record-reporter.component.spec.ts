@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BcpRecordReporterComponent } from './bcp-record-reporter.component';
 
-describe('BcpRecordReporterComponent', () => {
+describe('BcpRecordSurveyorComponent', () => {
   let component: BcpRecordReporterComponent;
   let fixture: ComponentFixture<BcpRecordReporterComponent>;
 

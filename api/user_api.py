@@ -2,6 +2,7 @@ import json
 from data import User
 import logging
 
+
 class UserApi:
     @staticmethod
     def fetch_user(user, token_info):
@@ -15,7 +16,7 @@ class UserApi:
                 user_data.put()
             if not hasattr(user_data.fire_user, 'name'):
                 user_data.fire_user = json.dumps(token_info['fire_user'])
-                user_data.put()                
+                user_data.put()
             if user_data.fire_user['name'] != token_info['fire_user']['name']:
                 user_data.fire_user = json.dumps(token_info['fire_user'])
                 user_data.put()
@@ -24,6 +25,7 @@ class UserApi:
                 'name': user_data.fire_user.name,
                 'standing': user_data.standing.name,
                 'test': user_data.test_user,
+                'train': user_data.train_user,
             }
             success = True
         except Exception as e:
