@@ -87,7 +87,7 @@
     "typescript": "~4.0.5",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "workbox-cli": "^6.0.2",
+    "workbox-cli": "^6.1.1",
     "workbox-sw": "^5.1.4"
   }
 }
