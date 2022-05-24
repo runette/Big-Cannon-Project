@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Gallery, GalleryRef, GalleryItem, ImageItem } from 'ng-gallery';
-import { AngularFireStorage  } from '@angular/fire/storage';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireStorage  } from '@angular/fire/compat/storage';
+import { Auth } from '@angular/fire/auth';
 import { BcpApiService,  } from '../bcp-api.service';
 import { Observable } from 'rxjs';
 import { BcpMapDataService } from '../bcp-map-data.service';
@@ -42,7 +42,7 @@ export class BcpPhotosComponent implements OnInit {
   constructor(private gallery: Gallery,
               private storage: AngularFireStorage,
               private changeDetect: ChangeDetectorRef,
-              private auth: AngularFireAuth,
+              private auth: Auth,
               private mapData: BcpMapDataService,
               private api: BcpApiService ) { }
 
@@ -87,14 +87,14 @@ export class BcpPhotosComponent implements OnInit {
     if (snapshot.state == "success"){
       let data = snapshot.metadata;
       data['id'] = id;
-      this.auth.idToken.subscribe(token => {
-        this.api.apiPost(token, this.api.ADDPHOTO, data ).subscribe(response => {
+      this.auth.currentUser.getIdToken().then(token => {
+        this.api.apiPost(token, this.api.ADDPHOTO, data ).subscribe( {next :response => {
             console.log(`Uploaded ${snapshot.metadata.fullPath}`)
             this.mapData.update(response)
         },
-        error => {})
-      },
-      error => {})
+        error: e => console.error(e)})
+      }
+      )
     }
   }
 }

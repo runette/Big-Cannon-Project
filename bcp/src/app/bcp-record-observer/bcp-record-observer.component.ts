@@ -1,4 +1,4 @@
-///<reference types='googlemaps' />
+///<reference types='google.maps' />
 import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';

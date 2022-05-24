@@ -6,7 +6,7 @@ import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BcpApiService } from '../bcp-api.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 
@@ -31,7 +31,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   fabIcon: string = "add";
 
   constructor(public request: ActivatedRoute,
-              private auth: AngularFireAuth,
+              private auth: Auth,
               private api: BcpApiService,
               private mapData: BcpMapDataService,
               public userData: BcpUserService,
@@ -160,13 +160,15 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
 
   submit(){
     if (this.fabIcon == "save") {
-      this.auth.idToken.subscribe(token => {
-        this.api.apiPost(token, this.api.SETRECORD, this.gun ).subscribe(response => {
+      if (this.auth.currentUser) {
+      this.auth.currentUser.getIdToken().then(token => {
+        this.api.apiPost(token, this.api.SETRECORD, this.gun ).subscribe({next: response => {
           this.mapData.update(response);
         },
-        error => {})
-      },
-      error => {})
+        error: e => console.error(e)
+      })
+      })
+    }
       this.fabIcon = "add";
     } else {
       this.router.navigate(['/new_record']);

@@ -11,7 +11,7 @@ import {GoogleMapsModule} from '@angular/google-maps';
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { environment } from '../environments/environment';
 import { GalleryModule } from 'ng-gallery';
-import { AngularFireStorageModule } from '@angular/fire/storage';
+import { StorageModule } from '@angular/fire/storage';
 
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {LayoutModule} from '@angular/cdk/layout';
@@ -33,8 +33,6 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
-
-
 
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
 import { BcpDatabaseComponent } from './bcp-database/bcp-database.component';
@@ -105,7 +103,7 @@ import { BcpV2Component } from './bcp-v2/bcp-v2.component';
     MatRadioModule,
     GalleryModule,
     MatProgressBarModule,
-    AngularFireStorageModule,
+    StorageModule,
     MatBadgeModule,
     MatTooltipModule,
   ],

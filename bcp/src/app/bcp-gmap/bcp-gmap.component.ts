@@ -67,7 +67,7 @@ export class BcpGmapComponent implements OnInit {
     if (!this.map) {
       this.map = this.my_map.googleMap;
       this.map.setCenter(this.location);
-      let options: google.maps.ReadonlyMarkerOptions = {
+      let options: google.maps.MarkerOptions = {
         draggable: true,
       }
       let icon: google.maps.Icon = {'url':''};
@@ -96,7 +96,7 @@ export class BcpGmapComponent implements OnInit {
     }
   }
 
-  private showPosition(position: Position) {
+  private showPosition(position: GeolocationPosition) {
     this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude );
     this.map.setCenter(this.location);
     this.marker.setPosition(this.location);
@@ -147,5 +147,3 @@ export class LatLng{
     this.lng = lng || "0";
   }
 }
-
-

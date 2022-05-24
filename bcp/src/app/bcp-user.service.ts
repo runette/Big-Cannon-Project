@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
 import {BcpApiService} from './bcp-api.service';
 import {Observable, BehaviorSubject} from 'rxjs';
 
@@ -15,8 +15,8 @@ export class BcpUserService {
   current_user: any;
   current_respose: any;
 
-  constructor(private auth: AngularFireAuth, private api: BcpApiService) {
-    auth.user.subscribe( user => {
+  constructor(private auth: Auth, private api: BcpApiService) {
+    auth.onAuthStateChanged( user => {
       if (user) {
           this.getUser(user);
       } else {
@@ -28,15 +28,13 @@ export class BcpUserService {
 
   public getUser(user): void{
     if (user != this.current_user) {
-      this.auth.idToken.subscribe(token => {
-        this.api.apiPost(token, this.api.FETCH_USER ).subscribe(response => {
-          this.user.next(new BcpUser(user, response));
-          this.login = true;
-          this.current_respose = response;
-        },
-        error => {})
+      this.api.apiPost(user.getIdToken(), this.api.FETCH_USER ).subscribe({next: response => {
+        this.user.next(new BcpUser(user, response));
+        this.login = true;
+        this.current_respose = response;
       },
-      error => {})
+      error: e => console.error(e)}
+      )
     }
   }
 }

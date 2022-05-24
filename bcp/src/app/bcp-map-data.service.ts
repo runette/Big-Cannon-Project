@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp-filter-values.service';
 import { BcpUserService } from './bcp-user.service'
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
 import { BcpApiService } from './bcp-api.service';
 import { Subject } from 'rxjs';
 
@@ -24,7 +24,7 @@ export class BcpMapDataService {
 
   private data : MapData;
 
-  constructor(private user: BcpUserService, private auth: AngularFireAuth, private api: BcpApiService) { 
+  constructor(private user: BcpUserService, private auth: Auth, private api: BcpApiService) { 
     this.getMapData()
     this.$newData = new Subject<boolean>();
   }
@@ -121,14 +121,16 @@ export class BcpMapDataService {
 
   
   public getMapData(): void{
-    this.auth.idToken.subscribe(token => {
-      this.api.apiPost(token, this.api.FETCH_MAP ).subscribe(response => {
-          this.data = this.loadMapData(response['entries'] as [{[key:string]: any}]);
-          this.setFilter();
-      },
-      error => {})
-    },
-    error => {})
+    if (this.auth.currentUser) {
+      this.auth.currentUser.getIdToken().then(token => {
+        this.api.apiPost(token, this.api.FETCH_MAP ).subscribe({next: response => {
+            this.data = this.loadMapData(response['entries'] as [{[key:string]: any}]);
+            this.setFilter();
+        },
+        error: e => console.error(e)})
+      }
+      )
+    }
   }
 
 

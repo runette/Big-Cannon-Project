@@ -13,8 +13,8 @@ export class AppComponent {
   badgeColor = "primary";
   userSubscription: Subscription;
 
-  constructor(public userData: BcpUserService){
-    this.userSubscription = this.userData.user.subscribe(user => this.onUserChange(user));
+  constructor(){
+
   }
 
   onUserChange(user: BcpUser){
@@ -36,6 +36,6 @@ export class AppComponent {
   }
 
   ngOnDestroy(): void {
-    this.userSubscription.unsubscribe();
+
   }
 }

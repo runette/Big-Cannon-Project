@@ -1,13 +1,12 @@
-///<reference types='googlemaps' />
+///<reference types='google.maps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
 import { Component, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps';
-import { BcpFilterValuesService, Material, GunCategory, RecordStatus, RecordQuality, Order } from '../bcp-filter-values.service';
+import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import {LocateControlOptions} from '../googlemap-locate/google-locate-control';
-import {MarkerClustererOptions} from '@google/markerclustererplus';
-import MarkerClusterer from '@google/markerclustererplus';
+import {MarkerClustererOptions, MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
 
 @Component({
@@ -36,12 +35,17 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit{
     zoomTo: 17
   }
   clusterOptions: MarkerClustererOptions = {
-    averageCenter: true,
-    maxZoom: 12,
-    imagePath: '../assets/m',
+    algorithm: new SuperClusterAlgorithm({
+      maxZoom: 12,
+    }),
+    markers: [ new google.maps.Marker(
+      {icon:{
+        url:'../assets/m'
+      }}
+    )]
   }
   
-  invisMarker: google.maps.ReadonlyMarkerOptions = {visible: false, opacity: 0};
+  invisMarker: google.maps.MarkerOptions = {visible: false, opacity: 0};
 
   map: google.maps.Map;
   @ViewChild(GoogleMap, {static: false}) my_map: GoogleMap;
@@ -71,8 +75,8 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit{
 
   loaded($event) {
     if (!this.map) {
-      this.map = this.my_map.googleMap;
-      this.mc = new MarkerClusterer(this.map, [], this.clusterOptions );
+      this.clusterOptions.map = this.my_map.googleMap;
+      this.mc = new MarkerClusterer(this.clusterOptions );
       this.loadMarkers();
     }
   }
@@ -125,7 +129,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit{
       // var entry: DataItem;
       for (let i=0; i< this.data.filteredData.length; i++) {
         let entry = this.data.filteredData[i];
-        let options: google.maps.ReadonlyMarkerOptions = {
+        let options: google.maps.MarkerOptions = {
           draggable: false,
         }
         let icon: google.maps.Icon = {'url':''};
