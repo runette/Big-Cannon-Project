@@ -4,7 +4,8 @@
             width="100%"
             [options]="options"
             (tilesloaded)="loaded($event)"
-            (zoomend)="onZoomEnd($event)"
+            (zoomChanged)="onBoundsChanged()"
+            (mapDragend)="onBoundsChanged()"
 >
 <map-marker #marker [options]="invisMarker"
 [position]="{lat:0,lng:0}"></map-marker>
@@ -12,7 +13,7 @@
     [record]="selectedMarker[0]" 
 ></app-bcp-data-card></map-info-window>
 </google-map>
-<div class="bounding-box" fxHide fxShow.gt-sm></div>
+<div #bounding_box class="bounding-box" fxHide fxShow.gt-sm></div>
 </div>
 <app-googlemap-locate
             [options]="locateOptions"
@@ -45,7 +46,7 @@
             <mat-slide-toggle matTooltip="See only the records currently on the map or all records"
                 class=""
                 [color]="'accent'"
-                [checked]="here"
+                [checked]="data.here"
                 (change)="setHere($event)">
                 <span class="toggle-content">{{hereText}}</span>
             </mat-slide-toggle>
@@ -85,14 +86,21 @@
         <button mat-list-item [matMenuTriggerFor]="materialMenu">Material<small class="text-muted" *ngIf=" data.material != 'All'"> {{data.material}}</small></button>
         <button mat-list-item [matMenuTriggerFor]="statusMenu">Status<small class="text-muted" *ngIf=" data.recordQuality != 'All'"> {{data.recordQuality}}</small></button>
         <button mat-list-item [matMenuTriggerFor]="orderMenu">Order <small class="text-muted" *ngIf=" data.order != 'Order'">{{data.order}}</small></button>
-    <mat-slide-toggle mat-list-item
+        <mat-slide-toggle matTooltip="See only the records currently on the map or all records"
+            class=""
+            [color]="'accent'"
+            [checked]="data.here"
+            (change)="setHere($event)">
+            <span class="toggle-content">{{hereText}}</span>
+        </mat-slide-toggle>
+        <mat-slide-toggle mat-list-item matTooltip="Cluster records by site"
           class=""
           [color]="'accent'"
           [checked]="cluster"
           (change)="setCluster($event)">
         Ungrouped
       </mat-slide-toggle>
-      <mat-slide-toggle mat-list-item
+      <mat-slide-toggle mat-list-item matTooltip="See only your own records or all records"
           class=""
           [color]="'accent'"
           [checked]="data.ownRecords"
@@ -140,6 +148,7 @@
 
 <mat-menu #orderMenu="matMenu">
     <button mat-menu-item (click)="setOrder('Order')">Order</button>
+    <button mat-menu-item (click)="setOrder('Alphabetic')">Alphabetical</button>
     <button mat-menu-item (click)="setOrder('Latest First')">Latest First</button>
     <button mat-menu-item (click)="setOrder('Oldest First')">Oldest First</button>
 </mat-menu>

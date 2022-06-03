@@ -6,7 +6,6 @@ import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BcpApiService } from '../bcp-api.service';
-import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 
@@ -31,7 +30,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   fabIcon: string = "add";
 
   constructor(public request: ActivatedRoute,
-              private auth: Auth,
+              private user: BcpUserService,
               private api: BcpApiService,
               private mapData: BcpMapDataService,
               public userData: BcpUserService,
@@ -159,16 +158,14 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   }
 
   submit(){
-    if (this.fabIcon == "save") {
-      if (this.auth.currentUser) {
-      this.auth.currentUser.getIdToken().then(token => {
-        this.api.apiPost(token, this.api.SETRECORD, this.gun ).subscribe({next: response => {
+    if (this.user.current_user) {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.SETRECORD, this.gun ).subscribe({next: response => {
           this.mapData.update(response);
         },
         error: e => console.error(e)
-      })
-      })
-    }
+      }),
+      e => console.error(e)
+      )
       this.fabIcon = "add";
     } else {
       this.router.navigate(['/new_record']);

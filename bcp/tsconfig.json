@@ -11,6 +11,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",
+    "paths": { "@angular/*": [ "../node_modules/@angular/*" ] },
     "lib": [
       "es2018",
       "dom"

@@ -71,10 +71,10 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
+              "sourceMap": true,
+              "namedChunks": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "budgets": [
                 {
@@ -88,6 +88,14 @@
                   "maximumError": "100kb"
                 }
               ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           }
         },
@@ -99,8 +107,15 @@
           "configurations": {
             "production": {
               "browserTarget": "bcp:build:production"
+            },
+            "development": {
+              "browserTarget": "bcp:build:development"
+            },
+            "itest":{
+              "browserTarget": "bcp:build:itest"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -150,10 +165,6 @@
               "devServerTarget": "bcp:serve:production"
             }
           }
-        },
-        "deploy": {
-          "builder": "@angular/fire:deploy",
-          "options": {}
         }
       }
     }

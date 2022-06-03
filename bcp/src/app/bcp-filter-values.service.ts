@@ -18,4 +18,4 @@ export type Material =  "All" | "Not Known" | "Cast Iron" | "Wrought Iron" | "Br
 export type RecordQuality =  'All' | 'Observer'| "Recorder" | "Surveyor";
 export type GunCategory =  "All" | "Not Known" | "Muzzle Loading" | "Breech Loading" | "Carronade";  
 export type RecordStatus = "All"| 'Unverified' | 'Auto' | 'Verified';
-export type Order = "Order" | "Latest First" | "Oldest First" ;
+export type Order = "Order" | "Latest First" | "Oldest First" | "Alphabetic";

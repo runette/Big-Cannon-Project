@@ -54,6 +54,9 @@ export class BcpGmapComponent implements OnInit {
   @Output()
   newLocation$: EventEmitter<google.maps.LatLng> = new EventEmitter<google.maps.LatLng>();
 
+  @Output()
+  newBounds$: EventEmitter<google.maps.LatLngBounds> = new EventEmitter<google.maps.LatLngBounds>();
+
   buttonTitle = "Center"
 
   constructor(public DATA_VALUES: BcpFilterValuesService) {

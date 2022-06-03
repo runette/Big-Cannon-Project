@@ -1,6 +1,6 @@
-import json
-from data import Gun, geolocate, GeoPt
+from data import geolocate
 import logging
+from google.cloud.datastore.helpers import GeoPoint
 
 class LocationApi:
     @staticmethod
@@ -8,7 +8,7 @@ class LocationApi:
         try:
             lat = body['lat']
             lon = body['lng']
-            location = GeoPt(lat, lon)
+            location = GeoPoint(lat, lon)
             geo = geolocate(location)
             geo.update({"location": [lat, lon]})
             success = True

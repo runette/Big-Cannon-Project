@@ -23,10 +23,23 @@
     /fetch_map:
       post:
         operationId: api.MapApi.fetch_map
+        
+        requestBody:
+          description: Request for Map Data
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: number
+                  transaction:
+                    type: number
 
         responses:
           200:
-            description: Fectch the Map data
+            description: Fetch the Map data
             content:
               application/json:
                 schema:

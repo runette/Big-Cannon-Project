@@ -24,13 +24,14 @@ import json
 from enum import Enum
 import logging
 import googlemaps
-from simplendb.ndb import Model, Query, Key, GeoPt, ndb
-import simplendb.users
-from simplendb.images import ndbImage, Blob
-from simplendb.helpers import to_bool, to_int
+from images import ndbImage
+from helpers import to_int
+from google.cloud import ndb
+
 import requests
 import time
 
+from typing import List, Dict
 
 GUN_TYPES = ("Cast Iron", "Wrought Iron", "Bronze",
              "Not Known", "Combined Cast and Wrought Iron")
@@ -41,34 +42,9 @@ GUN_STATUS = ('Unverified', 'Auto', 'Verified')
 MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES,
           'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 
-
-class BNG():
-    @staticmethod
-    def convert_to_LL(eastings, northings):
-        return BNG.BGS_api({'method': 'BNGtoLatLng', 'easting': eastings, "northing": northings})
-
-    @staticmethod
-    def convert_from_LL(lat, lon):
-        return BNG.BGS_api({'method': 'LatLongToBNG', 'lat': str(lat), 'lon': str(lon)})
-
-    @staticmethod
-    def BGS_api(params):
-        URL = "http://www.bgs.ac.uk/data/webservices/CoordConvert_LL_BNG.cfc"
-        try:
-            result = requests.get(URL, params=params)
-            if result.status_code == requests.codes.ok:
-                try:
-                    return result.json()
-                except:
-                    raise Exception('ParseError' + result.text())
-            else:
-                raise Exception('ApiError' + str(result.status_code))
-        except Exception as e:
-            logging.error(str(e))
-            return
-
-
-class Gun(Model):
+client = ndb.Client()
+        
+class Gun(ndb.Model):
     class Types(Enum):
         CAST = 0
         WROUGHT = 1
@@ -92,43 +68,38 @@ class Gun(Model):
         BREECH_LOAD = 2
         CARRONADE = 3
 
-    def schema(self):
-        super().schema()
-        self.Property("gunid", ndb.IntegerProperty)
-        self.Property("location", ndb.GeoPtProperty)
-        self.Property("type", ndb.EnumProperty, enum=Gun.Types)
-        self.Property("quality", ndb.EnumProperty,
-                      enum=Gun.Quality, default=Gun.Quality.BRONZE)
-        self.Property("description", ndb.StringProperty)
-        self.Property("name", ndb.StringProperty)
-        self.Property("date", ndb.DateTimeProperty, auto_now=True)
-        self.Property("site", ndb.StringProperty)
-        self.Property('display_name', ndb.StringProperty)
-        self.Property("context", ndb.StringProperty)
-        self.Property("collection", ndb.BooleanProperty)
-        self.Property("coll_name", ndb.StringProperty)
-        self.Property("coll_ref", ndb.StringProperty)
-        self.Property("images", ndb.TextProperty, repeated=True)
-        self.Property("markings", ndb.BooleanProperty)
-        self.Property("mark_details", ndb.StringProperty)
-        self.Property("interpretation", ndb.BooleanProperty)
-        self.Property("inter_details", ndb.StringProperty)
-        self.Property("country", ndb.StringProperty, default="none")
-        self.Property("geocode", ndb.JsonProperty)
-        self.Property("user_id", ndb.StringProperty)
-        self.Property("status", ndb.EnumProperty,
-                      enum=Gun.Status, default=Gun.Status.UNVERIFIED)
-        self.Property("measurements", ndb.DictProperty)
-        self.Property("moulding_code", ndb.StringProperty, repeated=True)
-        self.Property("muzzle_code", ndb.StringProperty)
-        self.Property("cas_code", ndb.StringProperty)
-        self.Property("button_code", ndb.StringProperty)
-        self.Property('category', ndb.EnumProperty,
-                      enum=Gun.Categories, default=Gun.Categories.NOT_KNOWN)
+    gunid = ndb.IntegerProperty()
+    location = ndb.GeoPtProperty()
+    type = ndb.IntegerProperty()
+    quality = ndb.IntegerProperty(default=Quality.BRONZE.value)
+    description = ndb.StringProperty()
+    name = ndb.StringProperty()
+    date = ndb.DateTimeProperty(auto_now=True)
+    site = ndb.StringProperty()
+    display_name = ndb.StringProperty()
+    context = ndb.StringProperty()
+    collection = ndb.BooleanProperty()
+    coll_name = ndb.StringProperty()
+    coll_ref = ndb.StringProperty()
+    images = ndb.TextProperty(repeated=True)
+    markings = ndb.BooleanProperty()
+    mark_details = ndb.StringProperty()
+    interpretation = ndb.BooleanProperty()
+    inter_details = ndb.StringProperty()
+    country = ndb.StringProperty(default="none")
+    geocode = ndb.JsonProperty()
+    user_id = ndb.StringProperty()
+    status = ndb.IntegerProperty(default=Status.UNVERIFIED.value)
+    measurements = ndb.GenericProperty()
+    moulding_code = ndb.StringProperty(repeated=True)
+    muzzle_code = ndb.StringProperty()
+    cas_code = ndb.StringProperty()
+    button_code = ndb.StringProperty()
+    category = ndb.IntegerProperty(default=Categories.NOT_KNOWN.value)
 
     @classmethod
-    def map_data(cls, namespace):
-        result = cls.query(order=['gunid'], namespace=namespace).fetch()
+    def map_data(cls, namespace) -> List[Dict]:
+        result = cls.query(order_by=['site'], namespace=namespace).fetch()
         users = User.query().fetch()
         map_data = []
         for gun in result:
@@ -137,7 +108,7 @@ class Gun(Model):
                 map_data.append(data)
         return map_data
 
-    def api_data(self, users):
+    def api_data(self, users) -> Dict:
         try:
             thumbnail = self.get_images()[0].get("s32")
         except:
@@ -149,27 +120,25 @@ class Gun(Model):
             id = ""
             for user in users:
                 fu = user.fire_user
-                if fu['email'] in self.name:
+                if self.name and fu['email'] in self.name:
                     id = fu['user_id']
             if id != "":
                 self.user_id = id
                 self.put()
-                name = User.get_by_id(self.user_id).fire_user['name']
+                name = User.get_id(self.user_id).fire_user['name']
             else:
                 name = self.name
         try:
             line = {}
             line.update({'thumbnail': thumbnail, 'owner': name})
-            for item in self.items():
+            for item in self.to_dict().items():
                 if item[0] == 'location':
                     line.update(
-                        {'lat': item[1].latitude, 'lng': self.location.longitude})
+                        {'lat': item[1].latitude, 'lng': item[1].longitude})
                 elif item[0] in MATRIX:
                     line.update({item[0]: MATRIX[item[0]][item[1]]})
                 elif item[0] == 'date':
                     line.update({'date': self.date.timestamp() * 1000})
-                elif item[0] == 'geocode':
-                    line.update({'geocode': json.loads(item[1])})
                 elif item[0] == 'images':
                     images = []
                     for image in item[1]:
@@ -189,7 +158,7 @@ class Gun(Model):
 
     @classmethod
     def get_next(cls, namespace):
-        all = cls.query(order=["-gunid"], namespace=namespace).fetch()
+        all = cls.query(order_by=["-gunid"], namespace=namespace).fetch()
         if all:
             return all[0].gunid + 1
         else:
@@ -197,7 +166,7 @@ class Gun(Model):
 
     @classmethod
     def get_id(cls, id, namespace):
-        return cls.query(filters=[("gunid", "=", id)], namespace=namespace).get()
+        return cls.query(cls.gunid == id, namespace=namespace).get()
 
     def get_images(self):
         IMAGE_DEFAULTS = [{"s200": "/img/70x70.png", "original": ""}]
@@ -214,22 +183,20 @@ class Gun(Model):
             return IMAGE_DEFAULTS
 
 
-class User(Model):
+class User(ndb.Model):
     class Standing(Enum):
         OBSERVER = 0
         RECORDER = 1
         SURVEYOR = 2
         ADMIN = 3
 
-    def schema(self):
-        super().schema()
-        self.Property("user_id", ndb.StringProperty)
-        self.Property("standing", ndb.EnumProperty,
-                      enum=User.Standing, default=User.Standing.OBSERVER)
-        self.Property('created', ndb.DateTimeProperty, auto_now=True)
-        self.Property("fire_user", ndb.JsonProperty)
-        self.Property('test_user', ndb.BooleanProperty)
-        self.Property('train_user', ndb.BooleanProperty)
+
+    user_id = ndb.StringProperty()
+    standing = ndb.IntegerProperty(default= Standing.OBSERVER.value)
+    created = ndb.DateTimeProperty (auto_now=True)
+    fire_user = ndb.JsonProperty()
+    test_user = ndb.BooleanProperty()
+    train_user = ndb.BooleanProperty()
 
     def namespace(self):
         if self.train_user:
@@ -237,10 +204,10 @@ class User(Model):
         if self.test_user:
             return "test"
         return None
-
+    
     @classmethod
-    def get_by_id(cls, id):
-        return User.query(filters=[('user_id', '=', id)]).get()
+    def get_id(cls, id):
+        return User.query(cls.user_id == id).get()
 
 
 def geolocate(location):
@@ -339,29 +306,40 @@ class MapData(object):
     _test_mapdata = None
     _prod_mapdata = None
     _train_mapdata = None
+    _cache_id = None
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(MapData, cls).__new__(cls)
-            cls._dev_mapdata = Gun.map_data("test")
-            cls._prod_mapdata = Gun.map_data(None)
-            cls._train_mapdata = Gun.map_data("train")
+            cls._instance.co_regenerate()
         return cls._instance
+    
+    def co_regenerate(self):
+        with client.context():
+            self._dev_mapdata = Gun.map_data("test")
+            self._prod_mapdata = Gun.map_data(None)
+            self._train_mapdata = Gun.map_data("train")
+
 
     async def update(self, namespace: str):
-        await self.co_update(namespace)
+        with client.context():
+            if namespace == "test":
+                self._dev_mapdata = Gun.map_data("test")
+            if namespace == "train":
+                self._train_mapdata = Gun.map_data("train")
+            else:
+                self._prod_mapdata = Gun.map_data(None)        
 
-    async def co_update(self, namespace: str):
-        if namespace == "test":
-            self._dev_mapdata = Gun.map_data("test")
-        if namespace == "train":
-            self._train_mapdata = Gun.map_data("train")
-        else:
-            self._prod_mapdata = Gun.map_data(None)
-
-    def get(self, namespace: str):
+    def get(self, namespace: str) -> List[Dict]:
         if namespace == "test":
             return self._dev_mapdata
         if namespace == "train":
             return self._train_mapdata
         return self._prod_mapdata
+    
+    def __dict__(self) -> Dict:
+        return {
+            "test": self._test_mapdata,
+            "train": self._train_mapdata,
+            "prod": self._prod_mapdata
+        }

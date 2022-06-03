@@ -1,6 +1,6 @@
 {
   "name": "bcp",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/runette/ultima-ratio.git"
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/runette/ultima-ratio#readme",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve ",
     "build": "./build.sh --prod=true",
     "IntTest": "./build.sh --configuration=itest",
     "test": "ng test",
@@ -33,7 +33,7 @@
     "@angular/cdk": "*",
     "@angular/common": "*",
     "@angular/compiler": "*",
-    "@angular/core": "^13.3.9",
+    "@angular/core": "^13.3.10",
     "@angular/fire": "*",
     "@angular/flex-layout": "*",
     "@angular/forms": "*",
@@ -43,11 +43,11 @@
     "@angular/platform-browser-dynamic": "*",
     "@angular/router": "*",
     "@googlemaps/markerclusterer": "^2.0.7",
+    "@types/firebase": "^3.2.1",
     "firebase": "*",
     "ng-gallery": "*",
-    "ngx-auth-firebaseui": "file:../../ngx-auth-firebaseui/dist/ngx-auth-firebaseui",
     "ngx-lightbox": "*",
-    "rxjs": "*",
+    "rxjs": "^6.6.7",
     "tslib": "*",
     "workbox-cacheable-response": "*",
     "workbox-core": "*",
@@ -55,8 +55,7 @@
     "workbox-precaching": "*",
     "workbox-routing": "*",
     "workbox-strategies": "*",
-    "workbox-window": "*",
-    "zone.js": "*"
+    "workbox-window": "*"
   },
   "devDependencies": {
     "@angular-devkit/architect": "*",
@@ -68,7 +67,6 @@
     "@types/jasmine": "*",
     "@types/jasminewd2": "*",
     "@types/node": "*",
-    "codelyzer": "*",
     "fuzzy": "*",
     "inquirer": "*",
     "inquirer-autocomplete-prompt": "*",

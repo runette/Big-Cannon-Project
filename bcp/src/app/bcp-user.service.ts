@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
 import {BcpApiService} from './bcp-api.service';
 import {Observable, BehaviorSubject} from 'rxjs';
+import {AuthProcessService} from 'ngx-auth-firebaseui';
+import { User }  from 'firebase/auth';
 
 
 @Injectable({
@@ -12,13 +13,13 @@ export class BcpUserService {
   user: BehaviorSubject<BcpUser> = new BehaviorSubject<BcpUser>(null);
   login: boolean = false;
   token: string;
-  current_user: any;
+  current_user: User ;
   current_respose: any;
 
-  constructor(private auth: Auth, private api: BcpApiService) {
-    auth.onAuthStateChanged( user => {
-      if (user) {
-          this.getUser(user);
+  constructor(private auth: AuthProcessService, private api: BcpApiService) {
+    auth.user$.subscribe( u => {
+      if (u) {
+          this.getUser(u);
       } else {
         this.user.next(null);
         this.login = false;
@@ -26,15 +27,17 @@ export class BcpUserService {
     });
   }
 
-  public getUser(user): void{
+  public getUser(user: User): void{
     if (user != this.current_user) {
-      this.api.apiPost(user.getIdToken(), this.api.FETCH_USER ).subscribe({next: response => {
-        this.user.next(new BcpUser(user, response));
+      user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_USER ).subscribe({next: response => {
         this.login = true;
         this.current_respose = response;
+        this.current_user = user;
+        this.user.next(new BcpUser(user, response));
       },
       error: e => console.error(e)}
-      )
+      ),
+      e => console.error(e))
     }
   }
 }

@@ -2,9 +2,10 @@ Flask
 googlemaps
 Jinja2
 simplejson
-urllib3 <1.25
-simpleNDB
+urllib3
 gunicorn
 connexion
 firebase_admin
 flask_cors
+google-cloud-ndb
+Pillow

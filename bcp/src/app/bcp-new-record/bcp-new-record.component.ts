@@ -3,7 +3,6 @@ import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { GalleryItem  } from 'ng-gallery';
 import { BcpApiService } from '../bcp-api.service';
 import { MatStepper } from '@angular/material/stepper';
-import { Auth } from '@angular/fire/auth';
 import { BcpPhotosComponent } from '../bcp-photos/bcp-photos.component';
 import { BcpMapDataService } from '../bcp-map-data.service';
 import { Router } from '@angular/router';
@@ -42,7 +41,7 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
 }
 
   constructor(public DATA_VALUES: BcpFilterValuesService,
-              private auth: Auth,
+              private user: BcpUserService,
               private api: BcpApiService,
               private mapData: BcpMapDataService,
               private router: Router,
@@ -59,7 +58,7 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
     this.userSubscription.unsubscribe();
   }
 
-  userChange(user){
+  userChange(user): void{
     this.currentUser = user;
   }
 
@@ -67,16 +66,19 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
     this.location = pos;
   }
 
-  acceptPosition() {
-    this.auth.onIdTokenChanged(async user => {
-      this.api.apiPost(await user.getIdToken(), this.api.GET_LOCATION, {
-        lat: this.location.lat(),
-        lng: this.location.lng()
-      } ).subscribe({next: response => this.newGeo(response), error: e => console.error(e)})
-    })
+  acceptPosition():void {
+    if (this.user.current_user) {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.GET_LOCATION, {
+          lat: this.location.lat(),
+          lng: this.location.lng()
+        } 
+      ).subscribe({next: response => this.newGeo(response), error: e => console.error(e)})
+      )
+    }
   }
 
-  newGeo(response){
+
+  newGeo(response): void{
     this.geocode = response;
     this.site = response.country;
     try {
@@ -86,24 +88,25 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
     this.changDetect.detectChanges();
   }
 
-  acceptSite() {
+  acceptSite():void {
     if (this.site) this.stepper.selectedIndex = 2;
   }
 
-  acceptPhoto(files: FileList) {
+  acceptPhoto(files: FileList): void {
     let data = this.geocode;
     data['current_site'] = this.site;
     let folderName: string = "prod";
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
-    this.auth.onIdTokenChanged(async user => {
-      this.api.apiPost(await user.getIdToken(), this.api.ADDRECORD, data ).subscribe({next: response => {
-        this.mapData.add(response);
-        this.photo.send_file(files, `${folderName}/${response['gunid']}`, response['gunid']);
-        this.router.navigate(["/database","entry"], {queryParams:{"gunid":response['gunid']}});
-      },
-      error: e => console.error(e)
-    })
+
+    if (this.user.current_user) {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDRECORD, data ).subscribe({
+        next: response => {
+          this.mapData.add(response);
+          this.photo.send_file(files, `${folderName}/${response['gunid']}`, response['gunid']);
+          this.router.navigate(["/database","entry"], {queryParams:{"gunid":response['gunid']}});
+        }
+      }
+      ))
     }
-    )
   }
 }

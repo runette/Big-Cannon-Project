@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp-filter-values.service';
-import { BcpUserService } from './bcp-user.service'
-import { Auth } from '@angular/fire/auth';
+import { BcpUserService } from './bcp-user.service';
 import { BcpApiService } from './bcp-api.service';
 import { Subject } from 'rxjs';
 
@@ -15,18 +14,31 @@ export class BcpMapDataService {
   private _gunCategory: GunCategory = "All";
   private _recordQuality : RecordQuality = "All";
   private _recordStatus : RecordStatus = "All";
-  private _order : Order = "Order";
+  private _order : Order = "Alphabetic";
   private _ownRecords : boolean = false;
   private _boundingBox: google.maps.LatLngBounds;
+  private _here: boolean = true;
 
   filteredData: MapData;
+  filteredSites: MapSites;
   $newData: Subject<boolean>;
+  $clearMarkers: Subject<boolean>;
 
   private data : MapData;
+  private transaction: number;
 
-  constructor(private user: BcpUserService, private auth: Auth, private api: BcpApiService) { 
-    this.getMapData()
+  constructor(private user: BcpUserService, private api: BcpApiService) { 
     this.$newData = new Subject<boolean>();
+    this.$clearMarkers = new Subject<boolean>();
+    this.transaction = 0;
+    this.user.user.subscribe({
+      next: () => {
+        this.$clearMarkers.next(true);
+        this.transaction++;
+        this.data = [];
+        this.getMapData();
+      }
+    })
   }
 
   set material(value: Material) {
@@ -63,7 +75,7 @@ export class BcpMapDataService {
 
   set order(value: Order) {
     this._order = value;
-    this.setFilter();
+    this.gunSort();
   }
   get order():Order{
     return this._order;
@@ -86,21 +98,55 @@ export class BcpMapDataService {
     return this._boundingBox;
   }
 
+  set here(value: boolean){
+    this._here = value;
+    this.setFilter();
+  }
+
+  get here(): boolean {
+    return this._here;
+  }
 
   public setFilter():void {
-    this.filteredData=this.data.filter(item => {
-      return  (this.gunCategory === 'All' || item.category == this.gunCategory) && 
-              (this.material === 'All' || item.material == this.material) && 
-              (this.recordQuality === 'All' || item.quality == this.recordQuality) &&
-              (this.recordStatus === 'All'|| item.status == this.recordStatus) &&
-              (!this.ownRecords || item.userId == this.user.user.getValue().fireUserData.uid) 
-    })
-    this.filteredData.sort( (a,b) => {
-      if (this.order === 'Order') return b.gunid - a.gunid;
-      if (this.order === "Latest First") return b.gunid - a.gunid;
-      if (this.order === "Oldest First") return a.gunid - b.gunid;
-    })
-    this.$newData.next(true);
+    if (this.data) {
+      this.filteredData=this.data.filter(item => {
+        return  (this.gunCategory === 'All' || item.category == this.gunCategory) && 
+                (this.material === 'All' || item.material == this.material) && 
+                (this.recordQuality === 'All' || item.quality == this.recordQuality) &&
+                (this.recordStatus === 'All'|| item.status == this.recordStatus) &&
+                (!this.ownRecords || item.userId == this.user.user.getValue().fireUserData.uid) &&
+                (!this.here || this.boundingBox && this.boundingBox.contains(item.location))
+      });
+      this.gunSort();
+      this.filteredSites = [];
+      this.data.forEach( item => {
+        if ( ! this.filteredSites.some ( e => e.name === item.site)) {
+          this.filteredSites.push(
+            {
+              name: item.site,
+              geocode: item.geocode,
+              gunCount: 1,
+              country: item.geocode.country
+            }
+          )
+        } else {
+          this.filteredSites.filter( e => e.name === item.site )[0].gunCount++;
+        }
+      })
+      this.filteredSites.sort( (a,b) => a.name.localeCompare(b.name))
+      this.$newData.next(true);
+    }
+  }
+
+  public gunSort(): void {
+    if (this.filteredData) {
+      this.filteredData.sort( (a,b) => {
+        if (this.order === 'Order') return a.site.localeCompare(b.site);
+        if (this.order === "Latest First") return b.gunid - a.gunid;
+        if (this.order === "Oldest First") return a.gunid - b.gunid;
+        else return a.site.localeCompare(b.site)
+      })
+    }
   }
 
   public add(indata: any) {
@@ -119,28 +165,33 @@ export class BcpMapDataService {
     this.$newData.next(true);
   }
 
-  
-  public getMapData(): void{
-    if (this.auth.currentUser) {
-      this.auth.currentUser.getIdToken().then(token => {
-        this.api.apiPost(token, this.api.FETCH_MAP ).subscribe({next: response => {
-            this.data = this.loadMapData(response['entries'] as [{[key:string]: any}]);
-            this.setFilter();
-        },
-        error: e => console.error(e)})
-      }
+  public getMapData(page: number = 0): void{
+    if (this.user.current_user) {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction} ).subscribe({next: response => {
+        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response['transaction'], response['length']);
+        this.setFilter();
+      },
+      error: e => console.error(e)}
+      ),
+      e => console.error(e))
+    } else {
+      this.api.apiPost( null, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction} ).subscribe({next: response => {
+        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response['transaction'], response['length']);
+        this.setFilter();
+      },
+      error: e => console.error(e)}
       )
     }
   }
 
-
-
-  private loadMapData(data: [{[key:string]:any}]) : MapData {
-    let mapData : MapData = [];
-    for ( let i = 0; i < data.length; i++) {
-      mapData[i] = this.loadDataitem(data[i]);
+  private loadMapData(data: [{[key:string]:any}], page: number, transaction: number, length: number) {
+    if (transaction == this.transaction) {
+      page++;
+      if (page<length) this.getMapData(page);
+      for (let item of data) {
+        this.data.push(this.loadDataitem(item));
+      }
     }
-    return mapData
   }
 
   loadDataitem(data: any): DataItem {
@@ -189,9 +240,20 @@ export interface DataItem {
   button_code?: string;
   thumbnail?:string;
   quality?: RecordQuality;
+  marker?: google.maps.Marker;
 }
 
 export type MapData = DataItem[];
+
+export interface Site{
+  name: string;
+  geocode: Geocode;
+  country?: string;
+  gunCount: number;
+  marker?: google.maps.Marker;
+}
+
+export type MapSites = Site[];
 
 export interface Measurements {
   scale: boolean;

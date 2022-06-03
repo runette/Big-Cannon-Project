@@ -4,6 +4,7 @@
                     height="100%"
                     [options]="options"
                     (tilesloaded)="loaded($event)"
+                    (boundsChanged)="newBounds$.next($event)"
         >
         </google-map>
 </div>

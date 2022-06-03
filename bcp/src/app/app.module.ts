@@ -97,7 +97,6 @@ import { BcpV2Component } from './bcp-v2/bcp-v2.component';
     MatChipsModule,
     BrowserModule,
     MatStepperModule,
-    //AngularFireModule.initializeApp(environment.firebase),
     NgxAuthFirebaseUIModule.forRoot(environment.firebaseui),
     MatGridListModule,
     MatRadioModule,
