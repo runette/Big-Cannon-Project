@@ -4,10 +4,9 @@ venv/
 *.wpu
 *.wpr
 ultima-ratio.wpu
-ultima-ratio-221014-6011fff684c3.json
 node_modules/
 lib/
 dist/
 .DS_Store
 .angular
-
+ultima-ratio-221014*.json
