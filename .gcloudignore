@@ -24,4 +24,5 @@ node_modules/
 lib/
 bcp/
 
-*.json
+ultima-ratio-221014*.json
+.DS_Store

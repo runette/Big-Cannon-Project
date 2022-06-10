@@ -1,3 +1,26 @@
+# MIT License
+
+#Copyright (c) 2019-2022 Runette Software Ltd
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+
+
 import json
 from data import Gun, User, MapData, get_serving_url, geolocate, GUN_TYPES, GUN_CATEGORIES
 from helpers import to_bool, to_int
@@ -38,7 +61,7 @@ class GunApi:
                         gun.images = image_list
                     gun.put()
                 success = True
-                MapData().update(namespace)
+                MapData().update()
             except Exception as e:
                 logging.error(str(e))
                 success = False
@@ -66,9 +89,9 @@ class GunApi:
                     )
                 gun.populate(
                     description=body.get('description', ""),
-                    type=Gun.Types(GUN_TYPES.index(body.get('material'))),
+                    type=Gun.Types(GUN_TYPES.index(body.get('material'))).value,
                     category=Gun.Categories(
-                        GUN_CATEGORIES.index(body.get('category'))),
+                        GUN_CATEGORIES.index(body.get('category'))).value,
                     user_id=body.get('userId'),
                     site=body.get('site', ""),
                     context=body.get('context'),
@@ -102,7 +125,7 @@ class GunApi:
                     gun.country = address['country']
                 gun.put()
                 success = True
-                MapData().update(namespace)
+                MapData().update()
             except Exception as e:
                 logging.error(str(e))
                 success = False
@@ -125,7 +148,7 @@ class GunApi:
                 gun = Gun(namespace=namespace,
                           gunid=gunid,
                           user_id=user_data.user_id,
-                          type=Gun.Types.NOT_KNOWN,
+                          type=Gun.Types.NOT_KNOWN.value,
                           date=datetime.now(),
                           measurements={},
                           country=body['country'],
@@ -137,6 +160,7 @@ class GunApi:
                 gun.site = body['current_site']
                 gun.display_name = gun.site
                 gun.put()
+                MapData().update()
             except Exception as e:
                 logging.error(str(e))
                 success = False

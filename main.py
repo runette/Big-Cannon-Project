@@ -1,6 +1,6 @@
 # MIT License
 
-#Copyright (c) 2019 Paul Harwood
+#Copyright (c) 2019-2022 Runette Software Ltd
 
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,12 @@ from connexion import App
 import firebase_admin
 from flask_cors import CORS
 import logging
+from google.cloud import ndb
 
 firebase_admin.initialize_app()
-mapdata = MapData()
+client = ndb.Client()
+with client.context():
+    MapData()
 
 options = {"swagger_ui": False}
 app = App(__name__, options=options)
@@ -40,7 +43,8 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 try:
     import googleclouddebugger
     googleclouddebugger.enable()
-except ImportError:
+except ImportError as e:
+    print(str(e))
     pass
 
 if __name__ == '__main__':

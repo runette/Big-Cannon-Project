@@ -44,7 +44,18 @@
               application/json:
                 schema:
                   type: object
-    
+                  
+    /update_map:
+      post:
+        operationId: api.MapApi.update_map
+        
+        responses:
+          200:
+            description: Updtae the Map data
+            content:
+              application/json:
+                schema:
+                  type: object
     /fetch_user:
       post:
         operationId: api.UserApi.fetch_user

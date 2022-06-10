@@ -18,12 +18,13 @@ export class BcpApiService {
 
   constructor( private http: HttpClient) { }
 
-  public apiPost(token: string, url:string, body: {} = {}): Observable<object> {
+  public apiPost(token: string, url:string, body: {} = {}, observe: "body" = "body"): Observable<object> {
     return this.http.post(
       url, body,{
         headers: {
         'Authorization': `Bearer ${ token ? token : "null"}`
         },
+        observe: observe,
         responseType: 'json'
   })};
 

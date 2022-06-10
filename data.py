@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2019 Paul Harwood
+# Copyright (c) 2019 - 2022 Runette Software Ltd
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,9 @@ import googlemaps
 from images import ndbImage
 from helpers import to_int
 from google.cloud import ndb
+from google.cloud import tasks_v2
+from google.cloud.tasks_v2.services.cloud_tasks.transports import CloudTasksGrpcTransport
+import grpc
 
 import requests
 import time
@@ -41,8 +44,6 @@ GUN_CATEGORIES = ("Not Known", "Muzzle Loading",
 GUN_STATUS = ('Unverified', 'Auto', 'Verified')
 MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES,
           'category': GUN_CATEGORIES, 'status': GUN_STATUS}
-
-client = ndb.Client()
         
 class Gun(ndb.Model):
     class Types(Enum):
@@ -76,7 +77,6 @@ class Gun(ndb.Model):
     name = ndb.StringProperty()
     date = ndb.DateTimeProperty(auto_now=True)
     site = ndb.StringProperty()
-    display_name = ndb.StringProperty()
     context = ndb.StringProperty()
     collection = ndb.BooleanProperty()
     coll_name = ndb.StringProperty()
@@ -86,8 +86,6 @@ class Gun(ndb.Model):
     mark_details = ndb.StringProperty()
     interpretation = ndb.BooleanProperty()
     inter_details = ndb.StringProperty()
-    country = ndb.StringProperty(default="none")
-    geocode = ndb.JsonProperty()
     user_id = ndb.StringProperty()
     status = ndb.IntegerProperty(default=Status.UNVERIFIED.value)
     measurements = ndb.GenericProperty()
@@ -96,18 +94,24 @@ class Gun(ndb.Model):
     cas_code = ndb.StringProperty()
     button_code = ndb.StringProperty()
     category = ndb.IntegerProperty(default=Categories.NOT_KNOWN.value)
+    country_of_origin = ndb.StringProperty(default = None)
+    
+    display_name = ndb.StringProperty()
+    country = ndb.StringProperty()
+    geocode = ndb.JsonProperty()    
 
     @classmethod
-    def map_data(cls, namespace) -> List[Dict]:
-        result = cls.query(order_by=['site'], namespace=namespace).fetch()
+    def map_data(cls, namespace, size, cursor) -> List[Dict]:
+        (result, cursor, f) = cls.query(order_by=['site'], namespace=namespace).fetch_page(size, cursor)
         users = User.query().fetch()
         map_data = []
         for gun in result:
             data = gun.api_data(users)
             if data:
                 map_data.append(data)
-        return map_data
-
+        return (map_data, cursor, f)
+      
+        
     def api_data(self, users) -> Dict:
         try:
             thumbnail = self.get_images()[0].get("s32")
@@ -212,16 +216,15 @@ class User(ndb.Model):
 
 def geolocate(location):
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
-    reverse_geocode_result = gmaps.reverse_geocode(
-        (location.latitude, location.longitude))
+    loc = (location.latitude, location.longitude)
+    reverse_geocode_result = gmaps.reverse_geocode( loc )
     for radius in [100, 300, 600, 1000]:
-        places_result = gmaps.places_nearby(
-            location=(location.latitude, location.longitude), radius=radius)
+        places_result = gmaps.places_nearby( loc, radius=radius)
         token = places_result.get('next_page_token')
         results = places_result["results"]
         while token:
             try:
-                places_result = gmaps.places_nearby(page_token=token)
+                places_result = gmaps.places_nearby(loc, page_token=token)
             except Exception as e:
                 logging.error(str(e))
                 if 'INVALID_REQUEST' in str(e):
@@ -300,35 +303,72 @@ def get_posts():
         logging.error(str(e))
         return
 
+class Site(ndb.Model):
+    display_name = ndb.StringProperty()
+    country = ndb.StringProperty()
+    geocode = ndb.JsonProperty()
+    website = ndb.StringProperty()
 
 class MapData(object):
     _instance = None
-    _test_mapdata = None
-    _prod_mapdata = None
-    _train_mapdata = None
-    _cache_id = None
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(MapData, cls).__new__(cls)
-            cls._instance.co_regenerate()
+            cls._instance.update()
+            cls._instance._prod_mapdata = []
+            cls._instance._dev_mapdata = []
+            cls._instance._train_mapdata = []
         return cls._instance
-    
-    def co_regenerate(self):
-        with client.context():
-            self._dev_mapdata = Gun.map_data("test")
-            self._prod_mapdata = Gun.map_data(None)
-            self._train_mapdata = Gun.map_data("train")
-
-
-    async def update(self, namespace: str):
-        with client.context():
-            if namespace == "test":
-                self._dev_mapdata = Gun.map_data("test")
-            if namespace == "train":
-                self._train_mapdata = Gun.map_data("train")
-            else:
-                self._prod_mapdata = Gun.map_data(None)        
+        
+    def update(cls):
+        
+        #channel = grpc.insecure_channel('localhost:8123')
+        
+        #transport = CloudTasksGrpcTransport(channel=channel)   
+        tclient = tasks_v2.CloudTasksClient()
+        parent = "projects/ultima-ratio-221014/locations/europe-west2/queues/default"
+        url = "https://v2.bigcannonproject.org/_ah/api/update_map"
+        #url= "http://localhost:8000/_ah/api/update_map"
+        task = tasks_v2.Task(
+            http_request= tasks_v2.HttpRequest(
+                http_method=tasks_v2.HttpMethod.POST,
+                url= url,
+                headers = {"Authorization": "Bearer null"},
+                body = json.dumps({"namespace": None}).encode("utf-8")
+            )
+        )
+        request = tasks_v2.CreateTaskRequest(
+            parent= parent,
+            task = task
+        )
+        tclient.create_task(request= request)
+        task = tasks_v2.Task(
+            http_request= tasks_v2.HttpRequest(
+                http_method=tasks_v2.HttpMethod.POST,
+                url= url,
+                headers = {"Authorization": "Bearer null"},
+                body = json.dumps({"namespace": "test"}).encode("utf-8")
+            )
+        )
+        request = tasks_v2.CreateTaskRequest(
+            parent= parent,
+            task = task
+        )
+        tclient.create_task(request= request)
+        task = tasks_v2.Task(
+            http_request= tasks_v2.HttpRequest(
+                http_method=tasks_v2.HttpMethod.POST,
+                url= url,
+                headers = {"Authorization": "Bearer null"},
+                body = json.dumps({"namespace": "train"}).encode("utf-8")
+            )
+        )
+        request = tasks_v2.CreateTaskRequest(
+            parent= parent,
+            task = task
+        )
+        tclient.create_task(request= request)        
 
     def get(self, namespace: str) -> List[Dict]:
         if namespace == "test":
@@ -339,7 +379,7 @@ class MapData(object):
     
     def __dict__(self) -> Dict:
         return {
-            "test": self._test_mapdata,
+            "test": self._dev_mapdata,
             "train": self._train_mapdata,
             "prod": self._prod_mapdata
         }

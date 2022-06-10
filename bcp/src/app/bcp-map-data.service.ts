@@ -168,15 +168,15 @@ export class BcpMapDataService {
   public getMapData(page: number = 0): void{
     if (this.user.current_user) {
       this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction} ).subscribe({next: response => {
-        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response['transaction'], response['length']);
+        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response);
         this.setFilter();
       },
       error: e => console.error(e)}
       ),
       e => console.error(e))
     } else {
-      this.api.apiPost( null, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction} ).subscribe({next: response => {
-        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response['transaction'], response['length']);
+      this.api.apiPost( null, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction}, "response" as "body" ).subscribe({next: response => {
+        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response);
         this.setFilter();
       },
       error: e => console.error(e)}
@@ -184,8 +184,8 @@ export class BcpMapDataService {
     }
   }
 
-  private loadMapData(data: [{[key:string]:any}], page: number, transaction: number, length: number) {
-    if (transaction == this.transaction) {
+  private loadMapData(data: [{[key:string]:any}], page: number, response: object ) {
+    if (response["transaction"] == this.transaction) {
       page++;
       if (page<length) this.getMapData(page);
       for (let item of data) {
