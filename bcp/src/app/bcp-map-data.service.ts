@@ -3,6 +3,7 @@ import { Material, GunCategory, RecordStatus, RecordQuality, Order } from './bcp
 import { BcpUserService } from './bcp-user.service';
 import { BcpApiService } from './bcp-api.service';
 import { Subject } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
 
 
 @Injectable({
@@ -168,7 +169,7 @@ export class BcpMapDataService {
   public getMapData(page: number = 0): void{
     if (this.user.current_user) {
       this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction} ).subscribe({next: response => {
-        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response);
+        this.loadMapData( page, response as HttpResponse<any>);
         this.setFilter();
       },
       error: e => console.error(e)}
@@ -176,7 +177,7 @@ export class BcpMapDataService {
       e => console.error(e))
     } else {
       this.api.apiPost( null, this.api.FETCH_MAP, {"page": page, "transaction": this.transaction}, "response" as "body" ).subscribe({next: response => {
-        this.loadMapData(response['entries'] as [{[key:string]: any}], page, response);
+        this.loadMapData( page, response as HttpResponse<any>);
         this.setFilter();
       },
       error: e => console.error(e)}
@@ -184,13 +185,15 @@ export class BcpMapDataService {
     }
   }
 
-  private loadMapData(data: [{[key:string]:any}], page: number, response: object ) {
-    if (response["transaction"] == this.transaction) {
+  private loadMapData(page: number, response: HttpResponse<any> ) {
+    if (response.status === 200 && response.body["transaction"] == this.transaction) {
       page++;
-      if (page<length) this.getMapData(page);
-      for (let item of data) {
+      this.getMapData(page);
+      for (let item of response.body["entries"]) {
         this.data.push(this.loadDataitem(item));
       }
+    } else if (this.data === []) {
+      this.getMapData(page);
     }
   }
 

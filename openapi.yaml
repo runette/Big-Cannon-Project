@@ -45,6 +45,31 @@
                 schema:
                   type: object
                   
+    /fetch_sites:
+      post:
+        operationId: api.MapApi.fetch_sites
+        
+        requestBody:
+          description: Request for Site Data
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: number
+                  transaction:
+                    type: number
+
+        responses:
+          200:
+            description: Fetch the Ste data
+            content:
+              application/json:
+                schema:
+                  type: object
+                  
     /update_map:
       post:
         operationId: api.MapApi.update_map

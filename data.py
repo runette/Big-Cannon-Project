@@ -76,7 +76,7 @@ class Gun(ndb.Model):
     description = ndb.StringProperty()
     name = ndb.StringProperty()
     date = ndb.DateTimeProperty(auto_now=True)
-    site = ndb.StringProperty()
+    site_id = ndb.IntegerProperty(required=True)
     context = ndb.StringProperty()
     collection = ndb.BooleanProperty()
     coll_name = ndb.StringProperty()
@@ -95,10 +95,6 @@ class Gun(ndb.Model):
     button_code = ndb.StringProperty()
     category = ndb.IntegerProperty(default=Categories.NOT_KNOWN.value)
     country_of_origin = ndb.StringProperty(default = None)
-    
-    display_name = ndb.StringProperty()
-    country = ndb.StringProperty()
-    geocode = ndb.JsonProperty()    
 
     @classmethod
     def map_data(cls, namespace, size, cursor) -> List[Dict]:
@@ -304,10 +300,22 @@ def get_posts():
         return
 
 class Site(ndb.Model):
-    display_name = ndb.StringProperty()
+    
+    class Type(Enum):
+        GOOGLE = 0
+        OSM = 1
+        OTHER = 2
+    
+    display_name = ndb.StringProperty(required=True)
     country = ndb.StringProperty()
-    geocode = ndb.JsonProperty()
-    website = ndb.StringProperty()
+    geocode = ndb.JsonProperty(required=True)
+    guns = ndb.IntegerProperty(repeated=True)
+    place_id = ndb.StringProperty(required=True)
+    attribution = ndb.JsonProperty(required=True)
+    verified = ndb.BooleanProperty(default=False)
+    verified_by = ndb.KeyProperty()
+    type = ndb.IntegerProperty(default= Type.GOOGLE.value)
+    
 
 class MapData(object):
     _instance = None

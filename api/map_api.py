@@ -63,6 +63,9 @@ class MapApi:
                 success = 500
             return response, success
         
+    def fetch_sites(user, body):
+        pass
+    
     def update_map(user, body):
         with client.context():
             namespace = body.get("namespace")
