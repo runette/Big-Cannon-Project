@@ -21,15 +21,12 @@
 #SOFTWARE.
 
 import json
-import math
-from data import User, Gun
+from data import User, Gun, Site
 from flask import Response
-from data import MapData
 from google.cloud import ndb
-from helpers import to_int
+import googlemaps
 
-PAGE_SIZE = 300
-INITIAL_PAGE_SIZE = 20
+gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
 
 client = ndb.Client()
 
@@ -37,20 +34,22 @@ class MapApi:
     @staticmethod
     def fetch_map(user, body):
         with client.context():
+            response = Response()
             try:
                 user_data = User.get_id(user)
                 if user_data:
                     namespace = user_data.namespace()
                 else:
                     namespace = None
-                entries = MapData().get(namespace)
-                page = body.get("page", 0)
-                page_num = math.ceil(len(entries)/PAGE_SIZE)
-                response = Response()
-                if page < page_num:
-                    x = slice(to_int(page * PAGE_SIZE), to_int((page + 1) * PAGE_SIZE))
+                if body.get("cursor"):
+                    cursor = ndb.Cursor(urlsafe=body.get("cursor").encode("utf-8"))
+                else:
+                    cursor= ndb.Cursor()
+                (data, cursor, f) = Gun.map_data(namespace, cursor)
+                if data:
                     map = {
-                        "entries": entries[x],
+                        "entries": data,
+                        "cursor": cursor.urlsafe().decode("utf-8"),
                         "transaction": body.get("transaction")
                     }
                     success = 200
@@ -64,27 +63,61 @@ class MapApi:
             return response, success
         
     def fetch_sites(user, body):
-        pass
-    
-    def update_map(user, body):
         with client.context():
-            namespace = body.get("namespace")
-            success = False
+            response = Response()
             try:
-                target = MapData()._prod_mapdata
-                if namespace=="test":
-                    target = MapData()._dev_mapdata
-                elif namespace=="train":
-                    target = MapData()._train_mapdata
-                cursor=None
-                f = True
-                size = INITIAL_PAGE_SIZE
-                while f:
-                    (data, cursor, f) = Gun.map_data(namespace, size, cursor)
-                    target.extend(data)
-                    size = PAGE_SIZE
-                success = True
+                user_data = User.get_id(user)
+                if user_data:
+                    namespace = user_data.namespace()
+                else:
+                    namespace = None
+                if body.get("cursor"):
+                    cursor = ndb.Cursor(urlsafe=body.get("cursor").encode("utf-8"))
+                else:
+                    cursor= ndb.Cursor()
+                (data, cursor) = Site.data(namespace, cursor)
+                if data:
+                    map = {
+                        "sites": data,
+                        "cursor": cursor.urlsafe().decode("utf-8"),
+                        "transaction": body.get("transaction")
+                    }
+                    success = 200
+                    response.content_type = 'application/json'
+                    response.set_data(json.dumps(map))
+                else:
+                    success = 204
             except Exception as e:
                 print(str(e))
-        return (200 if success else 500)
+                success = 500
+            return response, success
+        
+    def add_site(user, body):
+        with client.context():
+            try:
+                user_data = User.get_id(user)
+                if user_data:
+                    namespace = user_data.namespace()
+                else:
+                    namespace = None
+                place = gmaps.place(body.get("place_id"))
+                geocode = place.get("result")
+                address_comps = geocode.get("address_components")
+                site = Site(
+                    place_id = body.get("place_id"),
+                    geocode = geocode,
+                    attribution = place.get("html_attributions"),
+                    display_name = geocode.get("name"),
+                    guns = [],
+                    namespace= namespace
+                    )
+                country = [comp.get("long_name") for comp in address_comps if "country" in comp.get("types")]
+                if len(country) > 0:
+                    site.country = country[0]
+                site.put()
+                response = site.api_data()
+            except Exception as e:
+                return {}, 500
+            return response, 200
+            
         

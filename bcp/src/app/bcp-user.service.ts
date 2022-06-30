@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {BcpApiService} from './bcp-api.service';
-import {Observable, BehaviorSubject} from 'rxjs';
+import {Subscription, BehaviorSubject} from 'rxjs';
 import {AuthProcessService} from 'ngx-auth-firebaseui';
 import { User }  from 'firebase/auth';
-
 
 @Injectable({
   providedIn: 'root'
 })
-export class BcpUserService {
+export class BcpUserService implements OnDestroy {
 
   user: BehaviorSubject<BcpUser> = new BehaviorSubject<BcpUser>(null);
   login: boolean = false;
@@ -16,15 +15,20 @@ export class BcpUserService {
   current_user: User ;
   current_respose: any;
 
+  private subscriptions: Subscription[] = [];
+
   constructor(private auth: AuthProcessService, private api: BcpApiService) {
-    auth.user$.subscribe( u => {
+    this.subscriptions.push(auth.user$.subscribe( u => {
       if (u) {
           this.getUser(u);
       } else {
         this.user.next(null);
         this.login = false;
       }
-    });
+    }));
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   public getUser(user: User): void{
@@ -45,7 +49,7 @@ export class BcpUserService {
 export class BcpUser {
   name: string;
   id: string;
-  fireUserData?: any;
+  fireUserData?: fireUserData;
   standing: BcpUserStanding;
   test_user: boolean;
   train_user: boolean;
@@ -59,6 +63,11 @@ export class BcpUser {
     this.train_user = buser.train;
   }
 
+}
+
+export interface fireUserData{
+  photoURL?: string;
+  uid?: string;
 }
 
 export type BcpUserStanding = "OBSERVER" | "RECORDER" | "SURVEYOR" | "ADMIN";

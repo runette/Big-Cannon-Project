@@ -1,19 +1,74 @@
 from argparse import Namespace
-from data import Gun, Site
+from data import Site
 from google.cloud import ndb
 import googlemaps
+from enum import Enum
 
 gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
 
-namespace = "train"
+namespace = "test"
 
 client = ndb.Client()
+
+class Gun(ndb.Model):
+    class Types(Enum):
+        CAST = 0
+        WROUGHT = 1
+        BRONZE = 2
+        NOT_KNOWN = 3
+        COMBINATION = 4
+
+    class Quality(Enum):
+        GOLD = 2
+        SILVER = 1
+        BRONZE = 0
+
+    class Status(Enum):
+        UNVERIFIED = 0
+        AUTO = 1
+        VERIFIED = 2
+
+    class Categories(Enum):
+        NOT_KNOWN = 0
+        MUZZLE_LOAD = 1
+        BREECH_LOAD = 2
+        CARRONADE = 3
+
+    gunid = ndb.IntegerProperty()
+    location = ndb.GeoPtProperty()
+    type = ndb.IntegerProperty()
+    quality = ndb.IntegerProperty(default=Quality.BRONZE.value)
+    description = ndb.StringProperty()
+    name = ndb.StringProperty()
+    date = ndb.DateTimeProperty(auto_now=True)
+    site_id = ndb.IntegerProperty(required=True)
+    context = ndb.StringProperty()
+    collection = ndb.BooleanProperty()
+    coll_name = ndb.StringProperty()
+    coll_ref = ndb.StringProperty()
+    images = ndb.TextProperty(repeated=True)
+    markings = ndb.BooleanProperty()
+    mark_details = ndb.StringProperty()
+    interpretation = ndb.BooleanProperty()
+    inter_details = ndb.StringProperty()
+    user_id = ndb.StringProperty()
+    status = ndb.IntegerProperty(default=Status.UNVERIFIED.value)
+    measurements = ndb.GenericProperty()
+    moulding_code = ndb.StringProperty(repeated=True)
+    muzzle_code = ndb.StringProperty()
+    cas_code = ndb.StringProperty()
+    button_code = ndb.StringProperty()
+    category = ndb.IntegerProperty(default=Categories.NOT_KNOWN.value)
+    country_of_origin = ndb.StringProperty(default = None)
+    geocode = ndb.JsonProperty()
+    site = ndb.StringProperty()
+    display_name = ndb.StringProperty()
 
 with client.context():
     sites = Site.query(namespace= namespace).fetch()
     guns = Gun.query(namespace= namespace)
     for gun in guns:
-        places = gun.geocode["places"]
+        places = gun.geocode.get("places"]
         locations = gun.geocode.get("geolocation")
         if places is None and locations is None:
             sitelist=[gun.geocode]

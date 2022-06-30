@@ -20,8 +20,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve ",
-    "build": "./build.sh --configuration=production",
-    "IntTest": "./build.sh --configuration=itest",
+    "build": "source build.sh --configuration=production",
+    "deploy": "source deploy.sh",
+    "IntTest": "source build.sh --configuration=itest",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -38,7 +39,7 @@
     "@angular/flex-layout": "*",
     "@angular/forms": "*",
     "@angular/google-maps": "*",
-    "@angular/material": "*",
+    "@angular/material": "^13.3.9",
     "@angular/platform-browser": "*",
     "@angular/platform-browser-dynamic": "*",
     "@angular/router": "*",

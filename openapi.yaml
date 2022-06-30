@@ -32,8 +32,8 @@
               schema:
                 type: object
                 properties:
-                  page:
-                    type: number
+                  cursor:
+                    type: string
                   transaction:
                     type: number
 
@@ -57,8 +57,8 @@
               schema:
                 type: object
                 properties:
-                  page:
-                    type: number
+                  cursor:
+                    type: string
                   transaction:
                     type: number
 
@@ -70,17 +70,31 @@
                 schema:
                   type: object
                   
-    /update_map:
+    /add_site:
       post:
-        operationId: api.MapApi.update_map
+        operationId: api.MapApi.add_site
         
+        requestBody:
+          description: Add a New Site
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  place_id:
+                    type: string
+
         responses:
           200:
-            description: Updtae the Map data
+            description: Add a new Site
             content:
               application/json:
                 schema:
                   type: object
+
     /fetch_user:
       post:
         operationId: api.UserApi.fetch_user
@@ -153,7 +167,11 @@
             application/json:
               schema:
                 type: object
-
+                properties:
+                  location: 
+                    type: object
+                  site_id: 
+                    type: number
 
         responses:
           200:

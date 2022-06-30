@@ -1,51 +1,57 @@
 <div class="position-relative" [formGroup]="gunForm">
-    <div class="embed-responsive embed-responsive-16by9">
-        <object class="embed-responsive-item w-100" #cannon data='../../assets/cannon_chart.svg' type="image/svg+xml"></object>
-   </div>
-    
-    <div class="overlap" >
-    <table  class="table table-sm table-dark table-hover mb-5">
-        <thead class="bg-dark">
-            <th >Measurements</th>
-            <th>
-                    mm<mat-slide-toggle name="scale" colour="accent" (change)="scaleToggle($event)"> </mat-slide-toggle>metre
-            </th>
-        </thead>
-        <tbody class="small">
-        <tr>
-            <td >Length</td>
-            <td><input matInput class="w-100" type="text" name="length" id="length" placeholder="Length" formControlName="length"></td>
-            </tr>
-            <tr>
-            <td>Base Ring Diameter</td>
-            <td><input class="w-100" type="text" name="base_ring" id="base_ring" placeholder="Base Ring"  formControlName="base_ring"></td>
-            </tr>
-            <tr>
-            <td>Muzzle Diameter</td>
-            <td><input class="w-100" type="text" name="muzzle" id="muzzle" placeholder="Muzzle" formControlName="muzzle"></td>
-            </tr>
-            <tr>
-            <td>Bore Diameter</td>
-            <td><input class="w-100" type="text" name="bore" id="bore" placeholder="Bore"  formControlName="bore"></td>
-            </tr>
-            <tr>
-            <td>Trunnion Position</td>
-            <td><input class="w-100" type="text" name="trunnion_position" id="trunnion_position" placeholder="Trunnion to BR"  formControlName="trunnion_position"></td>
-            </tr>
-            <tr>
-            <td>Trunnion Width</td>
-            <td><input class="w-100" type="text" name="trunnion_width" id="trunnion_width" placeholder="Trunnion Width"  formControlName="trunnion_width"></td>
-            </tr>
-            <tr>
-            <td>Trunnion Diameter</td>
-            <td><input class="w-100" type="text" name="trunnion_diameter" id="trunnion_diameter" placeholder="Trunnion Dia"  formControlName="trunnion_diameter"></td>
-            </tr>
-            <tr>
-            <td>Trunnion Offset</td>
-            <td><input class="w-100" type="text" name="trunnion_offset" id="trunnion_offset" placeholder="Trunnion Offset"  formControlName="trunnion_offset"></td>
-            </tr>
-        </tbody>
-        </table>
-    </div>
-    </div>
+    <mat-card>
+        <mat-card-title>Cannon Measurements</mat-card-title>
+        <mat-card-subtitle>Enter the measurements of the cannon or gun</mat-card-subtitle>
+        <mat-card-content>
+            <div class="embed-responsive embed-responsive-16by9">
+                <object class="embed-responsive-item w-100" #cannon data='../../assets/cannon_chart.svg' type="image/svg+xml"></object>
+           </div>
+            
+            <div class="overlap" >
+            <table  class="table table-sm table-dark table-hover mb-5">
+                <thead class="bg-dark">
+                    <th >Measurements</th>
+                    <th>
+                            mm<mat-slide-toggle name="scale" colour="accent" (change)="scaleToggle($event)"> </mat-slide-toggle>metre
+                    </th>
+                </thead>
+                <tbody class="small">
+                <tr>
+                    <td >Length</td>
+                    <td><input matInput class="w-100" type="text" name="length" id="length" placeholder="Length" formControlName="length"></td>
+                    </tr>
+                    <tr>
+                    <td>Base Ring Diameter</td>
+                    <td><input class="w-100" type="text" name="base_ring" id="base_ring" placeholder="Base Ring"  formControlName="base_ring"></td>
+                    </tr>
+                    <tr>
+                    <td>Muzzle Diameter</td>
+                    <td><input class="w-100" type="text" name="muzzle" id="muzzle" placeholder="Muzzle" formControlName="muzzle"></td>
+                    </tr>
+                    <tr>
+                    <td>Bore Diameter</td>
+                    <td><input class="w-100" type="text" name="bore" id="bore" placeholder="Bore"  formControlName="bore"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Position</td>
+                    <td><input class="w-100" type="text" name="trunnion_position" id="trunnion_position" placeholder="Trunnion to BR"  formControlName="trunnion_position"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Width</td>
+                    <td><input class="w-100" type="text" name="trunnion_width" id="trunnion_width" placeholder="Trunnion Width"  formControlName="trunnion_width"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Diameter</td>
+                    <td><input class="w-100" type="text" name="trunnion_diameter" id="trunnion_diameter" placeholder="Trunnion Dia"  formControlName="trunnion_diameter"></td>
+                    </tr>
+                    <tr>
+                    <td>Trunnion Offset</td>
+                    <td><input class="w-100" type="text" name="trunnion_offset" id="trunnion_offset" placeholder="Trunnion Offset"  formControlName="trunnion_offset"></td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
      

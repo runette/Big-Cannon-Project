@@ -49,8 +49,9 @@ export class GooglemapLocateComponent implements OnInit {
         let options = this.options;
         let map = this.map;
         this.locateStatus = 'on';
+        let locateStatus = this.locateStatus  
         let position = this.position;
-        this.watch = navigator.geolocation.watchPosition(function(my_position) {
+        this.watch = navigator.geolocation.watchPosition(my_position => {
             position = my_position;
             let latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             marker.setMap(map);

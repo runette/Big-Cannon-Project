@@ -22,7 +22,7 @@
 
 
 import json
-from data import Gun, User, MapData, get_serving_url, geolocate, GUN_TYPES, GUN_CATEGORIES
+from data import Gun, User, Site, get_serving_url, GUN_TYPES, GUN_CATEGORIES, SITE_TYPES
 from helpers import to_bool, to_int
 from google.cloud.datastore.helpers import GeoPoint
 import logging
@@ -32,7 +32,6 @@ from datetime import datetime
 from google.cloud import ndb
 
 client = ndb.Client()
-
 
 class GunApi:
     @staticmethod
@@ -59,9 +58,8 @@ class GunApi:
                                 image_list.remove(image)
                         image_list.append(json_url)
                         gun.images = image_list
-                    gun.put()
+                    gun.put_async()
                 success = True
-                MapData().update()
             except Exception as e:
                 logging.error(str(e))
                 success = False
@@ -78,9 +76,7 @@ class GunApi:
             else:
                 namespace = None
             try:
-                gun_id = to_int(body.get('gunid'))
-                new_location = GeoPoint(body.get('location').get(
-                    'lat'), body.get('location').get('lng'))
+                gun_id = to_int(body['gunid'])
                 gun = Gun.get_id(gun_id, namespace)
                 if not gun:
                     gun = Gun(
@@ -93,7 +89,8 @@ class GunApi:
                     category=Gun.Categories(
                         GUN_CATEGORIES.index(body.get('category'))).value,
                     user_id=body.get('userId'),
-                    site=body.get('site', ""),
+                    site_id=body.get('site_id'),
+                    country_of_origin = body.get("country_of_origin"),
                     context=body.get('context'),
                     collection=to_bool(body.get('collection')),
                     coll_name=body.get('coll_name', ""),
@@ -102,11 +99,12 @@ class GunApi:
                     mark_details=body.get('mark_details', ""),
                     interpretation=to_bool(body.get('interpretation', "")),
                     inter_details=body.get('inter_details', ""),
+                    location=GeoPoint(body.get('location').get(
+                        'lat'), body.get('location').get('lng')),
                     moulding_code=list(body.get('moulding_code', "")),
                     muzzle_code=body.get('muzzle_code', ""),
                     cas_code=body.get('cas_code', ""),
                     button_code=body.get('button_code', ""),
-                    display_name=body.get('display_name', ""),
                 )
                 gun.measurements = {}
                 MEASUREMENTS = ['length', 'base_ring', 'muzzle', 'bore', 'trunnion_position',
@@ -116,21 +114,25 @@ class GunApi:
                     value = body.get(item) if body.get(item) else "0"
                     m.update({item: to_int(value)})
                     gun.measurements = m
-                if gun.country == 'none' or new_location != gun.location:
-                    gun.location = new_location
-                    address = geolocate(gun.location)
-                    gun.geocode = address
-                    gun.site = address['default']
-                    gun.display_name = gun.site
-                    gun.country = address['country']
                 gun.put()
-                success = True
-                MapData().update()
+                return gun.api_data(users), (200)
             except Exception as e:
-                logging.error(str(e))
-                success = False
-                gun_id = 0
-            return gun.api_data(users), (200 if success else 500)
+                try:
+                    site_id=to_int(body['id'])
+                    site=Site.get_by_id(site_id, namespace=namespace)
+                    site.populate(
+                        display_name=body.get("display_name"),
+                        attribution=body.get("attribution"),
+                        country= body.get("country"),
+                        type= Site.Type(SITE_TYPES.index(body.get("type"))).value,
+                        guns= body.get("guns"),
+                        geocode = body.get("geocode")
+                    )
+                    site.put()
+                    return site.api_data(), (200)
+                except Exception as e:
+                    logging.error(str(e))
+                    return {}, (500)
 
     @staticmethod
     def add_record(user, body):
@@ -145,25 +147,22 @@ class GunApi:
             try:
                 gunid = Gun.get_next(namespace)
                 location = body['location']
+                site_id = to_int(body['site_id'])
                 gun = Gun(namespace=namespace,
                           gunid=gunid,
                           user_id=user_data.user_id,
                           type=Gun.Types.NOT_KNOWN.value,
                           date=datetime.now(),
                           measurements={},
-                          country=body['country'],
+                          site_id = site_id
                           )
-                gun.location = GeoPoint(location[0], location[1])
-                geo = {"geolocation": body['geolocation']}
-                geo.update({"places": body['places']})
-                gun.geocode = geo
-                gun.site = body['current_site']
-                gun.display_name = gun.site
-                gun.put()
-                MapData().update()
+                gun.location = GeoPoint(location["lat"], location["lng"])
+                gun.put_async()
+                site = Site.get_by_id(gun.site_id, namespace=namespace)
+                site.guns.append(gun.gunid)
+                site.put()
             except Exception as e:
                 logging.error(str(e))
                 success = False
                 gunid = 0
             return gun.api_data(users), (200 if success else 500)
-

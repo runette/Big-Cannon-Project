@@ -6,8 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {FlexLayoutModule} from "@angular/flex-layout";
-import {GoogleMapsModule} from '@angular/google-maps';
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { GoogleMapsModule } from '@angular/google-maps';
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { environment } from '../environments/environment';
 import { GalleryModule } from 'ng-gallery';
@@ -33,6 +33,9 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {ScrollingModule } from '@angular/cdk/scrolling';
+import {MatCardModule} from '@angular/material/card';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
 import { BcpDatabaseComponent } from './bcp-database/bcp-database.component';
@@ -51,6 +54,9 @@ import { BcpPhotosComponent } from './bcp-photos/bcp-photos.component';
 import { BcpPrivacyComponent } from './bcp-privacy/bcp-privacy.component';
 import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
 import { BcpV2Component } from './bcp-v2/bcp-v2.component';
+import { BcpSiteCardComponent } from './bcp-site-card/bcp-site-card.component';
+import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.component';
+import { BcpSiteSelectorComponent } from './bcp-site-selector/bcp-site-selector.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +78,9 @@ import { BcpV2Component } from './bcp-v2/bcp-v2.component';
     BcpPrivacyComponent,
     BcpTorComponent,
     BcpV2Component,
+    BcpSiteCardComponent,
+    BcpSiteDetailComponent,
+    BcpSiteSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,8 +114,12 @@ import { BcpV2Component } from './bcp-v2/bcp-v2.component';
     StorageModule,
     MatBadgeModule,
     MatTooltipModule,
+    ScrollingModule,
+    MatCardModule,
+    MatSnackBarModule,
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

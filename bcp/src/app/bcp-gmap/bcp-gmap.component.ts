@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { GoogleMap } from '@angular/google-maps';
-import { DataItem } from '../bcp-map-data.service';
+import { DataItem, Marker } from '../bcp-map-data.service';
 
 
 
@@ -16,7 +16,7 @@ export class BcpGmapComponent implements OnInit {
   private map: google.maps.Map;
   @ViewChild(GoogleMap, {static: false}) my_map: GoogleMap;
 
-  private marker: google.maps.Marker
+  private marker: Marker
 
   private _loc: google.maps.LatLng
   
@@ -34,20 +34,25 @@ export class BcpGmapComponent implements OnInit {
   @Input()
   options: google.maps.MapOptions;
 
+
+  _viewport: google.maps.LatLngBounds;
+
+  @Input()
+  set viewport(vp: google.maps.LatLngBounds){
+    this._viewport = vp;
+    if (this.map && vp) this.makeMap();
+  }
+
+  get viewport() {
+    return this._viewport;
+  }
+
   private quality: string;
 
   @Input()
   set gun(gun: DataItem) {
     this.quality = gun.quality;
-    if (this.map) {
-      this.marker.setPosition(this.location);
-      this.map.setCenter(this.location);
-      let icon: google.maps.Icon = {'url':''};
-      if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-      else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-      else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-      this.marker.setIcon(icon);
-    }
+    if (this.map) this.makeMap();
   }
 
 
@@ -56,8 +61,6 @@ export class BcpGmapComponent implements OnInit {
 
   @Output()
   newBounds$: EventEmitter<google.maps.LatLngBounds> = new EventEmitter<google.maps.LatLngBounds>();
-
-  buttonTitle = "Center"
 
   constructor(public DATA_VALUES: BcpFilterValuesService) {
     this.quality = this.DATA_VALUES.RECORD_QUALITIES[1];
@@ -69,31 +72,46 @@ export class BcpGmapComponent implements OnInit {
   loaded($event) {
     if (!this.map) {
       this.map = this.my_map.googleMap;
-      this.map.setCenter(this.location);
-      let options: google.maps.MarkerOptions = {
-        draggable: true,
+      this.makeMap();
+    }
+  }
+
+  makeMap(): void {
+    if (this.viewport) {
+      if (!this.viewport.contains(this.location)) {
+        this.viewport.extend(this.location);
       }
+      this.map.fitBounds(this.viewport, 0)
+    } else {
+      this.map.setCenter(this.location);
+      this.map.setZoom(1);
+    }
+    let options: google.maps.MarkerOptions = {
+      draggable: true,
+    }
+    if (! this.marker) {
       let icon: google.maps.Icon = {'url':''};
       if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
       else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
       else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-      this.marker=new google.maps.Marker(options);
+      this.marker=new Marker(options);
       this.marker.setPosition(this.location);
       this.marker.setIcon(icon);
       this.marker.setMap(this.map);
       this.marker.addListener("dragend", event => this.markerDragged(event));
     }
+
   }
 
   markerDragged(event){
     this.location = event.latLng;
-    this.buttonTitle = "Center";
     this.newLocation$.next(this.location);
   }
 
   getLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => this.showPosition(position), this.showError);
+      this.map.setZoom(17);
     } else {
           alert("Geolocation is not supported by this browser.");
     }
@@ -124,20 +142,10 @@ export class BcpGmapComponent implements OnInit {
   }
 
   set() {
-    if (this.buttonTitle == "Center") {
-      this.map.setCenter(this.location);
-      this.marker.setPosition(this.location);
-      return;
-    }
     this.location = new google.maps.LatLng(parseFloat(this.displayLoc.lat), parseFloat(this.displayLoc.lng));
     this.map.setCenter(this.location);
     this.marker.setPosition(this.location);
-    this.buttonTitle = "Center";
     this.newLocation$.next(this.location);
-  }
-
-  dirtyLoc(){
-    this.buttonTitle = "Set";
   }
 }
 

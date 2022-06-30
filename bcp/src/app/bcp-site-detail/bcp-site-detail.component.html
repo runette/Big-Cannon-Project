@@ -1,0 +1,161 @@
+<div class="container pt-5 pb-5">
+    <div class="row">
+        <mat-card >
+            <mat-card-title-group>
+            <mat-card-title>
+                <ng-template [ngIf]="! edit">
+                    {{site.display_name}}
+                </ng-template>
+                <input  matInput 
+                        *ngIf="edit && user.login" 
+                        [value]="site.display_name" 
+                        #box 
+                        (keyup.enter)="nameChanged(box.value)"
+                    />
+                <button mat-button 
+                        *ngIf="! edit && user.login" 
+                        (click)="edit=true"
+                        matTooltip="Edit the display name"
+                    >  
+                    Edit
+                </button>
+            </mat-card-title>
+            <mat-card-subtitle>{{site.geocode.formatted_address}}</mat-card-subtitle>
+            <img mat-card-sm-image 
+                 *ngIf="site && site.geocode.icon" 
+                 [src]="site.geocode.icon" 
+              />
+            </mat-card-title-group>
+            <mat-card-content>
+                <mat-chip-list aria-label="Gun Count" class=" card-body align-middle">
+                    <mat-chip *ngIf="site" 
+                              color="primary" 
+                              selected
+                              matTooltip="There {{site.guns.length>1?'are':'is'}} {{site.guns.length}} record{{site.guns.length>1?'s':''}} at this Site"
+                    >{{site.guns.length}} Gun{{site.guns.length>1?"s":""}}
+                    </mat-chip>
+                </mat-chip-list>
+                <ng-template [ngIf]="! user.login">
+                    To see more details -  <a routerLink="/login" >Login</a>
+                </ng-template>
+            </mat-card-content>
+            <mat-card-footer>
+                <ng-template [ngIf]="site.attribution.length>0">
+                    <div  class="small" *ngFor="let att of site.attribution">
+                        {{att}}
+                    </div>
+                </ng-template>  
+            </mat-card-footer>
+            <mat-card-actions >
+                <a mat-raised-button color="primary"
+                   matTooltip="Goto the Google page for this site"
+                   *ngIf="site.type=='google' && user.login" 
+                   [href]="site.geocode.url" 
+                   target="_blank"
+                >Google Page</a>
+                <a mat-raised-button color="primary"
+                   matTooltip="Goto the website for this site"
+                   *ngIf="site.geocode.website && user.login" 
+                   [href]="site.geocode.website" 
+                   target="_blank"
+                >Website</a>
+                <button mat-raised-button 
+                        color="primary"
+                        *ngIf="user.login"
+                        matTooltip="Add a new record to this site"
+                        routerLink="/new_record"
+                        [queryParams]="{site_id:site.id}"
+                    >Add Gun
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+
+    <!-- second row-->
+    <div *ngIf="user.login" class="row bg-light pt-3">
+        <!-- Map Pane-->
+        <div class="col-md-6">
+            <mat-card>
+                <mat-card-title>Location</mat-card-title>
+                <mat-card-content>
+                    <div id="map_canvas" class="map-container-inline" > 
+                        <google-map width="100%"
+                                    height="100%"
+                                    [options]="options"
+                                    (mapInitialized)="loaded($event)"
+                        >
+                        </google-map>
+
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Gun List Pane-->
+        <div class="col-md-6">
+            <mat-card class="h-100">
+                <div class="float-table bg-ur"  id="table-entries" >
+                    <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
+                        <div *cdkVirtualFor="let record of guns">
+                            <app-bcp-data-card [routerLink]="['/database/entry']" [queryParams]="{gunid:record.gunid}"
+                                [record]="record"
+                            ></app-bcp-data-card>
+                        </div>
+                    </cdk-virtual-scroll-viewport>
+                </div>
+            </mat-card>
+        </div>
+        <!-- Photo  Pane-->
+        <!-- <div class="col-md-6">
+        <mat-card>
+            <mat-card-title>Photos</mat-card-title>
+            <mat-card-content>
+                <app-bcp-photos 
+                    [images]="images"
+                    (newImage$)="acceptPhoto($event)"
+                ></app-bcp-photos>
+            </mat-card-content>
+        </mat-card>
+        </div> -->
+    </div>
+
+    <div class="row fixed-bottom  bg-light ">
+        <div class="col-3">
+            <button mat-raised-button 
+            matTooltip="Goto previous Site in list"
+                    color="primary" 
+                    class="float-start mx-3  px-3" 
+                    (click)="last()">
+                <i class="arrow left"
+                ></i><span class="d-none d-sm-inline"
+                >Prev</span></button>
+        </div>
+        <div class="col-6">
+        </div>     
+        <div class="col-3">
+            <button mat-raised-button 
+                    matTooltip="Goto next Site in list"
+                    color="primary" 
+                    class="float-end mx-3  px-3" 
+                    (click)="next()"
+                ><span class="d-none d-sm-inline"
+                >Next</span> <i class="arrow right"
+                ></i> </button>
+        </div>
+    </div>
+
+    <button mat-fab  
+            [matTooltip]="fabTooltip" 
+            color="primary" 
+            ngClass='fab' 
+            (click)="submit()"
+            routerLink="/new_record"
+            [queryParams]="{site_id:site.id}"
+        >
+        <mat-icon   color='accent' 
+                    ngClass='fab-text'>
+            {{fabIcon}}
+        </mat-icon>
+    </button>
+</div>
+

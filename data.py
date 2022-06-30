@@ -27,9 +27,6 @@ import googlemaps
 from images import ndbImage
 from helpers import to_int
 from google.cloud import ndb
-from google.cloud import tasks_v2
-from google.cloud.tasks_v2.services.cloud_tasks.transports import CloudTasksGrpcTransport
-import grpc
 
 import requests
 import time
@@ -44,6 +41,9 @@ GUN_CATEGORIES = ("Not Known", "Muzzle Loading",
 GUN_STATUS = ('Unverified', 'Auto', 'Verified')
 MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES,
           'category': GUN_CATEGORIES, 'status': GUN_STATUS}
+SITE_TYPES = ("google", "osm", "other")
+
+PAGE_SIZE = 300
         
 class Gun(ndb.Model):
     class Types(Enum):
@@ -97,37 +97,23 @@ class Gun(ndb.Model):
     country_of_origin = ndb.StringProperty(default = None)
 
     @classmethod
-    def map_data(cls, namespace, size, cursor) -> List[Dict]:
-        (result, cursor, f) = cls.query(order_by=['site'], namespace=namespace).fetch_page(size, cursor)
+    def map_data(cls, namespace, cursor):
+        (result, cursor, f) = cls.query(order_by=['gunid'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
         users = User.query().fetch()
-        map_data = []
+        temp = []
         for gun in result:
             data = gun.api_data(users)
             if data:
-                map_data.append(data)
-        return (map_data, cursor, f)
-      
+                temp.append(data)
+        return (temp, cursor, f)
         
     def api_data(self, users) -> Dict:
         try:
             thumbnail = self.get_images()[0].get("s32")
         except:
             thumbnail = ""
-        try:
-            name = [user for user in users if user.user_id ==
-                    self.user_id][0].fire_user['name']
-        except Exception as e:
-            id = ""
-            for user in users:
-                fu = user.fire_user
-                if self.name and fu['email'] in self.name:
-                    id = fu['user_id']
-            if id != "":
-                self.user_id = id
-                self.put()
-                name = User.get_id(self.user_id).fire_user['name']
-            else:
-                name = self.name
+        name = [user for user in users if user.user_id ==
+                self.user_id][0].fire_user['name']
         try:
             line = {}
             line.update({'thumbnail': thumbnail, 'owner': name})
@@ -210,7 +196,7 @@ class User(ndb.Model):
         return User.query(cls.user_id == id).get()
 
 
-def geolocate(location):
+def geolocate(location, namespace):
     gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
     loc = (location.latitude, location.longitude)
     reverse_geocode_result = gmaps.reverse_geocode( loc )
@@ -231,33 +217,13 @@ def geolocate(location):
             token = places_result.get('next_page_token')
         if len(results) > 10:
             break
-    level = 0
-    if len(reverse_geocode_result) < 2:
-        try:
-            default = reverse_geocode_result[0]['formatted_address']
-        except:
-            default = "None"
-        country = default
-    else:
-        for location in reverse_geocode_result:
-            if "country" in location['types']:
-                country = location['formatted_address']
-                if level == 0:
-                    default = location['formatted_address']
-            if 'neighborhood' in location['types']:
-                level = 10
-                default = location['formatted_address']
-                continue
-            try:
-                admin = [item for item in location['types']
-                         if 'administrative_area' in item][0]
-                admin_level = to_int(admin[-1])
-                if admin_level > level:
-                    level = admin_level
-                    default = location['formatted_address']
-            except:
-                pass
-    return {"geolocation": reverse_geocode_result, "places": results, 'default': default, 'country': country}
+    for geo in reverse_geocode_result:    
+        if Site.query(Site.place_id == geo["place_id"], namespace=namespace).get():
+            reverse_geocode_result.remove(geo)
+    for geo in results:
+        if Site.query(Site.place_id == geo["place_id"], namespace=namespace).get():
+            results.remove(geo)    
+    return {"geolocation": reverse_geocode_result, "places": results}
 
 
 def get_serving_url(upload_metadata):
@@ -316,78 +282,27 @@ class Site(ndb.Model):
     verified_by = ndb.KeyProperty()
     type = ndb.IntegerProperty(default= Type.GOOGLE.value)
     
-
-class MapData(object):
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(MapData, cls).__new__(cls)
-            cls._instance.update()
-            cls._instance._prod_mapdata = []
-            cls._instance._dev_mapdata = []
-            cls._instance._train_mapdata = []
-        return cls._instance
-        
-    def update(cls):
-        
-        #channel = grpc.insecure_channel('localhost:8123')
-        
-        #transport = CloudTasksGrpcTransport(channel=channel)   
-        tclient = tasks_v2.CloudTasksClient()
-        parent = "projects/ultima-ratio-221014/locations/europe-west2/queues/default"
-        url = "https://v2.bigcannonproject.org/_ah/api/update_map"
-        #url= "http://localhost:8000/_ah/api/update_map"
-        task = tasks_v2.Task(
-            http_request= tasks_v2.HttpRequest(
-                http_method=tasks_v2.HttpMethod.POST,
-                url= url,
-                headers = {"Authorization": "Bearer null"},
-                body = json.dumps({"namespace": None}).encode("utf-8")
-            )
-        )
-        request = tasks_v2.CreateTaskRequest(
-            parent= parent,
-            task = task
-        )
-        tclient.create_task(request= request)
-        task = tasks_v2.Task(
-            http_request= tasks_v2.HttpRequest(
-                http_method=tasks_v2.HttpMethod.POST,
-                url= url,
-                headers = {"Authorization": "Bearer null"},
-                body = json.dumps({"namespace": "test"}).encode("utf-8")
-            )
-        )
-        request = tasks_v2.CreateTaskRequest(
-            parent= parent,
-            task = task
-        )
-        tclient.create_task(request= request)
-        task = tasks_v2.Task(
-            http_request= tasks_v2.HttpRequest(
-                http_method=tasks_v2.HttpMethod.POST,
-                url= url,
-                headers = {"Authorization": "Bearer null"},
-                body = json.dumps({"namespace": "train"}).encode("utf-8")
-            )
-        )
-        request = tasks_v2.CreateTaskRequest(
-            parent= parent,
-            task = task
-        )
-        tclient.create_task(request= request)        
-
-    def get(self, namespace: str) -> List[Dict]:
-        if namespace == "test":
-            return self._dev_mapdata
-        if namespace == "train":
-            return self._train_mapdata
-        return self._prod_mapdata
+    MATRIX=["display_name", "country", "geocode", "guns", "attribution"]
     
-    def __dict__(self) -> Dict:
-        return {
-            "test": self._dev_mapdata,
-            "train": self._train_mapdata,
-            "prod": self._prod_mapdata
-        }
+    @classmethod
+    def data(cls, namespace: str, cursor: ndb.Cursor):
+        (result, cursor, f) = cls.query(order_by=['display_name'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
+        temp = []
+        for site in result:
+            temp.append(site.api_data())
+        return (temp, cursor)
+    
+    def api_data(self) -> List[object]:
+        line = {"id": self.key.id()}
+        for item in self.to_dict().items():
+            if item[0] in Site.MATRIX:
+                line.update({item[0]: item[1]})
+            elif item[0]=="type":
+                line.update({item[0]: SITE_TYPES[item[1]]})
+        return line    
+            
+        
+        
+        
+    
+

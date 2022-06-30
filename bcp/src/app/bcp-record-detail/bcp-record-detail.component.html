@@ -3,19 +3,35 @@
     <form [formGroup]="gunForm" >
         <div class="row p-3  bg-ur" >
             <div class="col-2">
-                <a class="align-self-center mr-3" *ngIf="gun && gun.images[0]" [href]="gun.images[0].original"><img [src]="gun.images[0].s200" height="70px" alt=""></a>
+                <a  class="align-self-center mr-3" 
+                    *ngIf="gun && gun.images[0]" 
+                    [href]="gun.images[0].original"
+                  ><img [src]="gun.images[0].s200" 
+                        height="70px"
+                        alt=""
+                    />
+                </a>
             </div>
             <div class="col-10 p-2">
                 <div class="row">
                     <div class="col-sm-6">
                         <h2 *ngIf="gun; else waiting">Gun ID : {{ gun.gunid }}</h2>
-                        <ng-template #waiting>Waitting for data ...</ng-template>
-                        <h5 *ngIf="! currentUser" >For more information on this gun - Login</h5>
+                        <ng-template #waiting>Waiting for data ...</ng-template>
+                        <h5 *ngIf="! currentUser && gun" 
+                            >For more information on this gun - <a routerLink="/login" >Login</a>
+                        </h5>
                     </div>
                     <div class="col-sm-6">
                         <div class="float-end" >
                             <p class="text-muted" *ngIf="!edit"> Read-only </p>
-                            <button class="btn btn-secondary" type="button" (click)="link_here()" data-toggle="popover"  data-content="A permanent link to this record has been copied to the clipboard">Link here</button>
+                            <button class="btn btn-secondary"
+                                    type="button" 
+                                    (click)="link_here()"
+                                    data-toggle="popover"
+                                    data-content="A permanent link to this record has been copied to the clipboard"
+                                    matTooltip="create a Permalink to this record"
+                                >Link here
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -36,8 +52,15 @@
             ></bcp-record-surveyor>
         </div>
     </form>
-    <button mat-fab  color="primary" ngClass='fab' (click)="submit()">
-        <mat-icon color='accent' ngClass='fab-text'>
+    <button mat-fab  
+        color="primary"
+        ngClass='fab'
+        (click)="submit()"
+        [matTooltip]="fabTooltip"
+    >
+        <mat-icon color='accent'
+            ngClass='fab-text'
+        >
             {{fabIcon}}
         </mat-icon>
     </button>
@@ -45,19 +68,73 @@
 
     <div class="row fixed-bottom  bg-light ">
         <div class="col-3">
-            <button mat-raised-button color="primary" class="float-start mx-3  px-3" (click)="last()"><i class="arrow left"></i><span class="d-none d-sm-inline">Prev</span></button>
+            <button mat-raised-button
+                    color="primary"
+                    class="float-start mx-3  px-3"
+                    (click)="last()"
+                    matTooltip="Show the Previous Gun Record"
+                >
+                <i class="arrow left"></i>
+                <span class="d-none d-sm-inline"
+                    >Prev
+                </span>
+            </button>
         </div>
         <div class="col-6">
             <div class="mx-auto">
-                <mat-button-toggle-group appearance="legacy" [(value)]="currentScreen"> 
-                    <mat-button-toggle  id="observer" role="tab" aria-controls="list-observer" value="observer" ><span class="d-inline d-sm-none">O</span><span class="d-none d-sm-inline">Observer</span></mat-button-toggle>
-                    <mat-button-toggle id="reporter" role="tab" aria-controls="list-reporter" value="reporter"><span class="d-inline d-sm-none">R</span><span class="d-none d-sm-inline">Recorder</span></mat-button-toggle>
-                    <mat-button-toggle id="surveyor" role="tab" aria-controls="list-surveyor" value="surveyor"><span class="d-inline d-sm-none">S</span><span class="d-none d-sm-inline">Surveyor</span></mat-button-toggle>
+                <mat-button-toggle-group appearance="legacy"
+                                         *ngIf="user.login"
+                                         [(value)]="currentScreen"
+                    > 
+                    <mat-button-toggle  id="observer" 
+                                        role="tab" 
+                                        aria-controls="list-observer" 
+                                        value="observer"
+                                        matTooltip="Show the Observer Level Details"
+                        ><span class="d-inline d-sm-none"
+                            >O
+                        </span>
+                        <span class="d-none d-sm-inline"
+                            >Observer
+                        </span>
+                    </mat-button-toggle>
+                    <mat-button-toggle  id="reporter" 
+                                        role="tab" 
+                                        aria-controls="list-reporter" 
+                                        value="reporter"
+                                        matTooltip="Show the Reporter Level Details"
+                        ><span class="d-inline d-sm-none"
+                            >R
+                        </span>
+                        <span class="d-none d-sm-inline"
+                            >Recorder
+                        </span>
+                    </mat-button-toggle>
+                    <mat-button-toggle  id="surveyor"
+                                        role="tab" 
+                                        aria-controls="list-surveyor" 
+                                        value="surveyor"
+                                        matTooltip="Show the Surveyor Level Details"
+                        ><span class="d-inline d-sm-none"
+                            >S</span>
+                        <span class="d-none d-sm-inline"
+                            >Surveyor
+                        </span>
+                    </mat-button-toggle>
                 </mat-button-toggle-group>
             </div> 
         </div>     
         <div class="col-3">
-            <button mat-raised-button color="primary" class="float-end mx-3  px-3" (click)="next()"><span class="d-none d-sm-inline">Next</span> <i class="arrow right"></i> </button>
+            <button mat-raised-button 
+                    color="primary" 
+                    class="float-end mx-3  px-3" 
+                    (click)="next()"
+                    matTooltip="Show the next Gun Record" 
+                ><span class="d-none d-sm-inline"
+                    >Next
+                </span> 
+                <i class="arrow right"></i> 
+            </button>
         </div>
     </div>
 </div>

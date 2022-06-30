@@ -16,8 +16,15 @@
       <div fxLayout="row" fxHide fxShow.gt-xs>
         <a mat-button href="http://eepurl.com/hrRxUf" target="_blank" matTooltip="Subscribe to our Newsletter">Newsletter</a>
     </div>
-      <button mat-button routerLink="login">
-        <mat-icon [matBadge]="badgeText" [matBadgeColor]="badgeColor" matTooltip="User Profile">account_circle</mat-icon>
+      <button mat-icon-button routerLink="login" class="image"
+          [matBadge]="badgeText"
+          matBadgeSize="small"
+          matBadgePosition="above"
+          [matBadgeColor]="badgeColor" 
+          [matTooltip]="badgeHint"
+          [style.backgroundImage]="photoUrl"
+        >
+        <mat-icon *ngIf="! photoUrl" >account_circle</mat-icon>
       </button> 
       <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-xs>
       <mat-icon>menu</mat-icon>
@@ -33,6 +40,6 @@
       </mat-action-list>
     </mat-menu>
     <router-outlet class="pt-5"></router-outlet>
-    <div class="w-100" style="font-size:50%;" > <p class="text-center">Website <mat-icon style="font-size:50%;">copyright</mat-icon> <a href="https://runette.co.uk" target="_blank">Runette Software Ltd 2020</a></p></div>
+    <div class="w-100" style="font-size:50%;" > <p class="text-center">Website <mat-icon style="font-size:50%;">copyright</mat-icon> <a href="https://runette.co.uk" target="_blank">Runette Software Ltd 2020/2022</a></p></div>
   </mat-sidenav-content>
 </mat-sidenav-container>

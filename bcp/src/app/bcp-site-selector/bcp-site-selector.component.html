@@ -1,0 +1,100 @@
+<mat-card>
+    <mat-card-title-group>
+        <mat-card-title>Enter the correct Site </mat-card-title>
+    </mat-card-title-group>
+    <mat-card-content>
+        <p><small class="text-muted"> 
+            The site is a named context for the location of the gun
+        </small></p>
+        <p><small class="text-muted"> 
+            We use a standard set of location IDs provided by Google Maps and other sources to mark the nearest landmark. 
+        </small></p>
+        <mat-card *ngIf="! site && ! addSite">
+            <mat-card-title-group>
+                <mat-card-title>Known Sites</mat-card-title>
+            </mat-card-title-group>
+            <mat-card-content>
+                <small class="text-muted">
+                    The following are the sites close to this location which are already in the system. Pick one or create a new site.
+                </small>
+                <cdk-virtual-scroll-viewport itemSize="50" class="viewport my-2"> 
+                    <div *cdkVirtualFor="let item of closestSites">
+                        <app-bcp-site-card 
+                            (click)="setSite(item[0])"
+                            [site]="item[0]"
+                        ></app-bcp-site-card>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+            </mat-card-content>
+        </mat-card>
+        <mat-card *ngIf="addSite">
+            <mat-card-title-group>
+                <mat-card-title>Add Site</mat-card-title>
+            </mat-card-title-group>
+            <mat-card-content>
+                <p><small class="text-muted">
+                    Select a data source (default Google) and press "Fetch" to get the list of suitable sites.
+                </small></p>
+                <div class="row">
+                    <div class="col-6">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Data Source</mat-label>
+                            <mat-select  [(value)]="source">
+                              <mat-option *ngFor="let s of SOURCES" [value]="s">
+                                {{s}}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <button mat-raised-button color="primary" (click)="getSites()">Fetch</button>
+                    </div>
+                </div>
+                <ng-template ngIf="candidateSites">
+                    <cdk-virtual-scroll-viewport itemSize="50" class="viewport my-2"> 
+                        <div *cdkVirtualFor="let item of candidateSites">
+                            <app-bcp-site-card 
+                                (click)="site=item[0]; addSite=false"
+                                [site]="item[0]"
+                            ></app-bcp-site-card>
+                        </div>
+                    </cdk-virtual-scroll-viewport>
+                </ng-template>
+            </mat-card-content>
+        </mat-card>
+        <mat-card *ngIf="site && ! addSite">
+            <mat-card-title-group>
+            <mat-card-title>{{site.display_name}}</mat-card-title>
+            <mat-card-subtitle>{{site.geocode.formatted_address}}</mat-card-subtitle>
+            <img mat-card-sm-image *ngIf="site && site.geocode.icon" [src]="site.geocode.icon" >
+            </mat-card-title-group>
+            <mat-card-content>
+                <mat-chip-list aria-label="Gun Count" class=" card-body align-middle">
+                    <mat-chip *ngIf="site" 
+                            color="primary" 
+                            selected
+                        >{{site.guns.length}} Gun{{site.guns.length>1?"s":""}}
+                    </mat-chip>
+                </mat-chip-list>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <a mat-raised-button color="primary" 
+                *ngIf="site.type=='google' && user.login" 
+                [href]="site.geocode.url" 
+                target="_blank"
+                >Google Page
+                </a>
+                <a mat-raised-button color="primary" 
+                *ngIf="site.geocode.website && user.login" 
+                [href]="site.geocode.website" 
+                target="_blank"
+                >Website
+                </a>
+            </mat-card-actions>
+        </mat-card>
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="site=null; addSite=false">Select Known</button>
+        <button mat-raised-button color="primary" (click)="addSite=true">Add New</button>
+    </mat-card-actions>
+</mat-card>

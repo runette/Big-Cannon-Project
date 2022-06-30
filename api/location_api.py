@@ -20,21 +20,35 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-from data import geolocate
+from data import geolocate, User
 import logging
 from google.cloud.datastore.helpers import GeoPoint
+from google.cloud import ndb
+
+client = ndb.Client()
 
 class LocationApi:
     @staticmethod
-    def get_location(body):
-        try:
-            lat = body['lat']
-            lon = body['lng']
-            location = GeoPoint(lat, lon)
-            geo = geolocate(location)
-            geo.update({"location": [lat, lon]})
-            success = True
-        except Exception as e:
-            logging.error(str(e))
-            success = False
-        return geo, (200 if success else 500)
+    def get_location(user, body):
+        with client.context():
+            user_data = User.get_id(user)
+            if user_data:
+                namespace = user_data.namespace()
+            else:
+                namespace = None
+            if body["source"] == "Google":
+                try:
+                    lat = body['lat']
+                    lon = body['lng']
+                    location = GeoPoint(lat, lon)
+                    geo = geolocate(location, namespace)
+                    geo.update({"location": [lat, lon]})
+                    success = True
+                except Exception as e:
+                    logging.error(str(e))
+                    geo = []
+                    success = False
+            else:
+                geo=[]
+                success = False
+            return geo, (200 if success else 500)

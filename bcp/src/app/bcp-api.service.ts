@@ -11,10 +11,12 @@ export class BcpApiService {
 
   FETCH_USER = `${environment.apiUrl}/fetch_user`;
   FETCH_MAP = `${environment.apiUrl}/fetch_map`;
+  FETCH_SITES = `${environment.apiUrl}/fetch_sites`;
   GET_LOCATION = `${environment.apiUrl}/get_location`;
   ADDPHOTO = `${environment.apiUrl}/add_photo`;
   ADDRECORD = `${environment.apiUrl}/add_record`;
   SETRECORD = `${environment.apiUrl}/set_record`;
+  ADDSITE = `${environment.apiUrl}/add_site`;
 
   constructor( private http: HttpClient) { }
 

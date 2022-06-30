@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DataItem } from '../bcp-map-data.service';
+import { Site } from '../bcp-site-data.service';
 
 @Component({
   selector: 'app-bcp-data-card',
@@ -8,7 +9,10 @@ import { DataItem } from '../bcp-map-data.service';
 })
 export class BcpDataCardComponent implements OnInit {
   @Input()
-  record: DataItem
+  record: DataItem;
+  
+  @Input()
+  site: Site;
 
   constructor() { }
 

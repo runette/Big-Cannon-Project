@@ -2,6 +2,7 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
+import { Site, BcpSiteDataService } from '../bcp-site-data.service';
 import { BcpFilterValuesService}  from '../bcp-filter-values.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { GalleryItem, ImageItem } from 'ng-gallery';
@@ -27,10 +28,22 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
   @Input()
   set gun(value: DataItem) { 
     this._gun = value;
+    this.site = this.sites.fetch(value.site_id);
     this.updateGun();
   }
 
   get gun(): DataItem { return this._gun};
+
+  private _site: Site;
+  get site(): Site{
+    return this. _site;
+  }
+
+  set site(site: Site) {
+    this._site = site;
+    this.viewport = site.geocode.geometry.viewport;
+  }
+  viewport: google.maps.LatLngBounds;
 
   currentUser: BcpUser;
 
@@ -71,7 +84,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
 }
 
   constructor(public DATA_VALUES: BcpFilterValuesService,
-              public user: BcpUserService) {
+              public user: BcpUserService,
+              public sites: BcpSiteDataService
+              ) {
                 this.userSubscription = user.user.subscribe(user => this.onUserChange(user));
                }
 

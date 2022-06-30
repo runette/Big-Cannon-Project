@@ -10,6 +10,7 @@ import {BcpLoginComponent} from './bcp-login/bcp-login.component';
 import {BcpPrivacyComponent} from './bcp-privacy/bcp-privacy.component';
 import {BcpTorComponent} from './bcp-tor/bcp-tor.component';
 import {BcpV2Component} from './bcp-v2/bcp-v2.component'
+import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
 { path: 'database', component: BcpDatabaseComponent },
 { path: 'new_record', component: BcpNewRecordComponent},
 { path: 'database/entry', component: BcpRecordDetailComponent},
+{ path: 'database/site', component:BcpSiteDetailComponent},
 { path: 'recording', component: BcpHelpComponent},
 { path: 'login', component: BcpLoginComponent},
 { path: 'privacy', component: BcpPrivacyComponent},

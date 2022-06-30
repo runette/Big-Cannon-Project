@@ -21,7 +21,6 @@
 #SOFTWARE.
 
 import os
-from data import MapData
 from connexion import App
 import firebase_admin
 from flask_cors import CORS
@@ -30,8 +29,6 @@ from google.cloud import ndb
 
 firebase_admin.initialize_app()
 client = ndb.Client()
-with client.context():
-    MapData()
 
 options = {"swagger_ui": False}
 app = App(__name__, options=options)
@@ -57,4 +54,4 @@ if __name__ == '__main__':
     # App Engine itself will serve those files as configured in app.yaml.
     if 'WINGDB_ACTIVE' in os.environ:
         app.debug = False
-        app.run(host='localhost', port=8000)
+        app.run(host='0.0.0.0', port=8000)

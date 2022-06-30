@@ -7,8 +7,7 @@ import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BcpApiService } from '../bcp-api.service';
 import { Router } from '@angular/router';
-
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bcp-record-detail',
@@ -28,14 +27,16 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   dataSubscription: Subscription;
   pmap: ParamMap;
   fabIcon: string = "add";
+  fabTooltip: string = "add a new Gun record";
 
   constructor(public request: ActivatedRoute,
-              private user: BcpUserService,
+              public user: BcpUserService,
               private api: BcpApiService,
               private mapData: BcpMapDataService,
               public userData: BcpUserService,
               private fb: FormBuilder,
-              private router: Router
+              private router: Router,
+              private _snackBar: MatSnackBar
                ) {
       this.userSubscription = this.userData.user.subscribe(user => this.onUserChange(user));
       this.dataSubscription = this.mapData.$newData.subscribe( flag => this.onMap());
@@ -119,6 +120,9 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
         document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
         document.getSelection().addRange(selected);   // Restore the original selection
     };
+    this._snackBar.open("Permalink copied", "close", {
+      duration: 3000
+    })
   };
 
   next() {
@@ -155,20 +159,27 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
 
   formChanged(event: any){
     this.fabIcon = "save";
+    this.fabTooltip= "Save this Gun record";
   }
 
   submit(){
     if (this.user.current_user) {
-      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.SETRECORD, this.gun ).subscribe({next: response => {
-          this.mapData.update(response);
-        },
-        error: e => console.error(e)
-      }),
-      e => console.error(e)
-      )
-      this.fabIcon = "add";
+      if (this.fabIcon == "save"){
+        this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.SETRECORD, this.gun ).subscribe({next: response => {
+              this.mapData.update(response);
+            },
+            error: e => console.error(e)
+          }),
+          e => console.error(e)
+        )
+        this.fabIcon = "add";
+        this.fabTooltip = "add a new Gun record";
+      } else {
+        this.router.navigate(["new_record","site_id", this.site.id]);
+      }
+      
     } else {
-      this.router.navigate(['/new_record']);
+      this.router.navigate(['/login']);
     }
   }
 }

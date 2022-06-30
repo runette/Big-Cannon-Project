@@ -7,8 +7,13 @@
             </div>
             <div class="col-10">
                 <div class="card-body">
-                    <div class="h6 card-title text-truncate">
-                        {{record.display_name}}
+                    <div class="h6 card-title text-truncate"  *ngIf="site">
+                        {{site.display_name}}
+                    </div>
+                    <div class="h6 card-title text-truncate" *ngIf="! site">
+                        <ng-template [ngIf]="record.description">
+                            {{ record.description}}
+                        </ng-template>
                     </div>
                     <div class="card-text">
                         <p>
