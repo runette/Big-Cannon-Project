@@ -1,6 +1,6 @@
 ///<reference types='google.maps' />
 import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
 import { Site, BcpSiteDataService } from '../bcp-site-data.service';
 import { BcpFilterValuesService}  from '../bcp-filter-values.service';
@@ -21,7 +21,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
   @ViewChild(BcpPhotosComponent) photo: BcpPhotosComponent;
 
   @Input()
-  gunForm: FormGroup;
+  gunForm: UntypedFormGroup;
 
   edit: boolean;
 

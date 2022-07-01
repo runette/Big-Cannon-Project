@@ -4,7 +4,7 @@ import { DataItem, MapData } from '../bcp-map-data.service';
 import { BcpMapDataService } from '../bcp-map-data.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { BcpApiService } from '../bcp-api.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class BcpRecordDetailComponent implements OnInit, OnDestroy {
 
   gun: DataItem;
-  gunForm: FormGroup;
+  gunForm: UntypedFormGroup;
   edit: boolean= false;
   index: number;
   currentScreen: string = "observer";
@@ -34,7 +34,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
               private api: BcpApiService,
               private mapData: BcpMapDataService,
               public userData: BcpUserService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private router: Router,
               private _snackBar: MatSnackBar
                ) {

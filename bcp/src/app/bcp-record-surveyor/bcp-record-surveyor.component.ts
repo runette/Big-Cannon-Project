@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 export class BcpRecordSurveyorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input()
-  gunForm: FormGroup;
+  gunForm: UntypedFormGroup;
 
   edit: boolean;
 
