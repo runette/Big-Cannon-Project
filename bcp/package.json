@@ -44,6 +44,7 @@
     "@angular/platform-browser-dynamic": "*",
     "@angular/router": "*",
     "@googlemaps/markerclusterer": "*",
+    "@runette/ngx-leaflet-locate": "^2.0.1",
     "@types/firebase": "*",
     "firebase": "*",
     "ng-gallery": "*",

@@ -18,6 +18,7 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
     this.site = this.sites.fetch(site_id);
   }
 
+  @Input()
   site: Site;
 
   @Output()
@@ -28,7 +29,7 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
   candidateSites: [site: Site, distance: number][] = [];
   source: string = "Google";
   private _location: google.maps.LatLng;
-  private subscriptions: Subscription[];
+  private subscriptions: Subscription[] = [];
 
   @Input()
   get location() {

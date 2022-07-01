@@ -45,7 +45,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
         material: null,
         category: null,
         description: null,
-        site: null,
+        site_id: null,
         display_name: null,
         context: null,
         collection: null,
@@ -103,26 +103,36 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   }
 
   link_here() {
-    const el = document.createElement('textarea');  // Create a <textarea> element
-    el.value = window.location.href;                                 // Set its value to the string that you want copied
-    el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
-    el.style.position = 'absolute';                 
-    el.style.left = '-9999px';                      // Move outside the screen to make it invisible
-    document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
-    const selected =            
-        document.getSelection().rangeCount > 0        // Check if there is any content selected previously
-            ? document.getSelection().getRangeAt(0)     // Store selection if found
-            : false;                                    // Mark as false to know no selection existed before
-    el.select();                                    // Select the <textarea> content
-    document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
-    document.body.removeChild(el);                  // Remove the <textarea> element
-    if (selected) {                                 // If a selection existed before copying
-        document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
-        document.getSelection().addRange(selected);   // Restore the original selection
-    };
-    this._snackBar.open("Permalink copied", "close", {
-      duration: 3000
-    })
+    if (!navigator.clipboard){
+      const el = document.createElement('textarea');  // Create a <textarea> element
+      el.value = window.location.href;                                 // Set its value to the string that you want copied
+      el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+      el.style.position = 'absolute';                 
+      el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+      document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+      const selected =            
+          document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+              ? document.getSelection().getRangeAt(0)     // Store selection if found
+              : false;                                    // Mark as false to know no selection existed before
+      el.select();                                    // Select the <textarea> content
+      document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+      document.body.removeChild(el);                  // Remove the <textarea> element
+      if (selected) {                                 // If a selection existed before copying
+          document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+          document.getSelection().addRange(selected);   // Restore the original selection
+      };
+      this._snackBar.open("Permalink copied", "close", {
+        duration: 3000
+      })
+  } else{
+      navigator.clipboard.writeText( window.location.href).then(
+        () => {
+          this._snackBar.open("Permalink copied", "close", {
+            duration: 3000
+          })
+        }
+      );
+    }    
   };
 
   next() {
@@ -175,7 +185,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
         this.fabIcon = "add";
         this.fabTooltip = "add a new Gun record";
       } else {
-        this.router.navigate(["new_record","site_id", this.site.id]);
+        this.router.navigate(["new_record","site_id", this.gun.site_id]);
       }
       
     } else {

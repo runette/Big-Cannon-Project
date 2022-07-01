@@ -25,11 +25,10 @@ import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 export class BcpNewRecordComponent implements OnInit, OnDestroy {
 
   marker: google.maps.Marker
-  location: google.maps.LatLng;
+  private _location: google.maps.LatLng;
   images: GalleryItem[] = [];
   geocode: any;
-  _site: Site;
-  site_id: number;
+  private _site: Site;
 
   currentUser: BcpUser;
   @ViewChild('stepper') stepper: MatStepper;
@@ -58,10 +57,28 @@ get site() {
 set site(site: Site) {
   this._site = site;
   if (site) {
-    this.steponeCompleted = true;
     this.viewport = site.geocode.geometry.viewport;
+    if (this.viewport.contains(this.location)) {
+      this.steponeCompleted = true;
+    } else {
+      this.location = site.geocode.geometry.location;
+      this.steponeCompleted = true;
+    }
   } else {
     this.steponeCompleted=false;
+  }
+}
+
+get location (){
+  return this._location;
+}
+
+set location (loc){
+  this._location = loc;
+  if (this.viewport && this.viewport.contains(this.location)) {
+    this.steponeCompleted = true;
+  } else {
+    this.steponeCompleted = false;
   }
 }
 
@@ -80,7 +97,7 @@ set site(site: Site) {
 
   ngOnInit(): void {
         this.subscriptions.push(this.request.queryParamMap.subscribe(pmap => {
-      this.site_id = parseInt(pmap.get("site_id"));
+      this.site = this.sites.fetch(parseInt(pmap.get("site_id")));
     }));
   }
 

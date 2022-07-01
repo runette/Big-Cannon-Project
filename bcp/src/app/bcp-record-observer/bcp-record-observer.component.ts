@@ -41,7 +41,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
 
   set site(site: Site) {
     this._site = site;
-    this.viewport = site.geocode.geometry.viewport;
+    if (site) this.viewport = site.geocode.geometry.viewport;
   }
   viewport: google.maps.LatLngBounds;
 
@@ -57,7 +57,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     'material',
     'category',
     'description',
-    'site',
+    'site_id',
     'display_name',
     'context',
     'collection',
@@ -115,9 +115,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
           emitEvent: false
         });
         if (this.edit) 
-          this.gunForm.controls[key].enable({emitEvent: false}) 
+          this.gunForm.controls[key]?.enable({emitEvent: false}) 
         else 
-          this.gunForm.controls[key].disable({emitEvent: false}) 
+          this.gunForm.controls[key]?.disable({emitEvent: false}) 
       }
       )
     this.images = []
@@ -127,9 +127,16 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
   }
 
   formChanged(event: any) {
-    this.keys.forEach(key => 
-      this.gun[key] = this.gunForm.value[key]
-    );
+    this.keys.forEach(key => {
+      this.gun[key] = this.gunForm.value[key];
+      this.site = this.sites.fetch(this.gun.site_id);
+    });
+  }
+
+  siteChanged(site: Site) {
+    if (this.edit) {
+      this.gunForm.patchValue({site_id: site.id})
+    }
   }
 
   locationUpdate($event){
