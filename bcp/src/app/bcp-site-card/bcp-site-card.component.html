@@ -18,7 +18,7 @@
                               color="primary" 
                               selected
                               matTooltip="There {{site.guns.length>1?'are':'is'}} {{site.guns.length}} record{{site.guns.length>1?'s':''}} at this Site"
-                        >{{site.guns.length}} Gun{{site.guns.length>1?"s":""}} 
+                        >{{site.guns.length}} Gun{{site.guns.length!=1?"s":""}} 
                     </mat-chip>
                   </mat-chip-list>
             </div>

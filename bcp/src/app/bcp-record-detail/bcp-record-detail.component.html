@@ -6,10 +6,18 @@
                 <a  class="align-self-center mr-3" 
                     *ngIf="gun && gun.images[0]" 
                     [href]="gun.images[0].original"
-                  ><img [src]="gun.images[0].s200" 
+                  ><img *ngIf="gun.images[0].s200; else elseThumbnail"
+                        [src]="gun.images[0].s200" 
                         height="70px"
                         alt=""
                     />
+                    <ng-template #elseThumbnail>
+                        <img
+                        [src]="gun.images[0].original" 
+                        height="70px"
+                        alt=""
+                    />
+                    </ng-template>
                 </a>
             </div>
             <div class="col-10 p-2">

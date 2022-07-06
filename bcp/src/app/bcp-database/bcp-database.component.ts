@@ -177,36 +177,48 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
       this.clusterOptions.map = this.map;
       this.mc = new MarkerClusterer(this.clusterOptions );
       this.mc.clearMarkers();
-    }
-    if ( this.data.filteredData && this.data.filteredData.length > 0) {
-      let mapInfo = this.mapInfo;
-      let mapMarker = this.mapMarker;
-      let data = this.data;
-      let selectedMarker = this.selectedMarker;
       let markers: Marker[] = [];
-      // var entry: DataItem;
-      for (let entry of this.data.filteredData) {
-        if (! entry.marker){
-          let options: google.maps.MarkerOptions = {
-            draggable: false,
+      if ( this.data.filteredData && this.data.filteredData.length > 0) { 
+        for (let entry of this.data.filteredData) {
+          if (entry.marker) {
+            markers.push(entry.marker);
           }
-          let icon: google.maps.Icon = {'url':''};
-          if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-          else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-          else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-          let marker=new Marker(options);
-          marker.setPosition(entry.location);
-          marker.setIcon(icon);
-          marker.addListener('click', function (e) {
-            selectedMarker[0] = data.filteredData.find(item => item.location == this.getPosition())
-            mapMarker.marker = this;
-            mapInfo.open(mapMarker);
-          });
-          markers.push(marker)
-          entry.marker = marker;
-        };
+        }
+        this.mc.addMarkers(markers);
       }
-      this.mc.addMarkers(markers);
+    } else {
+      if ( this.data.filteredData && this.data.filteredData.length > 0) {
+        let mapInfo = this.mapInfo;
+        let mapMarker = this.mapMarker;
+        let data = this.data;
+        let selectedMarker = this.selectedMarker;
+        let markers: Marker[] = [];
+        // var entry: DataItem;
+        for (let entry of this.data.filteredData) {
+          if (! entry.marker){
+            let options: google.maps.MarkerOptions = {
+              draggable: false,
+            }
+            let icon: google.maps.Icon = {'url':''};
+            if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
+            else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
+            else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
+            let marker=new Marker(options);
+            marker.setPosition(entry.location);
+            marker.setIcon(icon);
+            marker.addListener('click', function (e) {
+              selectedMarker[0] = data.filteredData.find(item => item.location == this.getPosition())
+              mapMarker.marker = this;
+              mapInfo.open(mapMarker);
+            });
+            markers.push(marker)
+            entry.marker = marker;
+          } else {
+
+          };
+        }
+        this.mc.addMarkers(markers);
+      }
     }
   }
 }

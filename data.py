@@ -75,7 +75,7 @@ class Gun(ndb.Model):
     quality = ndb.IntegerProperty(default=Quality.BRONZE.value)
     description = ndb.StringProperty()
     name = ndb.StringProperty()
-    date = ndb.DateTimeProperty(auto_now=True)
+    date = ndb.DateTimeProperty(auto_now_add=True)
     site_id = ndb.IntegerProperty(required=True)
     context = ndb.StringProperty()
     collection = ndb.BooleanProperty()
@@ -95,6 +95,9 @@ class Gun(ndb.Model):
     button_code = ndb.StringProperty()
     category = ndb.IntegerProperty(default=Categories.NOT_KNOWN.value)
     country_of_origin = ndb.StringProperty(default = None)
+    attributions = ndb.StringProperty(repeated=True)
+    web_links = ndb.BooleanProperty(default=False)
+    urls = ndb.TextProperty(repeated=True)
 
     @classmethod
     def map_data(cls, namespace, cursor):
@@ -108,10 +111,20 @@ class Gun(ndb.Model):
         return (temp, cursor, f)
         
     def api_data(self, users) -> Dict:
-        try:
-            thumbnail = self.get_images()[0].get("s32")
-        except:
-            thumbnail = ""
+        thumbnail = None
+        images = self.get_images()
+        for image in images:
+            try:
+                thumbnail = image["s32"]
+                break
+            except Exception:
+                continue
+        if not thumbnail:
+            try:
+                thumbnail = images[0].get("original")
+            except Exception:
+                thumbnail= ""
+
         name = [user for user in users if user.user_id ==
                 self.user_id][0].fire_user['name']
         try:
@@ -157,6 +170,8 @@ class Gun(ndb.Model):
     def get_images(self):
         IMAGE_DEFAULTS = [{"s200": "/img/70x70.png", "original": ""}]
         images = []
+        if self.images == []:
+            return IMAGE_DEFAULTS
         try:
             for image in self.images:
                 try:

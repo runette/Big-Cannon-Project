@@ -201,14 +201,13 @@ export class BcpMapDataService implements OnDestroy{
       dataItem.location = new google.maps.LatLng(data.lat, data.lng);
     if (data.hasOwnProperty('date'))
       dataItem.date = new Date(data.date);
-    let keys = ['gunid', 'material','quality', 'description', 'owner', 'site_id', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'userId', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category', 'thumbnail' ];
-    let items = ['gunid', 'type','quality', 'description', 'owner', 'site_id', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category' , 'thumbnail'];
+    let keys = ['gunid', 'material','quality', 'description', 'owner', 'site_id', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'userId', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category', 'thumbnail', "attributions", "web_links", "urls" ];
+    let items = ['gunid', 'type',  'quality', 'description', 'owner', 'site_id', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'user_id', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category', 'thumbnail', "attributions", "web_links", "urls" ];
     for (let j = 0; j < items.length; j++)
       if (data.hasOwnProperty(items[j]))
         dataItem[keys[j]] = data[items[j]]
     return dataItem
   }
-  
 }
 
 export interface DataItem {
@@ -241,6 +240,9 @@ export interface DataItem {
   thumbnail?:string;
   quality?: RecordQuality;
   marker?: Marker;
+  attributions?: string[];
+  web_links?:boolean;
+  urls?: string[];
 }
 
 export type MapData = DataItem[];

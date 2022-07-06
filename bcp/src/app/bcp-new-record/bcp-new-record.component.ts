@@ -1,15 +1,15 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
-import { GalleryItem  } from 'ng-gallery';
+import { GalleryItem, ImageItem  } from 'ng-gallery';
 import { BcpApiService } from '../bcp-api.service';
 import { MatStepper } from '@angular/material/stepper';
 import { BcpPhotosComponent } from '../bcp-photos/bcp-photos.component';
 import { BcpMapDataService } from '../bcp-map-data.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
 import { Site, BcpSiteDataService } from '../bcp-site-data.service';
-import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
+import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'app-bcp-new-record',
@@ -24,11 +24,18 @@ import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 })
 export class BcpNewRecordComponent implements OnInit, OnDestroy {
 
-  marker: google.maps.Marker
   private _location: google.maps.LatLng;
+  private _site: Site;
+  private _files: File[] = [];
+  private _urls: string[] = [];
+
+  marker: google.maps.Marker
   images: GalleryItem[] = [];
   geocode: any;
-  private _site: Site;
+  description: string = "";
+  context: string = "";
+  pages: string[];
+  attributions: string[];
 
   currentUser: BcpUser;
   @ViewChild('stepper') stepper: MatStepper;
@@ -37,6 +44,10 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
   viewport: google.maps.LatLngBounds;
   steponeCompleted: boolean = false;
   steptwoCompleted: boolean = false;
+
+  fabIcon: string = "skip_next";
+  fabActive: boolean = false;
+  fabTooltip: string = "Next Step";
 
   options = {
     zoom: 12,
@@ -60,12 +71,15 @@ set site(site: Site) {
     this.viewport = site.geocode.geometry.viewport;
     if (this.viewport.contains(this.location)) {
       this.steponeCompleted = true;
+      this.fabActive = true;
     } else {
       this.location = site.geocode.geometry.location;
       this.steponeCompleted = true;
+      this.fabActive = true;
     }
   } else {
     this.steponeCompleted=false;
+    this.fabActive = false;
   }
 }
 
@@ -77,8 +91,10 @@ set location (loc){
   this._location = loc;
   if (this.viewport && this.viewport.contains(this.location)) {
     this.steponeCompleted = true;
+    this.fabActive = true;
   } else {
     this.steponeCompleted = false;
+    this.fabActive = false;
   }
 }
 
@@ -90,6 +106,7 @@ set location (loc){
               public userData: BcpUserService,
               public request: ActivatedRoute,
               private sites: BcpSiteDataService,
+              public changeDetect: ChangeDetectorRef
               ){
     this.location = new google.maps.LatLng(0,0);
     this.subscriptions.push (userData.user.subscribe(user => this.userChange(user)));
@@ -109,7 +126,8 @@ set location (loc){
     this.currentUser = user;
   }
 
-  acceptPhoto(files: FileList): void {
+  acceptPhoto(flag: boolean): void {
+    if (! flag || ! this.steptwoCompleted) return;
     if (! this.site.id) {
       let data = {
         source: "Google",
@@ -119,19 +137,24 @@ set location (loc){
         next: response => {
           this.sites.add(response);
           this.site = this.sites.fetch(response['id'])
-          this.addGun(files);
+          this.addGun();
         }
       })
       );
     } else {
-      this.addGun(files);
+      this.addGun();
     }
   }
 
-  addGun(files: FileList): void {
+  addGun(): void {
     let data = {
       "location": this.location,
-      "site_id": this.site.id
+      "site_id": this.site.id,
+      "description": this.description,
+      "context": this.context,
+      "image_urls": this._urls,
+      "urls": this.pages,
+      "attributions": this.attributions
     }
     let folderName: string = "prod";
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
@@ -141,7 +164,7 @@ set location (loc){
         next: response => {
           this.mapData.add(response);
           this.sites.fetch(response["site_id"]).guns.push(response['gunid'])
-          this.photo.send_file(files, `${folderName}/${response['gunid']}`, response['gunid']);
+          this.photo.send_file( `${folderName}/${response['gunid']}`, response['gunid']);
           this.router.navigate(["/database","entry"], {queryParams:{"gunid":response['gunid']}});
         }
       }
@@ -163,6 +186,62 @@ set location (loc){
       case error.UNKNOWN_ERROR:
           alert("An unknown error occurred.");
           break;
+    }
+  }
+
+  fabAction(): void{
+    if (this.stepper.selectedIndex == 1 && this.steponeCompleted && this.steptwoCompleted) {
+      this.acceptPhoto(true);
+    } else {
+      this.stepper.next();
+    }
+  }
+
+  selectionChange(event: StepperSelectionEvent): void{
+    if (event.selectedIndex == 0) {
+      this.fabActive = this.steponeCompleted;
+    } else {
+      this.fabActive = this.steptwoCompleted;
+    }
+  }
+
+  newImageUrl(urls: string[]): void {
+    this._urls = urls;
+    const flag = this._files.length > 0 || this._urls.length > 0;
+    this.steptwoCompleted=flag;
+    this.fabActive=flag;
+    this.setImages();
+  }
+
+  newImage(files: FileList): void {
+    const flag = files.length > 0 || this._urls.length > 0;
+    this.steptwoCompleted=flag;
+    this.fabActive=flag;
+    this._files = Array.from(files)
+    this.setImages();
+  }
+
+  setImages():void {
+    this.images = []
+    for (let file of this._files) {
+      const url = URL.createObjectURL(file)
+      this.images.push(new ImageItem({src: url}));
+    }
+    for (let url of this._urls) {
+      try {
+        const urlObj = new URL(url);
+        this.images.push(new ImageItem({src: url}));
+      } catch {
+
+      }
+     
+    }
+  }
+
+  imageError($event: any): void {
+    if ($event) {
+      this.steptwoCompleted = false;
+      this.fabActive = false;
     }
   }
 }

@@ -1,5 +1,5 @@
 ///<reference types='google.maps' />
-import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
 import { Site, BcpSiteDataService } from '../bcp-site-data.service';
@@ -8,6 +8,7 @@ import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { GalleryItem, ImageItem } from 'ng-gallery';
 import { Subscription } from 'rxjs';
 import { BcpPhotosComponent } from '../bcp-photos/bcp-photos.component';
+import { BcpApiService } from '../bcp-api.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
   gunForm: UntypedFormGroup;
 
   edit: boolean;
+  editAttribution: boolean = false;
 
   @Input()
   set gun(value: DataItem) { 
@@ -68,6 +70,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     'interpretation',
     'inter_details',
     'country',
+    'web_links',
+    'urls',
+    'attributions'
   ]
 
 
@@ -85,7 +90,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
 
   constructor(public DATA_VALUES: BcpFilterValuesService,
               public user: BcpUserService,
-              public sites: BcpSiteDataService
+              public sites: BcpSiteDataService,
+              public changeDetect: ChangeDetectorRef,
+              private api: BcpApiService,
               ) {
                 this.userSubscription = user.user.subscribe(user => this.onUserChange(user));
                }
@@ -122,7 +129,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
       )
     this.images = []
     for (let image of this.gun.images) {
-      this.images.push(new ImageItem({src: image.original, thumb: image.s200}));
+      this.images.push(new ImageItem({src: image.original, thumb: image.s200? image.s200 : image.original}));
     }
   }
 
@@ -134,8 +141,27 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
   }
 
   siteChanged(site: Site) {
-    if (this.edit) {
-      this.gunForm.patchValue({site_id: site.id})
+    if (this.edit && site) {
+      const old_site= this.sites.fetch(this.gun.site_id);
+      old_site.guns = old_site.guns.filter(item => item != this.gun.gunid)
+      if (old_site.guns.length < 1) {
+        this.sites.remove(site)
+      };
+      if (! site.id) {
+        let data = {
+          source: "Google",
+          place_id: site.geocode.place_id
+        }
+        this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDSITE, data ).subscribe({
+          next: response => {
+            this.sites.add(response);
+            this.gunForm.patchValue({site_id: response['id']})
+          }
+        }))
+      } else {
+        site.guns.push(this.gun.gunid)
+        this.gunForm.patchValue({site_id: site.id})
+      }
     }
   }
 
@@ -145,9 +171,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     }
   }
 
-  acceptPhoto(files: FileList){
+  acceptPhoto(){
     let folderName: string = "prod";
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
-    this.photo.send_file(files,`/${folderName}/${this.gun.gunid}`, this.gun.gunid)
+    this.photo.send_file(`/${folderName}/${this.gun.gunid}`, this.gun.gunid)
   }
 }

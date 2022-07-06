@@ -69,7 +69,7 @@
                     <tbody>
                     <tr>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <mat-slide-toggle
                                     formControlName="markings"
                                     name="markings"
@@ -78,13 +78,22 @@
                                     Markings?
                                 </mat-slide-toggle>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <mat-slide-toggle
                                     formControlName="interpretation"
                                     name="interpretations"
                                     matTooltip="Is there an Interprative Information associated with the Gun?"
                                 >
                                     Information board?
+                                </mat-slide-toggle>
+                            </div>
+                            <div class="col-sm-4">
+                                <mat-slide-toggle
+                                    formControlName="web_links"
+                                    name="Web Links"
+                                    matTooltip="Are here any web pages associated with this Gun?"
+                                >
+                                    Web Links?
                                 </mat-slide-toggle>
                             </div>
                         </div>
@@ -123,6 +132,51 @@
                         </tr>
                     </tbody>
                 </table>
+                <app-bcp-list-input
+                    *ngIf="user.login && gunForm.value.web_links"
+                    label="Associated Pages"
+                    [list]="gunForm.value.urls  || []"
+                    placeholder="Urls of Associated Pages"
+                    (updateList)="this.gunForm.patchValue({urls:$event})"
+                >
+                </app-bcp-list-input>
+                <app-bcp-list-input
+                    *ngIf="user.login && editAttribution"
+                    label="Add copyright messages for any content included in this record"
+                    [list]="gunForm.value.attributions  || []"
+                    placeholder="add attribution"
+                    (updateList)="this.gunForm.patchValue({attributions:$event});editAttribution=false"
+                >
+                </app-bcp-list-input>
+                <ng-template 
+                    [ngIf]="user.login && ! editAttribution"
+                >
+                    <small class="text-muted" *ngFor="let item of gunForm.value.attributions">
+                        <a 
+                            *ngIf="item.includes('http') && ! item.includes(' ') ; else elseBlock"
+                            [href]="item"
+                            target="_blank"
+                        >
+                            {{item | UrlProcess}}
+                            <ng-template ngIf="gunForm.value.attributions.length > 1">
+                                ,
+                            </ng-template>
+                        </a>
+                        <ng-template #elseBlock>
+                            {{item}}
+                            <ng-template ngIf="gunForm.value.attributions.length > 1">
+                                ,
+                            </ng-template>
+                        </ng-template>
+                    </small>
+                    <button 
+                        mat-button
+                        (click)="editAttribution=true"
+                        matTooltip="If this record contains or llinks to Copyright information, add an attribution here"
+                    >
+                        Edit Attributions
+                    </button>
+                </ng-template>
             </mat-card-content>
         </mat-card>
     </div>
@@ -143,7 +197,7 @@
                             color="primary" 
                             selected
                             matTooltip="There {{site.guns.length>1?'are':'is'}} {{site.guns.length}} record{{site.guns.length>1?'s':''}} at this Site"
-                        >{{site.guns.length}} Gun{{site.guns.length>1?"s":""}}
+                        >{{site.guns.length}} Gun{{site.guns.length!=1?"s":""}}
                     </mat-chip>
                 </mat-chip-list>
             </mat-card-content>
@@ -274,8 +328,9 @@
         <mat-card-title>Photos</mat-card-title>
         <mat-card-content>
             <app-bcp-photos 
+                [changeDetect]="changeDetect"
                 [images]="images"
-                (newImage$)="acceptPhoto($event)"
+                (submit$)="acceptPhoto()"
             ></app-bcp-photos>
         </mat-card-content>
        </mat-card>

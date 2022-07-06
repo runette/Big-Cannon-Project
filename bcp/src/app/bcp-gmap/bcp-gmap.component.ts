@@ -81,7 +81,7 @@ export class BcpGmapComponent implements OnInit {
       if (!this.viewport.contains(this.location)) {
         this.viewport.extend(this.location);
       }
-      this.map.fitBounds(this.viewport, 0)
+      this.map.fitBounds(this.viewport, 10)
     } else {
       this.map.setCenter(this.location);
       this.map.setZoom(1);

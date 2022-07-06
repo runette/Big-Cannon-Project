@@ -108,9 +108,15 @@ export class BcpSiteDataService implements OnDestroy{
     return this.data.find( site => site.id === id)
   }
 
-  add(indata: any) {
+  add(indata: any): void {
     let site = new Site(indata);
     this.data.push(site);
+    this.setFilter();
+  }
+
+  remove(site: Site): void {
+    const index = this.data.indexOf(site);
+    this.data.splice(index, 1)
     this.setFilter();
   }
 }

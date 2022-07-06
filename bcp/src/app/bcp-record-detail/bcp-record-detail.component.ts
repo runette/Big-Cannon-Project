@@ -68,6 +68,9 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
         muzzle_code: null,
         cas_code: null,
         button_code: null,
+        attributions: null,
+        web_links: null,
+        urls: null
       })
       this.gunForm.valueChanges.subscribe(event => this.formChanged(event));
    }
@@ -87,7 +90,8 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   }
 
   onMap(): void{
-      this.index = this.mapData.filteredData.findIndex(element => element.gunid ===  parseInt(this.pmap.get('gunid')));
+      const thisGun = parseInt(this.pmap.get('gunid'));
+      this.index = this.mapData.filteredData.findIndex(element => element.gunid ===  thisGun);
       let gun = this.mapData.filteredData[this.index];
       this.edit = false;
       if (this.currentUser && this.currentUser.fireUserData && gun) {

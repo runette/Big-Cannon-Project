@@ -54,7 +54,7 @@
                     <cdk-virtual-scroll-viewport itemSize="50" class="viewport my-2"> 
                         <div *cdkVirtualFor="let item of candidateSites">
                             <app-bcp-site-card 
-                                (click)="site=item[0]; addSite=false"
+                                (click)="setSite(item[0]); addSite=false"
                                 [site]="item[0]"
                             ></app-bcp-site-card>
                         </div>
@@ -73,7 +73,7 @@
                     <mat-chip *ngIf="site" 
                             color="primary" 
                             selected
-                        >{{site.guns.length}} Gun{{site.guns.length>1?"s":""}}
+                        >{{site.guns.length}} Gun{{site.guns.length!=1?"s":""}}
                     </mat-chip>
                 </mat-chip-list>
             </mat-card-content>
@@ -94,7 +94,7 @@
         </mat-card>
     </mat-card-content>
     <mat-card-actions align="end">
-        <button mat-raised-button color="primary" (click)="site=null; addSite=false">Select Known</button>
-        <button mat-raised-button color="primary" (click)="addSite=true">Add New</button>
+        <button mat-raised-button color="primary" (click)="setSite(null); addSite=false">Select Known</button>
+        <button mat-raised-button color="primary" (click)="setSite(null); addSite=true">Add New</button>
     </mat-card-actions>
 </mat-card>

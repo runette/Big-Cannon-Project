@@ -1,5 +1,10 @@
 <div class="container pt-5 pb-5" *ngIf="currentUser else notlogedin">
-    <mat-horizontal-stepper linear labelPosition="right"  #stepper>
+    <mat-horizontal-stepper 
+        linear 
+        labelPosition="right" 
+        #stepper
+        (selectionChange)="selectionChange($event)"
+    >
         <mat-step errorMessage="Site is required." [completed]="steponeCompleted" >
             <ng-template matStepLabel>Add Gun Location and Site</ng-template>
             <ng-template matStepContent>
@@ -31,6 +36,53 @@
                             (newSite$)="this.site = $event"
                         >
                         </app-bcp-site-selector>
+                        <mat-card>
+                            <mat-card-title>
+                                Details
+                            </mat-card-title>
+                            <mat-card-content>
+                                <mat-form-field 
+                                    appearance="fill"
+                                    class="w-100"
+                                >
+                                    <mat-label>Description of Gun Location</mat-label>
+                                        <textarea matInput 
+                                            placeholder="Describe where the Gun is located in the site"
+                                            [value]="context"
+                                            (input)="context=$event.target.value"
+                                        >
+                                        </textarea>
+                                        <button mat-icon-button
+                                            *ngIf="context" 
+                                            matSuffix  
+                                            aria-label="Clear" 
+                                            (click)="context=''"
+                                        >
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                </mat-form-field>
+                                <mat-form-field 
+                                    appearance="fill"
+                                    class="w-100"
+                                >
+                                    <mat-label>Gun Description</mat-label>
+                                    <textarea matInput
+                                        placeholder="Describe the Gun itself"
+                                        [value]="description"
+                                        (input)="description=$event.target.value"
+                                    >
+                                    </textarea>
+                                    <button mat-icon-button
+                                        *ngIf="description" 
+                                        matSuffix  
+                                        aria-label="Clear" 
+                                        (click)="description=''"
+                                    >
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </mat-card-content>
+                        </mat-card>
                     </div>
                 </div>
             </ng-template>
@@ -39,9 +91,60 @@
         <mat-step errorMessage="One Photo is Required" [completed]="steptwoCompleted">
             <ng-template matStepLabel>Upload A Photo</ng-template>
             <ng-template matStepContent>
-                <app-bcp-photos 
-                    (newImage$)="acceptPhoto($event)"
-                ></app-bcp-photos>
+                <mat-card>
+                    <mat-card-title-group>
+                        <mat-card-title>Enter at least one photo - either an upload or a link</mat-card-title>
+                    </mat-card-title-group>
+                    <mat-card-content>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <mat-card>
+                                    <app-bcp-photos
+                                        [changeDetect]="changeDetect"
+                                        (submit$)="acceptPhoto($event)"
+                                        (newImage$)="newImage($event)"
+                                        [images]="images"
+                                        (error)="imageError($event)"
+                                    ></app-bcp-photos>
+                                </mat-card>
+                            </div>
+                            <div class="col-md-6">
+                                <mat-card>
+                                    <mat-card-title-group>
+                                        <mat-card-title>Link to Existing Photographs</mat-card-title>
+                                    </mat-card-title-group>
+                                    <mat-card-content>
+                                        <app-bcp-list-input
+                                            label="Enter the URLs for the Photos"
+                                            placeholder="add url (e.g. https://www.site.com/photo.jpg"
+                                            (updateList)="newImageUrl($event)"
+                                        >
+                                        </app-bcp-list-input>
+                                        <app-bcp-list-input
+                                            label="Add copyright messages for any content included in this record"
+                                            placeholder="add attribution (e.g. (c) This Museum)"
+                                            (updateList)="attributions=$event"
+                                        >
+                                        </app-bcp-list-input>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card>
+                                    <mat-card-title-group>
+                                        <mat-card-title>Link to Relevant Web Sites</mat-card-title>
+                                    </mat-card-title-group>
+                                    <mat-card-content>
+                                        <app-bcp-list-input
+                                            label="Associated Pages"
+                                            placeholder="Urls of Associated Pages"
+                                            (updateList)="pages=$event"
+                                        >
+                                        </app-bcp-list-input>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
             </ng-template>
         </mat-step>
     </mat-horizontal-stepper>
@@ -53,3 +156,20 @@
         </div>
     </div>
 </ng-template>
+
+<!---  The FAB -->
+<button mat-fab 
+        color="primary" 
+        ngClass='fab'
+        [matTooltip]="fabTooltip"
+        [disabled]="! fabActive"
+        (click)="fabAction()"
+    >
+    <mat-icon 
+        color='accent'
+        ngClass='fab-text'
+        *ngIf="fabActive"
+    >
+        {{fabIcon}}
+    </mat-icon>
+</button>

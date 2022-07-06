@@ -14,11 +14,13 @@ export class BcpPhotosComponent implements OnInit {
 
   private _images: GalleryItem[];
   @ViewChild('fileinput') fileInput: ElementRef;
+  @Input() changeDetect: ChangeDetectorRef;
 
 
   @Input()
   set images(images: GalleryItem[]){
     this._images = images;
+    this.error.next(null)
     this.updateImages();
   }
 
@@ -27,9 +29,12 @@ export class BcpPhotosComponent implements OnInit {
   }
 
   files: string[];
-  fileNumber: number
+  fileNumber: number;
 
   @Output() newImage$: EventEmitter<FileList> = new EventEmitter<FileList>();
+  @Output() submit$: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() error: EventEmitter<any> = new EventEmitter<any>();
+
 
   galleryRef: GalleryRef;
 
@@ -40,7 +45,6 @@ export class BcpPhotosComponent implements OnInit {
 
   constructor(private gallery: Gallery,
               private storage: AngularFireStorage,
-              private changeDetect: ChangeDetectorRef,
               private user: BcpUserService,
               private mapData: BcpMapDataService,
               private api: BcpApiService ) { }
@@ -58,13 +62,18 @@ export class BcpPhotosComponent implements OnInit {
   }
 
   upload() {
-    this.newImage$.next(this.fileInput.nativeElement.files);
+    this.submit$.next(this.fileInput.nativeElement.files.length > 0);
   }
 
-  send_file(files: FileList, folder: string, id: number) {
+  fileAdded() {
+    this.newImage$.next(this.fileInput.nativeElement.files);
+    this.pbarFlag = this.fileInput.nativeElement.files.length > 0;
+  }
+
+  send_file(folder: string, id: number) {
     this.pbarFlag = true;
     let imageRef
-    let fileArray = Array.from(files)
+    let fileArray = Array.from(this.fileInput.nativeElement.files as FileList)
     this.fileNumber = fileArray.length
     for (let file of fileArray) {
       let file_name = file.name;
@@ -79,7 +88,7 @@ export class BcpPhotosComponent implements OnInit {
   updateProgress(progress: number) {
     this.pbarMode = "determinate";
     this.pbarProgress = progress;
-    this.changeDetect.detectChanges();
+    this.changeDetect?.detectChanges();
   }
 
   fileSnapshot(snapshot: any, id: number) {

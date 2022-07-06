@@ -7,14 +7,29 @@
     <div class="row">
         <div class="input-group mb-3">
             <div class="">
-                <input type="file" [(ngModel)]="files" multiple accept="image/jpeg, image/png, image/bmp, image/eps, image/gif, image/tiff, JPEG, PNG, GOF,EPS,TIFF" class="form-control update-ignore" #fileinput aria-describedby="inputGroupFileAddon01">
+                <input type="file"
+                    [(ngModel)]="files"
+                    multiple accept="image/jpeg, image/png, image/bmp, image/eps, image/gif, image/tiff, JPEG, PNG, GOF,EPS,TIFF"
+                    class="form-control update-ignore"
+                    #fileinput
+                    aria-describedby="inputGroupFileAddon01"
+                    (change)="fileAdded()"
+                />
             </div>
             <div class="input-group-prepend">
-                <button type="button" (click)="upload()" class="btn btn-primary" id="file-upload" >Upload</button>
+                <button type="button"
+                    (click)="upload()"
+                    class="btn btn-primary"
+                    id="file-upload" 
+                >
+                    Upload
+                </button>
             </div>
         </div>
     </div>
     <div class="row">
-        <gallery id="photos" ></gallery>
+        <gallery id="photos"
+            (error)="error.next($event)"
+        ></gallery>
     </div>
 </div>

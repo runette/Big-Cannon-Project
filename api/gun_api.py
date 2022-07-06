@@ -83,6 +83,16 @@ class GunApi:
                         gunid=gun_id,
                         name=user.email,
                     )
+                if to_int(body.get("site_id", "")) != gun.site_id:
+                    old_site = Site.get_by_id(gun.site_id, namespace=namespace)
+                    new_site = Site.get_by_id(to_int(body.get("site_id", "")),namespace=namespace)
+                    old_site.guns.remove(gun.gunid)
+                    new_site.guns.append(gun.gunid)
+                    if len(old_site.guns) < 1:
+                        old_site.key.delete()
+                    else:
+                        old_site.put()
+                    new_site.put()
                 gun.populate(
                     description=body.get('description', ""),
                     type=Gun.Types(GUN_TYPES.index(body.get('material'))).value,
@@ -105,6 +115,9 @@ class GunApi:
                     muzzle_code=body.get('muzzle_code', ""),
                     cas_code=body.get('cas_code', ""),
                     button_code=body.get('button_code', ""),
+                    web_links=to_bool(body.get('web_links')),
+                    urls=list(body.get('urls', "")),
+                    attributions=list(body.get("attributions", ""))
                 )
                 gun.measurements = {}
                 MEASUREMENTS = ['length', 'base_ring', 'muzzle', 'bore', 'trunnion_position',
@@ -130,8 +143,8 @@ class GunApi:
                     )
                     site.put()
                     return site.api_data(), (200)
-                except Exception as e:
-                    logging.error(str(e))
+                except Exception as e1:
+                    logging.error(str(e), str(e1))
                     return {}, (500)
 
     @staticmethod
@@ -154,9 +167,17 @@ class GunApi:
                           type=Gun.Types.NOT_KNOWN.value,
                           date=datetime.now(),
                           measurements={},
-                          site_id = site_id
+                          site_id = site_id,
+                          description= body.get("description", ""),
+                          context= body.get("context", ""),
+                          urls = list(body.get("urls","")),
+                          attributions = list(body.get("attributions",""))
                           )
                 gun.location = GeoPoint(location["lat"], location["lng"])
+                for url in body.get("image_urls", []):
+                    gun.images.append(json.dumps({
+                        "original": url
+                    }))
                 gun.put_async()
                 site = Site.get_by_id(gun.site_id, namespace=namespace)
                 site.guns.append(gun.gunid)
