@@ -39,13 +39,15 @@ class MapApi:
                 user_data = User.get_id(user)
                 if user_data:
                     namespace = user_data.namespace()
+                    login = True
                 else:
                     namespace = None
+                    login = False
                 if body.get("cursor"):
                     cursor = ndb.Cursor(urlsafe=body.get("cursor").encode("utf-8"))
                 else:
                     cursor= ndb.Cursor()
-                (data, cursor, f) = Gun.map_data(namespace, cursor)
+                (data, cursor, f) = Gun.map_data(namespace, cursor, login)
                 if data:
                     map = {
                         "entries": data,
@@ -115,9 +117,8 @@ class MapApi:
                 if len(country) > 0:
                     site.country = country[0]
                 site.put()
-                response = site.api_data()
+                return {"site":site.api_data()}, 200
             except Exception as e:
-                return {}, 500
-            return response, 200
+                return None, 500
             
         

@@ -1,7 +1,7 @@
 ///<reference types='google.maps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, ElementRef, ChangeDetectionStrategy} from '@angular/core';
-import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
+import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
 import { BcpSiteDataService } from '../bcp-site-data.service';
@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
 export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   options: google.maps.MapOptions = {
     zoom: 2,
-    center: {lat: 0, lng: 0},
+    center: {lat: 50, lng: 80},
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     zoomControl: true,
     zoomControlOptions:{
@@ -76,7 +76,13 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.push(this.data.$newData.subscribe({
       next: () => this.loadMarkers()
     }));
-    this.subscriptions.push( this.sites.$newData.subscribe({
+    this.subscriptions.push(this.data.$clearMarkers.subscribe({
+      next: () => {
+        this.mc = null;
+        this.loadMarkers();
+      }
+    }));
+    this.subscriptions.push(this.sites.$newData.subscribe({
       next: () => this.updateSites(),
     }));
     this.selectedMarker=[];

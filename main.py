@@ -37,13 +37,6 @@ app.add_api('openapi.yaml', strict_validation=True)
 CORS(app.app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
-try:
-    import googleclouddebugger
-    googleclouddebugger.enable()
-except ImportError as e:
-    print(str(e))
-    pass
-
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This

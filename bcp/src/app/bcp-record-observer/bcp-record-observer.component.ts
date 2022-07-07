@@ -154,8 +154,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
         }
         this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDSITE, data ).subscribe({
           next: response => {
-            this.sites.add(response);
-            this.gunForm.patchValue({site_id: response['id']})
+            const site: Site = new Site(response['site'])
+            this.sites.add(site);
+            this.gunForm.patchValue({site_id: site.id})
           }
         }))
       } else {

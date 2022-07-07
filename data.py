@@ -100,17 +100,17 @@ class Gun(ndb.Model):
     urls = ndb.TextProperty(repeated=True)
 
     @classmethod
-    def map_data(cls, namespace, cursor):
+    def map_data(cls, namespace:str, cursor, login: bool) -> List:
         (result, cursor, f) = cls.query(order_by=['gunid'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
         users = User.query().fetch()
         temp = []
         for gun in result:
-            data = gun.api_data(users)
+            data = gun.api_data(users, login)
             if data:
                 temp.append(data)
         return (temp, cursor, f)
         
-    def api_data(self, users) -> Dict:
+    def api_data(self, users, login: bool) -> Dict:
         thumbnail = None
         images = self.get_images()
         for image in images:
@@ -134,10 +134,16 @@ class Gun(ndb.Model):
                 if item[0] == 'location':
                     line.update(
                         {'lat': item[1].latitude, 'lng': item[1].longitude})
+                    continue
                 elif item[0] in MATRIX:
                     line.update({item[0]: MATRIX[item[0]][item[1]]})
+                    continue
                 elif item[0] == 'date':
                     line.update({'date': self.date.timestamp() * 1000})
+                    continue
+                elif item[0] in ['description', 'context', 'site_id', 'user_id', 'gunid']:
+                    line.update({item[0]: item[1]})
+                    continue
                 elif item[0] == 'images':
                     images = []
                     for image in item[1]:
@@ -147,8 +153,10 @@ class Gun(ndb.Model):
                             images.append(
                                 {"original": image, "s32": image + '=s32', "s200": image + "=s200"})
                     line.update({item[0]: images})
-                else:
+                    continue
+                elif login:
                     line.update({item[0]: item[1]})
+                continue
             return line
         except Exception as e:
             logging.error("Error in Gun API Data for gunid : "

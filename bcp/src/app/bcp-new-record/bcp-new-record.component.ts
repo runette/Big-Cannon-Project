@@ -135,8 +135,8 @@ set location (loc){
       }
       this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDSITE, data ).subscribe({
         next: response => {
-          this.sites.add(response);
-          this.site = this.sites.fetch(response['id'])
+          this.site = new Site(response['site'])
+          this.sites.add(this.site)
           this.addGun();
         }
       })
@@ -162,10 +162,17 @@ set location (loc){
     if (this.user.current_user) {
       this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDRECORD, data ).subscribe({
         next: response => {
-          this.mapData.add(response);
-          this.sites.fetch(response["site_id"]).guns.push(response['gunid'])
-          this.photo.send_file( `${folderName}/${response['gunid']}`, response['gunid']);
-          this.router.navigate(["/database","entry"], {queryParams:{"gunid":response['gunid']}});
+          const gun = response['gun'];
+          const sites = response['sites'];
+          this.mapData.add(gun);
+          for (const site of sites) {
+            if (site) {
+              this.sites.add(site);
+            }
+          };
+
+          this.photo.send_file( `${folderName}/${gun['gunid']}`, gun['gunid']);
+          this.router.navigate(["/database","entry"], {queryParams:{"gunid":gun['gunid']}});
         }
       }
       ))

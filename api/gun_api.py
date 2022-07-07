@@ -64,13 +64,15 @@ class GunApi:
                 logging.error(str(e))
                 success = False
                 gun = None
-            return gun.api_data(users), (200 if success else 500)
+            return gun.api_data(users, True), (200 if success else 500)
 
     @staticmethod
     def set_record(user, body):
         with client.context():
             user_data = User.get_id(user)
             users = User.query().fetch()
+            old_site = None
+            new_site = None
             if user_data and user_data.test_user:
                 namespace = 'test'
             else:
@@ -128,7 +130,9 @@ class GunApi:
                     m.update({item: to_int(value)})
                     gun.measurements = m
                 gun.put()
-                return gun.api_data(users), (200)
+                return {"gun": gun.api_data(users, True),
+                        "sites": [old_site.api_data(), new_site.api_data()]
+                        },(200)
             except Exception as e:
                 try:
                     site_id=to_int(body['id'])
@@ -142,10 +146,10 @@ class GunApi:
                         geocode = body.get("geocode")
                     )
                     site.put()
-                    return site.api_data(), (200)
+                    return {"site": site.api_data()}, (200)
                 except Exception as e1:
                     logging.error(str(e), str(e1))
-                    return {}, (500)
+                    return None, (500)
 
     @staticmethod
     def add_record(user, body):
@@ -156,7 +160,6 @@ class GunApi:
                 namespace = 'test'
             else:
                 namespace = None
-            success = True
             try:
                 gunid = Gun.get_next(namespace)
                 location = body['location']
@@ -182,8 +185,11 @@ class GunApi:
                 site = Site.get_by_id(gun.site_id, namespace=namespace)
                 site.guns.append(gun.gunid)
                 site.put()
+                return {
+                    "gun":gun.api_data(users, True),
+                    "sites": [site.api_data()]
+                    }, (200)
             except Exception as e:
                 logging.error(str(e))
-                success = False
-                gunid = 0
-            return gun.api_data(users), (200 if success else 500)
+                return None, (500)
+                

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DataItem, MapData } from '../bcp-map-data.service';
 import { BcpMapDataService } from '../bcp-map-data.service';
+import { BcpSiteDataService } from '../bcp-site-data.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
@@ -36,7 +37,8 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
               public userData: BcpUserService,
               private fb: UntypedFormBuilder,
               private router: Router,
-              private _snackBar: MatSnackBar
+              private _snackBar: MatSnackBar,
+              private sites: BcpSiteDataService
                ) {
       this.userSubscription = this.userData.user.subscribe(user => this.onUserChange(user));
       this.dataSubscription = this.mapData.$newData.subscribe( flag => this.onMap());
@@ -180,7 +182,14 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
     if (this.user.current_user) {
       if (this.fabIcon == "save"){
         this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.SETRECORD, this.gun ).subscribe({next: response => {
-              this.mapData.update(response);
+              const gun = response['gun'];
+              const sites = response['sites'];
+              this.mapData.update(gun);
+              for (const site of sites) {
+                if (site) {
+                  this.sites.add(site);
+                }
+              };
             },
             error: e => console.error(e)
           }),

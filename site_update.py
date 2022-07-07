@@ -85,5 +85,16 @@ class Update:
                     site.country = country[0]
                 site.put()
 
-Update.updateSites()
+    def deleteGuns():
+        with client.context():
+            guns = Gun.query(namespace=namespace)
+            for gun in guns:
+                description = gun.description
+                if description and "delete" in description.lower():
+                    print(gun.description)
+                    gun.key.delete()
+
+
+#Update.updateSites()
 #Update.setGuns()
+Update.deleteGuns()
