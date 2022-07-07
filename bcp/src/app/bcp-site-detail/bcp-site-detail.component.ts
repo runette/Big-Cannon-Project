@@ -21,10 +21,12 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private index: number = 0;
   private map: google.maps.Map;
+  private site_id: number;
 
   fabIcon: string = "add";
   fabTooltip: string = "Add a new Gun to this Site"
   guns: DataItem[] = [];
+  marker: Marker;
 
   options = {
     zoom: 12,
@@ -57,13 +59,20 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.push( this.request.queryParamMap.subscribe(pmap => {
       this.pmap = pmap;
-      let site_id = parseInt(pmap.get("site_id"))
-      if (site_id){
-        this.site = this.sites.fetch(site_id);
-        this.index = this.sites.filteredSites.findIndex(element => element.id ===  site_id);
-      }
-      this.guns = this.data.data.filter( item => this.site.guns.includes( item.gunid ))
+      this.site_id = parseInt(pmap.get("site_id"))
+      this.updateSite();
     }))
+    this.subscriptions.push( this.sites.$newData.subscribe( () => {
+      this.updateSite();
+    }))
+  }
+
+  updateSite() : void {
+    if (this.site_id){
+      this.site = this.sites.fetch(this.site_id);
+      this.index = this.sites.filteredSites?.findIndex(element => element.id ===  this.site_id);
+    }
+    this.guns = this.data.data.filter( item => this.site.guns.includes( item.gunid ))
   }
 
   loaded(map: google.maps.Map): void {
@@ -77,10 +86,11 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
       if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
       else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
       else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-      let marker=new Marker(options);
-      marker.setPosition(gun.location);
-      marker.setIcon(icon);
-      marker.setMap(this.map);
+      if (this.marker) this.marker.setVisible(false);
+      this.marker=new Marker(options);
+      this.marker.setPosition(gun.location);
+      this.marker.setIcon(icon);
+      this.marker.setMap(this.map);
     }
 
   }

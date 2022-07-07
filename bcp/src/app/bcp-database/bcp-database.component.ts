@@ -86,7 +86,13 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
       next: () => this.updateSites(),
     }));
     this.selectedMarker=[];
+    const screenWidth: number = window.innerWidth;
+    if (screenWidth < 600) {
+      this.options.center = {lat: 30, lng: 20};
+      this.options.zoom = 0;
+    }
   }
+  
   ngAfterViewInit() {
   }
 

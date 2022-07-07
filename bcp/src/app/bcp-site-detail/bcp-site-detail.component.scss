@@ -23,9 +23,22 @@
     vertical-align: unset;
 }
 
-.map-container-inline { height: 30vh !important; border: 1px solid #CCC;overflow: hidden }
+.map-container-inline { 
+    height: 50vh !important; 
+    border: 1px solid #CCC;
+    overflow: hidden }
 
-.float-table {
-    position: initial;
-    height: 100%
+@media (min-width: 600px)
+{
+    .float-table {
+        position: initial;
+        height: 100%
+    }
+}
+
+
+@media (max-width: 599.98px){
+    .float-table {
+        height: 100vh;
+    }
 }

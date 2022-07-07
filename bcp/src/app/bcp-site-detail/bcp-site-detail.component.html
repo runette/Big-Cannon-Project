@@ -1,6 +1,6 @@
 <div class="container pt-5 pb-5">
     <div class="row">
-        <mat-card >
+        <mat-card *ngIf="site; else noSite">
             <mat-card-title-group>
             <mat-card-title>
                 <ng-template [ngIf]="! edit">
@@ -71,10 +71,17 @@
         </mat-card>
     </div>
 
+    <!-- No Site-->
+    <ng-template #noSite>
+        <mat-card>
+            Waiting for Data ...
+        </mat-card>
+    </ng-template>
+
     <!-- second row-->
     <div *ngIf="user.login" class="row bg-light pt-3">
         <!-- Map Pane-->
-        <div class="col-md-6">
+        <div class="col-sm-6">
             <mat-card>
                 <mat-card-title>Location</mat-card-title>
                 <mat-card-content>
@@ -92,7 +99,7 @@
         </div>
 
         <!-- Gun List Pane-->
-        <div class="col-md-6">
+        <div class="col-sm-6">
             <mat-card class="h-100">
                 <div class="float-table bg-ur"  id="table-entries" >
                     <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
@@ -150,7 +157,7 @@
             ngClass='fab' 
             (click)="submit()"
             routerLink="/new_record"
-            [queryParams]="{site_id:site.id}"
+            [queryParams]="{site_id:site?.id}"
         >
         <mat-icon   color='accent' 
                     ngClass='fab-text'>

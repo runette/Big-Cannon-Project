@@ -31,7 +31,7 @@
 </button>
 
 <!-- The Filter Bar-->
-<mat-toolbar class="map-nav-wide bg-ur" fxLayout="row" fxHide fxShow.gt-sm>
+<mat-toolbar class="map-nav-wide bg-ur" fxLayout="row" fxHide fxShow.gt-xs>
     <div class="row">
         <div class="col-2">
             <button mat-button 
@@ -138,7 +138,7 @@
     </div>
 </mat-toolbar>
 
-<mat-expansion-panel class="map-nav bg-ur" fxLayout="row" fxShow fxHide.gt-sm>
+<mat-expansion-panel class="map-nav bg-ur" fxLayout="row" fxShow fxHide.gt-xs>
     <mat-expansion-panel-header>
         <mat-panel-title>
         </mat-panel-title>
@@ -181,7 +181,7 @@
 </mat-expansion-panel>
 
 <!-- The Site Table -->
-<div class="float-table-wide bg-ur" *ngIf="data.cluster" id="table-entries" fxHide fxShow.gt-sm>
+<div class="float-table-wide bg-ur" *ngIf="data.cluster" id="table-entries" fxHide fxShow.gt-xs>
     <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
         <div *cdkVirtualFor="let site of sites.filteredSites">
             <app-bcp-site-card [routerLink]="['site']" [queryParams]="{site_id:site.id}"
@@ -191,7 +191,7 @@
     </cdk-virtual-scroll-viewport>
 </div>
 
-<div class="float-table bg-ur" *ngIf="data.cluster" id="table-entries" fxShow fxHide.gt-sm>
+<div class="float-table bg-ur" *ngIf="data.cluster" id="table-entries" fxShow fxHide.gt-xs>
     <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
         <div *cdkVirtualFor="let site of sites.filteredSites">
             <app-bcp-site-card [routerLink]="['site']" [queryParams]="{site_id:site.id}"
@@ -203,7 +203,7 @@
 
 
 <!-- The Gun Table -->
-<div class="float-table-wide bg-ur" *ngIf="! data.cluster" id="table-entries" fxHide fxShow.gt-sm>
+<div class="float-table-wide bg-ur" *ngIf="! data.cluster" id="table-entries" fxHide fxShow.gt-xs>
     <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
         <div *cdkVirtualFor="let record of data.geoFilteredData">
             <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
@@ -214,7 +214,7 @@
     </cdk-virtual-scroll-viewport>
 </div>
 
-<div class="float-table bg-ur" *ngIf="! data.cluster" id="table-entries" fxShow fxHide.gt-sm>
+<div class="float-table bg-ur" *ngIf="! data.cluster" id="table-entries" fxShow fxHide.gt-xs>
     <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
         <div *cdkVirtualFor="let record of data.geoFilteredData">
             <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
