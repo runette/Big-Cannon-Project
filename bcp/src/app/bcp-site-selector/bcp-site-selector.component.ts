@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ChangeDetectorRef, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Site, BcpSiteDataService } from '../bcp-site-data.service';
 import { BcpUserService } from '../bcp-user.service';
 import { BcpApiService } from '../bcp-api.service';
@@ -87,16 +87,16 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
       for (let geocode of data) {
         let site = Site.fromGeocode(geocode);
         if (site.geocode.geometry.viewport.contains(this.location)) {
-          this.candidateSites.push([site, 
+          this.candidateSites = [...this.candidateSites,
+            [site, 
             google.maps.geometry.spherical.computeDistanceBetween(
               this.location, site.geocode.geometry.location
-            )
-          ]);
+            )]
+          ];
         }
       }
     }
     this.candidateSites.sort( (a,b) => a[1] - b[1]);
-    this.changDetect.detectChanges();
   }
   private showError(error) {
     switch (error.code) {

@@ -95,6 +95,6 @@ class Update:
                     gun.key.delete()
 
 
-#Update.updateSites()
-#Update.setGuns()
+Update.updateSites()
+Update.setGuns()
 Update.deleteGuns()

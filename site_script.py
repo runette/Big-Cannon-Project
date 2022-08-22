@@ -1,4 +1,3 @@
-from argparse import Namespace
 from data import Site
 from google.cloud import ndb
 import googlemaps
@@ -63,6 +62,7 @@ class Gun(ndb.Model):
     geocode = ndb.JsonProperty()
     site = ndb.StringProperty()
     display_name = ndb.StringProperty()
+    geocode = ndb.JsonProperty()
 
 with client.context():
     sites = Site.query(namespace= namespace).fetch()

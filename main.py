@@ -27,6 +27,14 @@ from flask_cors import CORS
 import logging
 from google.cloud import ndb
 
+try:
+    import googleclouddebugger
+    googleclouddebugger.enable(
+      breakpoint_enable_canary=True
+  )
+except ImportError:
+    pass
+
 firebase_admin.initialize_app()
 client = ndb.Client()
 
@@ -35,7 +43,7 @@ app = App(__name__, options=options)
 app.add_api('openapi.yaml', strict_validation=True)
 # add CORS support
 CORS(app.app)
-logging.getLogger('flask_cors').level = logging.DEBUG
+logging.getLogger('flask_cors').level = logging.ERROR
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

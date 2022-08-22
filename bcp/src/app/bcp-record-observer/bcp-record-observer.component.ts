@@ -1,5 +1,5 @@
 ///<reference types='google.maps' />
-import { Component, OnInit, Input, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef, HostListener   } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
 import { Site, BcpSiteDataService } from '../bcp-site-data.service';
@@ -20,12 +20,19 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
 
   private _gun: DataItem
   @ViewChild(BcpPhotosComponent) photo: BcpPhotosComponent;
+  private _siteCardElement: ElementRef;
+  @ViewChild("site_card", {static: false}) 
+  set siteCardElement(el: ElementRef) {
+    this._siteCardElement = el;
+    this.collapsed = this._siteCardElement?.nativeElement.offsetWidth < 350
+  }
 
   @Input()
   gunForm: UntypedFormGroup;
 
   edit: boolean;
   editAttribution: boolean = false;
+  collapsed: boolean = false;
 
   @Input()
   set gun(value: DataItem) { 
@@ -143,10 +150,12 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
   siteChanged(site: Site) {
     if (this.edit && site) {
       const old_site= this.sites.fetch(this.gun.site_id);
-      old_site.guns = old_site.guns.filter(item => item != this.gun.gunid)
-      if (old_site.guns.length < 1) {
-        this.sites.remove(site)
-      };
+      if (old_site) {
+        old_site.guns = old_site.guns.filter(item => item != this.gun.gunid)
+        if (old_site.guns.length < 1) {
+          this.sites.remove(site)
+        };
+      }
       if (! site.id) {
         let data = {
           source: "Google",
@@ -176,5 +185,10 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     let folderName: string = "prod";
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
     this.photo.send_file(`/${folderName}/${this.gun.gunid}`, this.gun.gunid)
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize() {
+    this.collapsed = this._siteCardElement?.nativeElement.offsetWidth < 350
   }
 }

@@ -85,15 +85,16 @@ class GunApi:
                         gunid=gun_id,
                         name=user.email,
                     )
+                new_site = Site.get_by_id(to_int(body.get("site_id", "")),namespace=namespace)
                 if to_int(body.get("site_id", "")) != gun.site_id:
-                    old_site = Site.get_by_id(gun.site_id, namespace=namespace)
-                    new_site = Site.get_by_id(to_int(body.get("site_id", "")),namespace=namespace)
-                    old_site.guns.remove(gun.gunid)
+                    if not gun.site_id is None:
+                        old_site = Site.get_by_id(gun.site_id, namespace=namespace)
+                        old_site.guns.remove(gun.gunid)
+                        if len(old_site.guns) < 1:
+                            old_site.key.delete()
+                        else:
+                            old_site.put()                        
                     new_site.guns.append(gun.gunid)
-                    if len(old_site.guns) < 1:
-                        old_site.key.delete()
-                    else:
-                        old_site.put()
                     new_site.put()
                 gun.populate(
                     description=body.get('description', ""),
@@ -131,7 +132,7 @@ class GunApi:
                     gun.measurements = m
                 gun.put()
                 return {"gun": gun.api_data(users, True),
-                        "sites": [old_site.api_data(), new_site.api_data()]
+                        "sites": [new_site.api_data() if old_site is None else old_site.api_data() , new_site.api_data()]
                         },(200)
             except Exception as e:
                 try:

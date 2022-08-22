@@ -180,7 +180,7 @@
             </mat-card-content>
         </mat-card>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-6"  #site_card>
         <!-- Site Details-->
         <mat-card *ngIf="site">
             <mat-card-title-group>
@@ -202,33 +202,70 @@
                 </mat-chip-list>
             </mat-card-content>
             <mat-card-actions align="end">
-                <button mat-raised-button color="primary"
-                        *ngIf="user.login"
+                    <button mat-raised-button color="primary"
+                        *ngIf="user.login && ! collapsed"
                         [routerLink]="['/database/site']" 
                         [queryParams]="{site_id:site.id}"
                         matTooltip="Goto the Details Page for this Site"
-                    >Goto Site
-                </button>
-                <a mat-raised-button color="primary" 
-                *ngIf="site.type=='google' && user.login" 
-                [href]="site.geocode.url" 
-                target="_blank"
-                matTooltip="Goto the Google page for this site"
-                >Google Page
-                </a>
-                <a mat-raised-button color="primary" 
-                *ngIf="site.geocode.website && user.login" 
-                [href]="site.geocode.website" 
-                target="_blank"
-                matTooltip="Goto the website for this site"
-                >Website
-                </a>
-                <button mat-raised-button
-                        *ngIf="user.login && this.edit"
+                    >Site
+                    </button>
+                    <a mat-raised-button color="primary" 
+                        *ngIf="site.type=='google' && user.login && ! collapsed" 
+                        [href]="site.geocode.url" 
+                        target="_blank"
+                        matTooltip="Goto the Google page for this site"
+                    >Google
+                    </a>
+                    <a mat-raised-button color="primary" 
+                        *ngIf="site.geocode.website && user.login && ! collapsed" 
+                        [href]="site.geocode.website" 
+                        target="_blank"
+                        matTooltip="Goto the website for this site"
+                    >Website
+                    </a>
+                    <button mat-raised-button
+                        *ngIf="user.login && this.edit && ! collapsed"
                         color="primary" 
                         (click)="site=null"
                     >Change
-                </button>
+                    </button>
+                    <button mat-raised-button 
+                        color="primary"
+                        [mat-menu-trigger-for]="menu"
+                        *ngIf="collapsed"
+                    >
+                        <mat-icon>menu</mat-icon>
+                    </button>
+                    <mat-menu x-position="before" #menu>
+                        <mat-action-list>
+                            <button mat-list-item
+                                *ngIf="user.login"
+                                [routerLink]="['/database/site']" 
+                                [queryParams]="{site_id:site.id}"
+                                matTooltip="Goto the Details Page for this Site"
+                            >Goto Site
+                            </button>
+                            <a mat-list-item
+                                *ngIf="site.type=='google' && user.login" 
+                                [href]="site.geocode.url" 
+                                target="_blank"
+                                matTooltip="Goto the Google page for this site"
+                            >Google Page
+                            </a>
+                            <a mat-list-item
+                                *ngIf="site.geocode.website && user.login" 
+                                [href]="site.geocode.website" 
+                                target="_blank"
+                                matTooltip="Goto the website for this site"
+                            >Website
+                            </a>
+                            <button mat-list-item
+                                *ngIf="user.login && this.edit"
+                                (click)="site=null"
+                            >Change
+                            </button>
+                        </mat-action-list>
+                    </mat-menu>
             </mat-card-actions>
         </mat-card>
         <app-bcp-site-selector *ngIf="! site"

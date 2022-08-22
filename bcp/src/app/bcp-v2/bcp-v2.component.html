@@ -1,24 +1,15 @@
 <div class="container mt-5">
     <div class="jumbotron jumbotron-fluid bg-white m-1">
         <div class="container">
-            <h3 >Version 2</h3>
-            <p><strong> Version 2 is currently in BETA - not everything will work!</strong></p>
+            <h2 >Version 2</h2>
             <p>
                 Version 2 is a completely new version of the application using the latest techniques.
                 This provides a platform for the future of this application.
             </p>
             <p>
                 This version of the application uses <strong>the same database and users</strong> as
-                the current version. This means:
+                the previous version.
             </p>
-                <ul>
-                    <li>
-                        that you see the same guns in version 2 as you see in version 1, and
-                    </li>
-                    <li>
-                        IMPORTANT - that if you make changes in version 2 they will change the real database.
-                    </li>
-                </ul>
             <p>
                 Please do not "experiment" with the data using your real login. If you want to experiment, there is a training login that you can use for that :
             </p>
@@ -34,25 +25,40 @@
     </div>
     <div class="jumbotron jumbotron-fluid bg-white m-1">
         <div class="container">
-            <h3 >Changes</h3>
-            <p>
-                The basic "flow" of the application is not changed. Most things work in the same way. The following are some of the changes:
-            </p>
+            <h2 >Changes</h2>
+            <h3>For more details see <a href="https://mailchi.mp/da94f4933140/big-cannon-project-going-from-strength-to-strength">here</a></h3>
             <ul>
+                <li>
+                    One of the biggest changes in the new version is that the main view of the database is by Site.
+
+                </li>
+                <li>
+                    By default, the list of Sites (and the List of Guns) is filtered just to show the Sites ( or Guns) that are currently visible on the map.
+                    This feature can be turned off, by flicking the slider switch marked “Here” whereupon it will read “All”.
+                </li>
+                <li>
+                    To make the application startup faster and more responsive we are now doing incremental loads of data.What does this mean for you? Mostly, this means that when you first open the application you will see the number of guns shown on the map count upwards for a few seconds as the data is loaded and it might take as longer as 30 seconds before the record you are interested in is loaded.
+                </li>
+                <li>
+                    The new record process has been streamlined a bit.
+                    A good workflow when adding a new Gun to an existing Site (or adding multiple guns to a site) is to open the Site and use the “Add Gun” Button which will prepopulate the record.
+                    You can also now add a link to an existing image or an existing web page, without needing to upload the images. This saves data, saves time and saves us storage costs.
+                </li>
+                <li>
+                    Tools to make it easier to analysis the database contents are working and will be released soon.
+                </li>
+                
                 <li>
                     The "login" menu item is now an icon on the right of the toolar with a picture of a person.
                     This will eventually show a profile picture and a user profile.
                     The login screen does nt require popups anymore
-                </li>
-                <li>
-                    The "new Record" Dialog has been rewritten to make it more usuable and does not require a popup anymore.
                 </li>
                 <li>British National Grid references have been removed since they do not seem to be used.</li>
                 <li>
                     The default order of the database has been changed to show the most recently entered records first.
                 </li>
                 <li>
-                    We are adding some new seaerch filters. The only one that is currently working is to show only the records that you have created.
+                    We are adding some new seaerch filters, including to show only the records that you have created.
                 </li>
                 <li>
                     We are changing the order the "tabs" in the Gun details screens to more naturally mtch the way that people add data.
@@ -62,7 +68,7 @@
     </div>
     <div class="jumbotron jumbotron-fluid bg-white m-1">
         <div class="container">
-            <h3 >Contributing</h3>
+            <h2 >Contributing</h2>
             <p><strong>Version 2 desperately needs more coders!</strong></p>
             <p> We really do need more help to make Version 2 work and add the community features and researcher features that we want to create.</p>
             <p> If you would like to help out, whether coding or create better "help" and "best practice" screens or if you are a researcher
