@@ -1,0 +1,58 @@
+on:
+  pull_request:
+    types: ['opened', 'synchronize', 'closed']
+
+name: Build Angular
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+        
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+
+    steps:
+      - uses: actions/checkout@v1
+      
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: bcp
+        
+      - name: Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: npm install and npm run deploy
+        run: |
+          cd bcp
+          npm i
+          npx patch-package
+          chmod a+x build.sh
+          npm run build
+          cd ../dist
+          zip -r distro.zip .
+          
+      - name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: 'projects/702290345983/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'trackbash@appspot.gserviceaccount.com'
+          project_id: 'trackbash'
+          
+      - name: 'Deploy'
+        uses: 'google-github-actions/deploy-appengine@v1'
+        if: github.event.pull_request.merged == true
+        
+      - name: Push Build to Releases
+        uses: ncipollo/release-action@v1
+        if: github.event.pull_request.merged == true
+        with:
+          artifacts: "dist/distro.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.package-version.outputs.current-version}}
