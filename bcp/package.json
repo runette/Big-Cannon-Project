@@ -1,9 +1,9 @@
 {
   "name": "bcp",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/runette/ultima-ratio.git"
+    "url": "git+https://github.com/runette/Big-Cannon-Project.git"
   },
   "keywords": [
     "big",
@@ -14,9 +14,9 @@
   "author": "Paul Harwood",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/runette/ultima-ratio/issues"
+    "url": "https://github.com/runette/Big-Cannon-Project/issues"
   },
-  "homepage": "https://github.com/runette/ultima-ratio#readme",
+  "homepage": "https://github.com/runette/Big-Cannon-Project#readme",
   "scripts": {
     "ng": "ng",
     "start": "ng serve ",
