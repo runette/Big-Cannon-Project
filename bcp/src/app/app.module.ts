@@ -16,7 +16,7 @@ import { StorageModule } from '@angular/fire/storage';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {LayoutModule} from '@angular/cdk/layout';
 import {MatLegacyMenuModule as MatMenuModule} from '@angular/material/legacy-menu';
-import {MatLegacyButtonModule as MatButtonModule} from '@angular/material/legacy-button';
+import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatLegacyListModule as MatListModule} from '@angular/material/legacy-list';
@@ -32,7 +32,7 @@ import {MatLegacyRadioModule as MatRadioModule} from '@angular/material/legacy-r
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatLegacyProgressBarModule as MatProgressBarModule} from '@angular/material/legacy-progress-bar';
 import {MatBadgeModule} from '@angular/material/badge';
-import {MatLegacyTooltipModule as MatTooltipModule} from '@angular/material/legacy-tooltip';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {ScrollingModule } from '@angular/cdk/scrolling';
 import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
 import {MatLegacySnackBarModule as MatSnackBarModule} from '@angular/material/legacy-snack-bar';

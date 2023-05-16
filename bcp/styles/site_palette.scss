@@ -5,6 +5,12 @@
 // calculate them. These contrast colors are pulled from the public Material Design spec swatches.
 // While the contrast colors in the spec are not prescriptive, we use them for convenience.
 
+@use '@angular/material' as mat;
+@include mat.core();
+
+$dark-primary-text: rgba(black, 0.87);
+$light-primary-text: white;
+
 $site: (
   50: #e3f4ff,
   100: #bbe2ff,
