@@ -12,11 +12,15 @@
                     <div class="col-md-6">
                         <form id="location-entry">
                             <mat-card>
-                                <mat-card-title-group>
+                                <mat-card-header>
                                     <mat-card-title>Enter the Gun Location</mat-card-title>
-                                </mat-card-title-group>
+                                </mat-card-header>
                                 <mat-card-content>
-                                    <p><small class="text-muted "> Enter co-ordinates, move the cannon on the map below to the right place or use your current location</small></p>
+                                    <p>
+                                        <small class="text-muted "> 
+                                            Enter co-ordinates, move the cannon on the map below to the right place or use your current location
+                                        </small>
+                                    </p>
                                     <small class="text-muted "><a href="/recording">How to Record a Cannon</a> </small>
                                 </mat-card-content>
                             </mat-card>
@@ -37,9 +41,11 @@
                         >
                         </app-bcp-site-selector>
                         <mat-card>
-                            <mat-card-title>
-                                Details
-                            </mat-card-title>
+                            <mat-card-header>
+                                <mat-card-title>
+                                    Details
+                                </mat-card-title>
+                            </mat-card-header>
                             <mat-card-content>
                                 <mat-form-field 
                                     appearance="fill"
@@ -92,9 +98,9 @@
             <ng-template matStepLabel>Upload A Photo</ng-template>
             <ng-template matStepContent>
                 <mat-card>
-                    <mat-card-title-group>
+                    <mat-card-header>
                         <mat-card-title>Enter at least one photo - either an upload or a link</mat-card-title>
-                    </mat-card-title-group>
+                    </mat-card-header>
                     <mat-card-content>
                         <div class="row">
                             <div class="col-md-6">
@@ -110,9 +116,9 @@
                             </div>
                             <div class="col-md-6">
                                 <mat-card>
-                                    <mat-card-title-group>
+                                    <mat-card-header>
                                         <mat-card-title>Link to Existing Photographs</mat-card-title>
-                                    </mat-card-title-group>
+                                    </mat-card-header>
                                     <mat-card-content>
                                         <app-bcp-list-input
                                             label="Enter the URLs for the Photos"
@@ -129,9 +135,9 @@
                                     </mat-card-content>
                                 </mat-card>
                                 <mat-card>
-                                    <mat-card-title-group>
+                                    <mat-card-header>
                                         <mat-card-title>Link to Relevant Web Sites</mat-card-title>
-                                    </mat-card-title-group>
+                                    </mat-card-header>
                                     <mat-card-content>
                                         <app-bcp-list-input
                                             label="Associated Pages"
