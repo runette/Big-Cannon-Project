@@ -1,6 +1,6 @@
 <mat-sidenav-container fullscreen>
-  <mat-sidenav-content fxLayout="column">
-    <mat-toolbar color="primary" class="fixed-top">
+  <mat-sidenav-content class="fxCol">
+    <mat-toolbar color="primary">
       <button mat-button onCLick="window.open('https://ordnancesociety.org.uk/')">
         <div >
           <img class="img-responsive m0 p0" height="50" src="../assets/CLEAN OS LOGO-640.png">
@@ -49,7 +49,16 @@
         </button>
       </mat-action-list>
     </mat-menu>
-    <router-outlet class="pt-5"></router-outlet>
-    <div class="w-100" style="font-size:50%;" > <p class="text-center">Website <mat-icon style="font-size:50%;">copyright</mat-icon> <a href="https://runette.co.uk" target="_blank">Runette Software Ltd 2020/2022</a></p></div>
+    <div class="app-body">
+      <router-outlet class="pt-5"></router-outlet>
+      <div class="fxRow" >
+        <p class="mat-caption" style="font-size:50%;">
+          Website &#169;
+          <a href="https://runette.co.uk"  target="_blank">
+            Runette Software Ltd 2020/2022
+          </a>
+        </p>
+      </div>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

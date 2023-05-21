@@ -31,114 +31,153 @@
 </button>
 
 <!-- The Filter Bar-->
-<mat-toolbar class="map-nav-wide bg-ur" fxLayout="row" fxHide fxShow.gt-xs>
-    <div class="row">
-        <div class="col-2">
+<mat-toolbar color="primary" class="map-nav-wide fxRow"  fxHide fxShow.gt-xs>
+    <mat-grid-list cols="12" rowHeight="fit" style="height: 64px;">
+        <mat-grid-tile
+            colspan="2"
+            rowspan="2"
+        >
             <button mat-button 
                 [disabled]="data.cluster" 
                 [matMenuTriggerFor]="typeMenu"
                 matTooltip="Filter on the type of Gun"
-            >
-                <div class="row">
-                    Type
-                </div>
-                <div class="row">
-                    <small class="text-muted" 
-                        *ngIf=" data.gunCategory != 'All'"
-                    >
-                        {{data.gunCategory}}
-                    </small>
-                </div>
+                >
+                <mat-list>
+                    <mat-list-item>
+                        <span matListItemTitle>
+                            Type
+                        </span>
+                        <span matListItemLine>
+                            {{data.gunCategory != 'All' ?  data.gunCategory: ""}}
+                        </span>
+                    </mat-list-item>
+                </mat-list>
             </button>
-        </div>
-        <div class="col-2">
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="2"
+            rowspan="2"
+        >
             <button mat-button
-                [disabled]="data.cluster"
-                [matMenuTriggerFor]="materialMenu"
-                matTooltip="Filter on what the Gun is made of"
-            >
-                <div class="row">
-                    Material
-                </div>
-                <div class="row"> 
-                    <small class="text-muted"
-                        *ngIf=" data.material != 'All'"
-                    >
-                        {{data.material}}
-                    </small>
-                </div>
+                    [disabled]="data.cluster"
+                    [matMenuTriggerFor]="materialMenu"
+                    matTooltip="Filter on what the Gun is made of"
+                >
+                <mat-list>
+                    <mat-list-item>
+                        <span matListItemTitle>
+                            Material
+                        </span>
+                        <span matListItemLine>
+                            {{data.material != 'All' ? data.material: ""}}
+                        </span>
+                    </mat-list-item>
+                </mat-list>
             </button>
-        </div>
-        <div class="col-2">
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="2"
+            rowspan="2"
+        >
             <button mat-button
-                [disabled]="data.cluster"
-                [matMenuTriggerFor]="statusMenu"
-                matTooltip="Filter on the status of the record"
-            >
-                <div class="row">
-                    Status
-                </div>
-                <div class="row">
-                    <small class="text-muted"
-                        *ngIf=" data.recordQuality != 'All'"
-                    >
-                        {{data.recordQuality}}
-                    </small>
-                </div>
+                    [disabled]="data.cluster"
+                    [matMenuTriggerFor]="statusMenu"
+                    matTooltip="Filter on the status of the record"
+                >
+                <mat-list>
+                    <mat-list-item>
+                        <span matListItemTitle>
+                            Status
+                        </span>
+                        <span matListItemLine>
+                            {{data.recordQuality != 'All' ? data.recordQuality: ""}}
+                        </span>
+                    </mat-list-item>
+                </mat-list>
             </button>
-        </div>
-        <div class="col-2">
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="2"
+            rowspan="2"
+        >
             <button mat-button
-                [disabled]="data.cluster"
-                [matMenuTriggerFor]="orderMenu"
-                matTooltip="Change the order the Guns are listed in"
-            >
-                <div class="row">
-                    Order
-                </div>
-                <div class="row">
-                    <small class="text-muted"
-                        *ngIf=" ! data.cluster"
-                    >
-                        {{data.order}}
-                    </small>
-                </div>
+                    [disabled]="data.cluster"
+                    [matMenuTriggerFor]="orderMenu"
+                    matTooltip="Change the order the Guns are listed in"
+                >
+                <mat-list>
+                    <mat-list-item>
+                        <span matListItemTitle>
+                            Order
+                        </span>
+                        <span matListItemLine>
+                            {{data.cluster ? "": data.order }}
+                        </span>
+                    </mat-list-item>
+                </mat-list>
             </button>
-        </div>
-        <div class="col-2">
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+            rowspan="2"
+        >
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+            >
+            <mat-slide-toggle matTooltip="See only your own records or all records"
+                class=""
+                [color]="'accent'"
+                [checked]="data.ownRecords"
+                (change)="setOwn($event)"
+                [disabled]="data.cluster">
+            </mat-slide-toggle>
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+        >
             <mat-slide-toggle matTooltip="See only the records currently on the map or all records"
                 class=""
                 [color]="'accent'"
                 [checked]="data.here"
                 (change)="setHere($event)">
-                <span class="toggle-content">{{data.hereText}}</span>
             </mat-slide-toggle>
-        </div>
-        <div class="col-2">
-            <div class="row">
-                <mat-slide-toggle matTooltip="Cluster records by site"
-                    class=""
-                    [color]="'accent'"
-                    [checked]="data.cluster"
-                    (change)="setCluster($event)">
-                    <span class="toggle-content">{{data.clusterText}}</span>
-                </mat-slide-toggle>
-            </div>
-            <div class="row">   
-                <mat-slide-toggle matTooltip="See only your own records or all records"
-                    class=""
-                    [color]="'accent'"
-                    [checked]="data.ownRecords"
-                    (change)="setOwn($event)"
-                    [disabled]="data.cluster">
-                    <span class="toggle-content">{{data.ownText}}</span>
-                </mat-slide-toggle>
-            </div>
-        </div>
-    </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+            >
+            <mat-slide-toggle matTooltip="Cluster records by site"
+                class=""
+                [color]="'accent'"
+                [checked]="data.cluster"
+                (change)="setCluster($event)">
+            </mat-slide-toggle>
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+            >
+            <span class="toggle-content">
+                {{data.ownText}}
+            </span>
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+        >
+            <span class="toggle-content">
+                {{data.hereText}}
+            </span>
+        </mat-grid-tile>
+        <mat-grid-tile
+            colspan="1"
+        >
+            <span class="toggle-content">
+                {{data.clusterText}}
+            </span>
+        </mat-grid-tile>
+    </mat-grid-list>
 </mat-toolbar>
 
-<mat-expansion-panel class="map-nav bg-ur" fxLayout="row" fxShow fxHide.gt-xs>
+<mat-expansion-panel class="map-nav bg-ur fxRow"  fxShow fxHide.gt-xs>
     <mat-expansion-panel-header>
         <mat-panel-title>
         </mat-panel-title>
@@ -146,7 +185,12 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-action-list>
-        <button mat-list-item [disabled]="data.cluster" [matMenuTriggerFor]="typeMenu">Type<small class="text-muted" *ngIf=" data.gunCategory != 'All'"> {{data.gunCategory}}</small> </button>
+        <button mat-list-item [disabled]="data.cluster" [matMenuTriggerFor]="typeMenu">
+            Type
+            <small class="text-muted" *ngIf=" data.gunCategory != 'All'"> 
+                {{data.gunCategory}}
+            </small>
+        </button>
         <button mat-list-item [disabled]="data.cluster" [matMenuTriggerFor]="materialMenu">Material<small class="text-muted" *ngIf=" data.material != 'All'"> {{data.material}}</small></button>
         <button mat-list-item [disabled]="data.cluster" [matMenuTriggerFor]="statusMenu">Status<small class="text-muted" *ngIf=" data.recordQuality != 'All'"> {{data.recordQuality}}</small></button>
         <button mat-list-item [disabled]="data.cluster" [matMenuTriggerFor]="orderMenu">Order <small class="text-muted" *ngIf=" ! data.cluster">{{data.order}}</small></button>
@@ -182,7 +226,7 @@
 
 <!-- The Site Table -->
 <div class="float-table-wide bg-ur" *ngIf="data.cluster" id="table-entries" fxHide fxShow.gt-xs>
-    <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
+    <cdk-virtual-scroll-viewport  itemSize="64" class="w-100 h-100 p-1" > 
         <div *cdkVirtualFor="let site of sites.filteredSites">
             <app-bcp-site-card [routerLink]="['site']" [queryParams]="{site_id:site.id}"
                 [site]="site"
@@ -192,7 +236,7 @@
 </div>
 
 <div class="float-table bg-ur" *ngIf="data.cluster" id="table-entries" fxShow fxHide.gt-xs>
-    <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
+    <cdk-virtual-scroll-viewport itemSize="64" class="w-100 h-100" > 
         <div *cdkVirtualFor="let site of sites.filteredSites">
             <app-bcp-site-card [routerLink]="['site']" [queryParams]="{site_id:site.id}"
                 [site]="site"
@@ -204,7 +248,7 @@
 
 <!-- The Gun Table -->
 <div class="float-table-wide bg-ur" *ngIf="! data.cluster" id="table-entries" fxHide fxShow.gt-xs>
-    <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
+    <cdk-virtual-scroll-viewport itemSize="64" class="w-100 h-100 p-1"> 
         <div *cdkVirtualFor="let record of data.geoFilteredData">
             <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
                 [record]="record"
@@ -215,7 +259,7 @@
 </div>
 
 <div class="float-table bg-ur" *ngIf="! data.cluster" id="table-entries" fxShow fxHide.gt-xs>
-    <cdk-virtual-scroll-viewport itemSize="50" class="w-100 h-100 p-1"> 
+    <cdk-virtual-scroll-viewport itemSize="64" class="w-100 h-100 p-1"> 
         <div *cdkVirtualFor="let record of data.geoFilteredData">
             <app-bcp-data-card [routerLink]="['entry']" [queryParams]="{gunid:record.gunid}"
                 [record]="record"

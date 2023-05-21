@@ -58,6 +58,7 @@ import { BcpSiteCardComponent } from './bcp-site-card/bcp-site-card.component';
 import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.component';
 import { BcpSiteSelectorComponent } from './bcp-site-selector/bcp-site-selector.component';
 import { BcpListInputComponent, UrlProcessPipe } from './bcp-list-input/bcp-list-input.component';
+import { TruncatePipe } from './bcp-truncate-pipe';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { BcpListInputComponent, UrlProcessPipe } from './bcp-list-input/bcp-list
     BcpSiteSelectorComponent,
     BcpListInputComponent,
     UrlProcessPipe,
+    TruncatePipe,
   ],
   imports: [
     BrowserModule,

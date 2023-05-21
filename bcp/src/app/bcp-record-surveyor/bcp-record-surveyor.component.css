@@ -1,10 +1,10 @@
-@media (min-width: 1000px) {
+@media (min-width: 810px) {
     .overlap {
               position:absolute;
               top: 55%;
     }}
     
-@media (max-width: 999.98px) {
+@media (max-width: 809.98px) {
 .overlap {
             position: initial;
 }}

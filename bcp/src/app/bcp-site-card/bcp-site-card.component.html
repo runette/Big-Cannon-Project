@@ -1,28 +1,34 @@
 
-<div class="info" >
-    <div class="card">
-        <div class="row no-gutters">
-            <div class="col-2">
-                <img class="card-img m-1" [src]="site.geocode.icon ? site.geocode.icon : '../assets/32x32.png'"  width="32px"/>
-            </div>
-            <div class="col-6">
-                <div class="card-body">
-                    <div class="h6 card-title text-truncate"  *ngIf="site">
-                        {{site.display_name}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
+<mat-card>
+    <mat-card-content>
+        <mat-grid-list cols="12" rowHeight="64px">
+            <mat-grid-tile colspan="2">
+                <img class="card-img m-1" [src]="site.geocode.icon ? site.geocode.icon : '../assets/32x32.png'" />
+            </mat-grid-tile>
+            <mat-grid-tile colspan="6">
+                <mat-card class="w-100">
+                    <mat-card-header>
+                        <mat-card-title>
+                            {{site.display_name | truncate:20}}
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p class="mat-caption">
+                            {{site.geocode.formatted_address | truncate:20}}
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="4">
                 <mat-chip-set aria-label="Gun Count" class=" card-body align-middle">
                     <mat-chip *ngIf="site" 
                               color="primary" 
-                              selected
+                              highlighted=""
                               matTooltip="There {{site.guns.length>1?'are':'is'}} {{site.guns.length}} record{{site.guns.length>1?'s':''}} at this Site"
                         >{{site.guns.length}} Gun{{site.guns.length!=1?"s":""}} 
                     </mat-chip>
-                  </mat-chip-set>
-            </div>
-        </div>
-    </div>
-</div>
-
+                </mat-chip-set>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
+</mat-card>

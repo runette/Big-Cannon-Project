@@ -1,150 +1,188 @@
 
-<div class="container pt-5 pb-5">
-    <form [formGroup]="gunForm" >
-        <div class="row p-3  bg-ur" >
-            <div class="col-2">
-                <a  class="align-self-center mr-3" 
-                    *ngIf="gun && gun.images[0]" 
-                    [href]="gun.images[0].original"
-                  ><img *ngIf="gun.images[0].s200; else elseThumbnail"
-                        [src]="gun.images[0].s200" 
-                        height="70px"
-                        alt=""
-                    />
-                    <ng-template #elseThumbnail>
-                        <img
-                        [src]="gun.images[0].original" 
-                        height="70px"
-                        alt=""
-                    />
-                    </ng-template>
-                </a>
-            </div>
-            <div class="col-10 p-2">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h2 *ngIf="gun; else waiting">Gun ID : {{ gun.gunid }}</h2>
-                        <ng-template #waiting>Waiting for data ...</ng-template>
-                        <h5 *ngIf="! currentUser && gun" 
-                            >For more information on this gun - <a routerLink="/login" >Login</a>
-                        </h5>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="float-end" >
-                            <p class="text-muted" *ngIf="!edit"> Read-only </p>
-                            <button class="btn btn-secondary"
+<div class="fxRow">
+    <div class="container" >
+        <form [formGroup]="gunForm" >
+            <mat-card class="w-100">
+                <mat-card-header></mat-card-header>
+                <mat-card-content>
+                    <mat-grid-list cols="12" rowHeight="120px">
+                        <mat-grid-tile colspan="2">
+                            <a  class="align-self-center mr-3" 
+                                *ngIf="gun && gun.images[0]" 
+                                [href]="gun.images[0].original"
+                                >
+                                <img *ngIf="gun.images[0].s200; else elseThumbnail"
+                                    [src]="gun.images[0].s200" 
+                                    alt=""
+                                />
+                                <ng-template #elseThumbnail>
+                                    <img
+                                        [src]="gun.images[0].original" 
+                                        alt=""
+                                    />
+                                </ng-template>
+                            </a>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="8">
+                            <mat-form-field 
+                                    class="mat-h2 m-3"
+                                    appearance="outline"
+                                >
+                                <mat-label>
+                                    Gun ID
+                                </mat-label>
+                                <input 
+                                    matInput 
+                                    [value]="gun ? gun.gunid : '' " 
+                                    readonly="true"
+                                />
+                            </mat-form-field>
+                            <ng-template #waiting>
+                                <p class="w-100" 
+                                        style="text-align: left;"
+                                    >
+                                    Waiting for data ...
+                                </p>
+                            </ng-template>
+                            <ng-container *ngIf="! currentUser || ! edit">
+                                <mat-chip-listbox>
+                                    <a routerLink="/login" >
+                                    <mat-chip  
+                                            highlighted="true" 
+                                            color="accent" 
+                                            *ngIf="! currentUser && gun"
+                                            matTooltip="For more information on this gun"
+                                        >
+                                        Login
+                                    </mat-chip>
+                                    </a>
+                                    <mat-chip highlighted="true" color="warn" *ngIf="!edit">
+                                        Read Only
+                                    </mat-chip>
+                                </mat-chip-listbox>
+                            </ng-container>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <button mat-raised-button
                                     type="button" 
+                                    color="primary"
                                     (click)="link_here()"
                                     data-toggle="popover"
                                     data-content="A permanent link to this record has been copied to the clipboard"
                                     matTooltip="create a Permalink to this record"
-                                >Link here
+                                >
+                                <mat-icon fontIcon="link"></mat-icon>
+                                <span class="sm-hide">
+                                    Link here
+                                </span>
                             </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="tab-content" *ngIf="gun" id="nav-tabContent">
-            <bcp-record-observer *ngIf="currentScreen == 'observer'"
-                [gun]="gun"
-                [gunForm]="gunForm"
-            ></bcp-record-observer>
-            <bcp-record-reporter *ngIf="currentScreen == 'reporter'"
-                [gun]="gun"
-                [gunForm]="gunForm"
-            ></bcp-record-reporter>
-            <bcp-record-surveyor *ngIf="currentScreen == 'surveyor'"
-                [gun]="gun"
-                [gunForm]="gunForm"
-            ></bcp-record-surveyor>
-        </div>
-    </form>
-    <button mat-fab  
-        color="primary"
-        ngClass='fab'
-        (click)="submit()"
-        [matTooltip]="fabTooltip"
-    >
-        <mat-icon color='accent'
-            ngClass='fab-text'
-        >
-            {{fabIcon}}
-        </mat-icon>
-    </button>
-
-
-    <div class="row fixed-bottom  bg-light ">
-        <div class="col-3">
-            <button mat-raised-button
-                    color="primary"
-                    class="float-start mx-3  px-3"
-                    (click)="last()"
-                    matTooltip="Show the Previous Gun Record"
-                >
-                <i class="arrow left"></i>
-                <span class="d-none d-sm-inline"
-                    >Prev
-                </span>
-            </button>
-        </div>
-        <div class="col-6">
-            <div class="mx-auto">
-                <mat-button-toggle-group appearance="legacy"
-                                         *ngIf="user.login"
-                                         [(value)]="currentScreen"
-                    > 
-                    <mat-button-toggle  id="observer" 
-                                        role="tab" 
-                                        aria-controls="list-observer" 
-                                        value="observer"
-                                        matTooltip="Show the Observer Level Details"
-                        ><span class="d-inline d-sm-none"
-                            >O
-                        </span>
-                        <span class="d-none d-sm-inline"
-                            >Observer
-                        </span>
-                    </mat-button-toggle>
-                    <mat-button-toggle  id="reporter" 
-                                        role="tab" 
-                                        aria-controls="list-reporter" 
-                                        value="reporter"
-                                        matTooltip="Show the Reporter Level Details"
-                        ><span class="d-inline d-sm-none"
-                            >R
-                        </span>
-                        <span class="d-none d-sm-inline"
-                            >Recorder
-                        </span>
-                    </mat-button-toggle>
-                    <mat-button-toggle  id="surveyor"
-                                        role="tab" 
-                                        aria-controls="list-surveyor" 
-                                        value="surveyor"
-                                        matTooltip="Show the Surveyor Level Details"
-                        ><span class="d-inline d-sm-none"
-                            >S</span>
-                        <span class="d-none d-sm-inline"
-                            >Surveyor
-                        </span>
-                    </mat-button-toggle>
-                </mat-button-toggle-group>
-            </div> 
-        </div>     
-        <div class="col-3">
-            <button mat-raised-button 
-                    color="primary" 
-                    class="float-end mx-3  px-3" 
-                    (click)="next()"
-                    matTooltip="Show the next Gun Record" 
-                ><span class="d-none d-sm-inline"
-                    >Next
-                </span> 
-                <i class="arrow right"></i> 
-            </button>
-        </div>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                </mat-card-content>
+            </mat-card>
+            <ng-container  *ngIf="gun" id="nav-tabContent">
+                <bcp-record-observer *ngIf="currentScreen == 'observer'"
+                    [gun]="gun"
+                    [gunForm]="gunForm"
+                ></bcp-record-observer>
+                <bcp-record-reporter *ngIf="currentScreen == 'reporter'"
+                    [gun]="gun"
+                    [gunForm]="gunForm"
+                ></bcp-record-reporter>
+                <bcp-record-surveyor *ngIf="currentScreen == 'surveyor'"
+                    [gun]="gun"
+                    [gunForm]="gunForm"
+                ></bcp-record-surveyor>
+            </ng-container>
+        </form>
     </div>
 </div>
 
+<!-- Floating Buttons -->
 
+<button mat-fab  
+    color="primary"
+    ngClass='fab'
+    (click)="submit()"
+    [matTooltip]="fabTooltip"
+    >
+    <mat-icon color='accent'
+    ngClass='fab-text'
+    >
+    {{fabIcon}}
+    </mat-icon>
+</button>
+
+<div class="fbLeft">
+    <button mat-raised-button
+            color="primary"
+            class="float-start mx-3  px-3"
+            (click)="last()"
+            matTooltip="Show the Previous Gun Record"
+        >
+        <mat-icon fontIcon="chevron_left"></mat-icon>
+        <span class="sm-hide">
+            Prev
+        </span>
+    </button>
+    <mat-button-toggle-group
+            appearance="legacy"
+            *ngIf="user.login"
+            [(value)]="currentScreen"
+        > 
+        <mat-button-toggle 
+                id="observer" 
+                role="tab" 
+                aria-controls="list-observer" 
+                value="observer"
+                matTooltip="Show the Observer Level Details"
+            >
+            <span class="sm-show">
+                O
+            </span>
+            <span class="sm-hide">
+                Observer
+            </span>
+        </mat-button-toggle>
+        <mat-button-toggle  
+                id="reporter" 
+                role="tab" 
+                aria-controls="list-reporter" 
+                value="reporter"
+                matTooltip="Show the Reporter Level Details"
+            >
+            <span class="sm-show">
+                R
+            </span>
+            <span class="sm-hide">
+                Recorder
+            </span>
+        </mat-button-toggle>
+        <mat-button-toggle
+                id="surveyor"
+                role="tab" 
+                aria-controls="list-surveyor" 
+                value="surveyor"
+                matTooltip="Show the Surveyor Level Details"
+            >
+            <span class="sm-show">
+                S
+            </span>
+            <span class="sm-hide">
+                Surveyor
+            </span>
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-raised-button 
+            color="primary" 
+            class="float-end mx-3  px-3" 
+            (click)="next()"
+            matTooltip="Show the next Gun Record" 
+        >
+        <span class="sm-hide">
+            Next
+        </span>
+        <mat-icon fontIcon="chevron_right"></mat-icon>
+    </button>
+</div>
+            
