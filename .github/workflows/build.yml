@@ -31,7 +31,7 @@ jobs:
       - name: npm install and npm run deploy
         run: |
           cd bcp
-          npm i
+          npm i --force
           npx patch-package
           chmod a+x build.sh
           npm run build
