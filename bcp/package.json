@@ -20,7 +20,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve ",
-    "build": "source build.sh --configuration=production",
+    "build": "./build.sh --configuration=production",
     "deploy": "source deploy.sh",
     "IntTest": "source build.sh --configuration=itest",
     "test": "ng test",
