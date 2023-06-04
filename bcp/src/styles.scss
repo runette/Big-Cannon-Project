@@ -1,5 +1,7 @@
+
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
+
 
 
 // Plus imports for other components in your app.
@@ -9,10 +11,12 @@
 // Be sure that you only ever include this mixin once!
 //@include mat-core();
 
+
 @include mat.core();
 @import '../styles/site_theme.scss';
 
 @include mat.all-component-themes($bcp-app-theme);
+
 
 $primary: mat.get-color-from-palette($bcp-app-primary);
 $accent: mat.get-color-from-palette($bcp-app-accent);
