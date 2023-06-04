@@ -1,5 +1,7 @@
-mat-select.mat-select {
-    background-color: white;
-    border-style: solid;
-    border-color: white;
+::ng-deep .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: black;
+  }
+
+::ng-deep .mat-primary .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+    color: black;
 }

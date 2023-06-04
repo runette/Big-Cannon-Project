@@ -1,28 +1,34 @@
 
-<div class="info" >
-    <div class="card">
-        <div class="row no-gutters">
-            <div class="col-2">
-                <img class="card-img m-1" [src]="record.thumbnail ? record.thumbnail : '../assets/32x32.png'"  width="32px"/>
-            </div>
-            <div class="col-10">
-                <div class="card-body">
-                    <div class="h6 card-title text-truncate"  *ngIf="site">
-                        {{site.display_name}}
-                    </div>
-                    <div class="h6 card-title text-truncate" *ngIf="! site">
-                        <ng-template [ngIf]="record.description">
-                            {{ record.description}}
-                        </ng-template>
-                    </div>
-                    <div class="card-text">
-                        <p>
-                            <small class="text-mute" *ngIf="record.category && record.category != 'Not Known'">{{record.category}}, </small>
-                            <small class="text-mute" *ngIf="record.material && record.material != 'Not Known'">{{record.material}}</small>
+<mat-card >
+    <mat-card-content>
+        <mat-grid-list cols="12" rowHeight="64px">
+            <mat-grid-tile colspan="2">
+                <img class="card-img m-1" [src]="record.thumbnail ? record.thumbnail : '../assets/32x32.png'" />
+            </mat-grid-tile>
+            <mat-grid-tile colspan="10">
+                <mat-card class="w-100">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <ng-container *ngIf="site">
+                                {{site.display_name | truncate:35}}
+                            </ng-container>
+                            <ng-container *ngIf="! site && record.description ">
+                                {{ record.description | truncate:35}}
+                            </ng-container>
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>  
+                        <p class="mat-caption">
+                            <span *ngIf="record.category && record.category != 'Not Known'">
+                                {{record.category}},
+                            </span>
+                            <span *ngIf="record.material && record.material != 'Not Known'">
+                                {{record.material}}
+                            </span>
                         </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
+</mat-card>

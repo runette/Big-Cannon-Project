@@ -1,23 +1,29 @@
-<div class="container pt-5 pb-5" *ngIf="currentUser else notlogedin">
-    <mat-horizontal-stepper 
-        linear 
-        labelPosition="right" 
-        #stepper
-        (selectionChange)="selectionChange($event)"
-    >
-        <mat-step errorMessage="Site is required." [completed]="steponeCompleted" >
-            <ng-template matStepLabel>Add Gun Location and Site</ng-template>
-            <ng-template matStepContent>
-                <div class="row">
-                    <div class="col-md-6">
+<div class="fxRow">
+    <div class="container"   *ngIf="currentUser else notlogedin">
+        <mat-horizontal-stepper 
+            linear 
+            labelPosition="right" 
+            #stepper
+            (selectionChange)="selectionChange($event)"
+        >
+            <mat-step errorMessage="Site is required." [completed]="steponeCompleted" >
+                <ng-template matStepLabel>Add Gun Location and Site</ng-template>
+                <ng-template matStepContent>
+                    <div class="fxRow-sm">
                         <form id="location-entry">
                             <mat-card>
-                                <mat-card-title-group>
+                                <mat-card-header>
                                     <mat-card-title>Enter the Gun Location</mat-card-title>
-                                </mat-card-title-group>
+                                </mat-card-header>
                                 <mat-card-content>
-                                    <p><small class="text-muted "> Enter co-ordinates, move the cannon on the map below to the right place or use your current location</small></p>
-                                    <small class="text-muted "><a href="/recording">How to Record a Cannon</a> </small>
+                                    <p class="mat-body "> 
+                                        Enter co-ordinates, move the cannon on the map below to the right place or use your current location
+                                    </p>
+                                    <p class="mat-caption">
+                                        <a href="/recording">
+                                            How to Record a Cannon
+                                        </a>
+                                    </p>
                                 </mat-card-content>
                             </mat-card>
                             <app-bcp-gmap
@@ -28,77 +34,79 @@
                             >
                             </app-bcp-gmap>
                         </form>
-                    </div>
-                    <div class="col-md-6">
-                        <app-bcp-site-selector
-                            [location]="location"
-                            [site]="site"
-                            (newSite$)="this.site = $event"
-                        >
-                        </app-bcp-site-selector>
-                        <mat-card>
-                            <mat-card-title>
-                                Details
-                            </mat-card-title>
-                            <mat-card-content>
-                                <mat-form-field 
-                                    appearance="fill"
-                                    class="w-100"
-                                >
-                                    <mat-label>Description of Gun Location</mat-label>
-                                        <textarea matInput 
-                                            placeholder="Describe where the Gun is located in the site"
-                                            [value]="context"
-                                            (input)="context=$event.target.value"
+                        <div>
+                            <app-bcp-site-selector
+                                [location]="location"
+                                [site]="site"
+                                (newSite$)="this.site = $event"
+                            >
+                            </app-bcp-site-selector>
+                            <mat-card >
+                                <mat-card-header>
+                                    <mat-card-title>
+                                        Details
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="fxCol">
+                                        <mat-form-field 
+                                            appearance="fill"
+                                            class="w-100"
                                         >
-                                        </textarea>
-                                        <button mat-icon-button
-                                            *ngIf="context" 
-                                            matSuffix  
-                                            aria-label="Clear" 
-                                            (click)="context=''"
+                                            <mat-label>Description of Gun Location</mat-label>
+                                                <textarea matInput 
+                                                    placeholder="Describe where the Gun is located in the site"
+                                                    [value]="context"
+                                                    (input)="context=$event.target.value"
+                                                >
+                                                </textarea>
+                                                <button mat-icon-button
+                                                    *ngIf="context" 
+                                                    matSuffix  
+                                                    aria-label="Clear" 
+                                                    (click)="context=''"
+                                                >
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                        </mat-form-field>
+                                        <mat-form-field 
+                                            appearance="fill"
+                                            class="w-100"
                                         >
-                                            <mat-icon>close</mat-icon>
-                                        </button>
-                                </mat-form-field>
-                                <mat-form-field 
-                                    appearance="fill"
-                                    class="w-100"
-                                >
-                                    <mat-label>Gun Description</mat-label>
-                                    <textarea matInput
-                                        placeholder="Describe the Gun itself"
-                                        [value]="description"
-                                        (input)="description=$event.target.value"
-                                    >
-                                    </textarea>
-                                    <button mat-icon-button
-                                        *ngIf="description" 
-                                        matSuffix  
-                                        aria-label="Clear" 
-                                        (click)="description=''"
-                                    >
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                </mat-form-field>
-                            </mat-card-content>
-                        </mat-card>
+                                            <mat-label>Gun Description</mat-label>
+                                            <textarea matInput
+                                                placeholder="Describe the Gun itself"
+                                                [value]="description"
+                                                (input)="description=$event.target.value"
+                                            >
+                                            </textarea>
+                                            <button mat-icon-button
+                                                *ngIf="description" 
+                                                matSuffix  
+                                                aria-label="Clear" 
+                                                (click)="description=''"
+                                            >
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
                     </div>
-                </div>
-            </ng-template>
-        </mat-step>
+                </ng-template>
+            </mat-step>
 
-        <mat-step errorMessage="One Photo is Required" [completed]="steptwoCompleted">
-            <ng-template matStepLabel>Upload A Photo</ng-template>
-            <ng-template matStepContent>
-                <mat-card>
-                    <mat-card-title-group>
-                        <mat-card-title>Enter at least one photo - either an upload or a link</mat-card-title>
-                    </mat-card-title-group>
-                    <mat-card-content>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <mat-card>
+            <mat-step errorMessage="One Photo is Required" [completed]="steptwoCompleted">
+                <ng-template matStepLabel>Upload A Photo</ng-template>
+                <ng-template matStepContent>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Enter at least one photo - either an upload or a link</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="fxRow-sm">
+                                <mat-card class="w-100">
                                     <app-bcp-photos
                                         [changeDetect]="changeDetect"
                                         (submit$)="acceptPhoto($event)"
@@ -107,52 +115,52 @@
                                         (error)="imageError($event)"
                                     ></app-bcp-photos>
                                 </mat-card>
+                                <div class="fxCol w-100">
+                                    <mat-card>
+                                        <mat-card-header>
+                                            <mat-card-title>Link to Existing Photographs</mat-card-title>
+                                        </mat-card-header>
+                                        <mat-card-content>
+                                            <app-bcp-list-input
+                                                label="Enter the URLs for the Photos"
+                                                placeholder="add url (e.g. https://www.site.com/photo.jpg"
+                                                (updateList)="newImageUrl($event)"
+                                            >
+                                            </app-bcp-list-input>
+                                            <app-bcp-list-input
+                                                label="Add copyright messages for any content included in this record"
+                                                placeholder="add attribution (e.g. (c) This Museum)"
+                                                (updateList)="attributions=$event"
+                                            >
+                                            </app-bcp-list-input>
+                                        </mat-card-content>
+                                    </mat-card>
+                                    <mat-card>
+                                        <mat-card-header>
+                                            <mat-card-title>Link to Relevant Web Sites</mat-card-title>
+                                        </mat-card-header>
+                                        <mat-card-content>
+                                            <app-bcp-list-input
+                                                label="Associated Pages"
+                                                placeholder="Urls of Associated Pages"
+                                                (updateList)="pages=$event"
+                                            >
+                                            </app-bcp-list-input>
+                                        </mat-card-content>
+                                    </mat-card>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <mat-card>
-                                    <mat-card-title-group>
-                                        <mat-card-title>Link to Existing Photographs</mat-card-title>
-                                    </mat-card-title-group>
-                                    <mat-card-content>
-                                        <app-bcp-list-input
-                                            label="Enter the URLs for the Photos"
-                                            placeholder="add url (e.g. https://www.site.com/photo.jpg"
-                                            (updateList)="newImageUrl($event)"
-                                        >
-                                        </app-bcp-list-input>
-                                        <app-bcp-list-input
-                                            label="Add copyright messages for any content included in this record"
-                                            placeholder="add attribution (e.g. (c) This Museum)"
-                                            (updateList)="attributions=$event"
-                                        >
-                                        </app-bcp-list-input>
-                                    </mat-card-content>
-                                </mat-card>
-                                <mat-card>
-                                    <mat-card-title-group>
-                                        <mat-card-title>Link to Relevant Web Sites</mat-card-title>
-                                    </mat-card-title-group>
-                                    <mat-card-content>
-                                        <app-bcp-list-input
-                                            label="Associated Pages"
-                                            placeholder="Urls of Associated Pages"
-                                            (updateList)="pages=$event"
-                                        >
-                                        </app-bcp-list-input>
-                                    </mat-card-content>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </ng-template>
-        </mat-step>
-    </mat-horizontal-stepper>
+                        </mat-card-content>
+                    </mat-card>
+                </ng-template>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </div>
 </div>
 <ng-template #notlogedin>
-    <div class="container pt-5 pb-5">
-        <div class="jumbotron jumbotron-fluid text-center bg-ur" >
-            <h1 class="display-4">You must be logged in to create new Records</h1>
+    <div style="padding-top: 5px; padding-bottom: 5px;" >
+        <div class="fxRow bg-ur" >
+            <h1 >You must be logged in to create new Records</h1>
         </div>
     </div>
 </ng-template>

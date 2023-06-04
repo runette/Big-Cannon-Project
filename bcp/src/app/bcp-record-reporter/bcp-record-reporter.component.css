@@ -3,6 +3,7 @@
     cursor: pointer;
     border: 10px solid transparent;
     margin-bottom: 0;
+    min-height: 32px;
 }
 
 .image-checkbox-checked {

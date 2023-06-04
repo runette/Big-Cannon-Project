@@ -1,20 +1,25 @@
 <mat-sidenav-container fullscreen>
-  <mat-sidenav-content fxLayout="column">
-    <mat-toolbar color="primary" class="fixed-top">
-      <button mat-button routerLink="/">
-        <div class="navbar-brand">
-          <img class="img-responsive m0 p0" height="50" src="../assets/ultima-ratio-logo.jpg">
+  <mat-sidenav-content class="fxCol">
+    <mat-toolbar color="primary">
+      <button mat-button onCLick="window.open('https://ordnancesociety.org.uk/')">
+        <div >
+          <img class="img-responsive m0 p0" height="50" src="../assets/CLEAN OS LOGO-640.png">
         </div>
       </button>
       <div fxLayout="row" fxHide fxShow.gt-xs>
-          <button mat-button routerLink="/database" matTooltip="Access the Gun database">Database</button>
+          <button mat-button   routerLink="/database" matTooltip="Access the Gun database">Database</button>
           <button mat-button routerLink="/new_record" matTooltip="Create a New Record">New Record</button>
-          <button mat-button routerLink="/v2" matTooltip="Details of the Version 2 Beta">About Version 2</button>
+          <button mat-button routerLink="/" matTooltip="Details of the Version 2 Beta">About</button>
       </div>
       <span class="fill-remaining-space"></span>
       <p></p>
       <div fxLayout="row" fxHide fxShow.gt-xs>
-        <a mat-button href="http://eepurl.com/hrRxUf" target="_blank" matTooltip="Subscribe to our Newsletter">Newsletter</a>
+        <button mat-button
+            onClick="window.open('http://eepurl.com/hrRxUf')"
+             matTooltip="Subscribe to our Newsletter"
+          >
+          Newsletter
+      </button>
     </div>
       <button mat-icon-button routerLink="login" class="image"
           [matBadge]="badgeText"
@@ -35,11 +40,25 @@
       <mat-action-list>
         <button mat-list-item routerLink="/database" matTooltip="Access the Gun database">Database</button>
         <button mat-list-item routerLink="/new_record" matTooltip="Create a New Record">New Record</button>
-        <button mat-button routerLink="/v2" matTooltip="Details of the Version 2 Beta">About Version 2</button>
-        <a mat-button href="http://eepurl.com/hrRxUf" target="_blank" matTooltip="Subscribe to our Newsletter">Newsletter</a>
+        <button mat-list-item routerLink="/" matTooltip="Details of the Version 2 Beta">About</button>
+        <button mat-list-item 
+            onClick="window.open('http://eepurl.com/hrRxUf')" 
+            matTooltip="Subscribe to our Newsletter"
+          >
+          Newsletter
+        </button>
       </mat-action-list>
     </mat-menu>
-    <router-outlet class="pt-5"></router-outlet>
-    <div class="w-100" style="font-size:50%;" > <p class="text-center">Website <mat-icon style="font-size:50%;">copyright</mat-icon> <a href="https://runette.co.uk" target="_blank">Runette Software Ltd 2020/2022</a></p></div>
+    <div class="app-body">
+      <router-outlet class="pt-5"></router-outlet>
+      <div class="fxRow" >
+        <p class="mat-caption" style="font-size:50%;">
+          Website &#169;
+          <a href="https://runette.co.uk"  target="_blank">
+            Runette Software Ltd 2020/2022
+          </a>
+        </p>
+      </div>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

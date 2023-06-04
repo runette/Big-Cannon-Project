@@ -5,7 +5,7 @@ import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
 import { BcpSiteDataService } from '../bcp-site-data.service';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
 import { LocateControlOptions } from '../googlemap-locate/google-locate-control';
 import { MarkerClustererOptions, MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
