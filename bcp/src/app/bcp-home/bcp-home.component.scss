@@ -1,27 +1,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-<<<<<<< HEAD
-@use '@angular/material' as mat;
-
-
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-//@include mat-core();
-
-@include mat.core();
-@import '../../../styles/site_theme.scss';
-
-@include mat.all-component-themes($bcp-app-theme);
-
-$primary: mat.get-color-from-palette($bcp-app-primary);
-$accent: mat.get-color-from-palette($bcp-app-accent);
-=======
 @mixin color($theme) {
-
     $color-config: mat.get-color-config($theme);
 
     // Get the primary color palette from the color-config.
@@ -30,7 +10,6 @@ $accent: mat.get-color-from-palette($bcp-app-accent);
   
     $primary: mat.get-color-from-palette($primary-palette, 700);
     $accent: mat.get-color-from-palette($accent-palette, 700);
->>>>>>> 76fb0b7 (Theme fixes)
 
 
 .paral {
