@@ -1,6 +1,6 @@
-runtime: python39
+runtime: python311
 instance_class: F4
-service: default
+service: stageing
 automatic_scaling:
   min_instances: 0
 entrypoint: gunicorn -b :$PORT -w 4 main:app

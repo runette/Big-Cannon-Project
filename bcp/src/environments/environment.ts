@@ -47,5 +47,6 @@ export const environment = {
     projectId: PROJECT_ID,
     storageBucket: STORAGE_BUCKET,
   },
-  apiUrl: 'http://localhost:8000/_ah/api'
+  //apiUrl: 'http://localhost:8000/_ah/api'
+  apiUrl: 'https://stageing-dot-ultima-ratio-221014.nw.r.appspot.com/_ah/api'
 }

@@ -1,0 +1,9 @@
+dispatch:
+  # Version 3 stageing
+  - url: "v3.bigcannonproject.org/"
+    service: stageing
+  # Default service
+  - url: "*.bigcannonproject.org/"
+    service: default
+  - url: "bigcannonproject.org/"
+    service: default

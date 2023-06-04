@@ -1,14 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-
-
 @import '~@angular/material/theming';
 @import '../styles/site_theme.scss';
 
 @include angular-material-color($bcp-app-theme);
+
+
+
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 $primary: mat-color(map-get($bcp-app-theme, primary));
 $accent: mat-color(map-get($bcp-app-theme, accent));
