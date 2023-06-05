@@ -27,14 +27,6 @@ from flask_cors import CORS
 import logging
 from google.cloud import ndb
 
-try:
-    import googleclouddebugger
-    googleclouddebugger.enable(
-      breakpoint_enable_canary=True
-  )
-except ImportError:
-    pass
-
 firebase_admin.initialize_app()
 client = ndb.Client()
 
@@ -53,6 +45,5 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
-    if 'WINGDB_ACTIVE' in os.environ:
-        app.debug = False
-        app.run(host='0.0.0.0', port=8000)
+    app.debug = False
+    app.run(host='0.0.0.0', port=8000)
