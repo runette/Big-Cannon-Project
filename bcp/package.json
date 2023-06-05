@@ -47,7 +47,6 @@
     "@types/firebase": "*",
     "firebase": "*",
     "ng-gallery": "8.0.0",
-    "ngx-lightbox": "8.0.0",
     "rxjs": "^6.6.7",
     "tslib": "*",
     "workbox-cacheable-response": "*",
