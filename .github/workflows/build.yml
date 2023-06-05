@@ -41,9 +41,9 @@ jobs:
       - name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v1'
         with:
-          workload_identity_provider: 'projects/702290345983/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-          service_account: 'trackbash@appspot.gserviceaccount.com'
-          project_id: 'trackbash'
+          workload_identity_provider: 'projects/927628257279/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'ultima-ratio-221014@appspot.gserviceaccount.com'
+          project_id: 'ultima-ratio-221014'
           
       - name: 'Deploy'
         uses: 'google-github-actions/deploy-appengine@v1'
@@ -56,3 +56,4 @@ jobs:
           artifacts: "dist/distro.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.package-version.outputs.current-version}}
+
