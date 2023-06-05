@@ -46,7 +46,7 @@
     "@googlemaps/markerclusterer": "*",
     "@types/firebase": "*",
     "firebase": "*",
-    "ng-gallery": "8.0.0",
+    "ng-gallery": "^7.0.0",
     "rxjs": "^6.6.7",
     "tslib": "*",
     "workbox-cacheable-response": "*",
