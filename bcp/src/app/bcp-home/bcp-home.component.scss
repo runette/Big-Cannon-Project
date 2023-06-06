@@ -12,54 +12,33 @@
     $accent: mat.get-color-from-palette($accent-palette, 700);
 
 
-.paral {
-    min-height: 500px;
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: 50% 50%;
-    }
-    
-.para01 {
-    background-image: url("/assets/gun-map-768.jpg");
-    }
-    
-.para02 {
-    background-image: url("/assets/cannon_measuring.jpg");
-    }
-    
-.jumbotron {
-    margin-bottom: 0;
-    }
+    .paral {
+        min-height: 200px;
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: 50% 50%;
+        }
+        
+    .para01 {
+        background-image: url("/assets/gun-map-768.jpg");
+        }
+        
+    .para02 {
+        background-image: url("/assets/cannon_measuring.jpg");
+        }
 
-.btn-primary {
-    background-color: $primary;
-    box-shadow: 0 6px 10px 0 #666;
-    border-color: $primary;
-    color: $accent;
-    text-align: center;
-    transition: all 0.1s ease-in-out;
-    }
-    
-.btn-secondary {
-box-shadow: 0 6px 10px 0 #666;
-transition: all 0.1s ease-in-out;
-}
 
-.btn-primary:hover {
-background-color: $primary;
-color: $accent;
-border-color: $primary;
-box-shadow: 0 6px 14px 0 #666;
-transform: scale(1.05);
-}
-
-.img-back {
-    opacity: 0.8;
-    background-color: $primary;
-    }
-      
-.img-text {
-color: white;
-opacity:1.0 !important;
-}
+    .img-back {
+        opacity: 0.8;
+        background-color: $primary;
+        padding: 10px;
+        margin: 10px;
+        }
+        
+    .img-text {
+        color: white;
+        opacity:1.0 !important;
+        font-weight: bold;
+        text-shadow: #444 0 1px 1px;
+        }
 }

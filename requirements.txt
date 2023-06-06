@@ -2,7 +2,7 @@ Flask==2.2.5
 googlemaps
 Jinja2
 simplejson
-urllib3
+urllib3==1.26.15
 gunicorn
 connexion
 firebase_admin
