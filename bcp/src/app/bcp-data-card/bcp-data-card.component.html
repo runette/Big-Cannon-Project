@@ -10,7 +10,7 @@
                     <mat-card-header>
                         <mat-card-title>
                             <ng-container *ngIf="site">
-                                {{site.display_name | truncate:35}}
+                                {{site.display_name | truncate:20}}
                             </ng-container>
                             <ng-container *ngIf="! site && record.description ">
                                 {{ record.description | truncate:35}}

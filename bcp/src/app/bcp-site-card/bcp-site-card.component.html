@@ -5,11 +5,11 @@
             <mat-grid-tile colspan="2">
                 <img class="card-img m-1" [src]="site.geocode.icon ? site.geocode.icon : '../assets/32x32.png'" />
             </mat-grid-tile>
-            <mat-grid-tile colspan="6">
+            <mat-grid-tile colspan="8">
                 <mat-card class="w-100">
                     <mat-card-header>
                         <mat-card-title>
-                            {{site.display_name | truncate:20}}
+                            {{site.display_name | truncate:15}}
                         </mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
@@ -19,7 +19,7 @@
                     </mat-card-content>
                 </mat-card>
             </mat-grid-tile>
-            <mat-grid-tile colspan="4">
+            <mat-grid-tile colspan="2">
                 <mat-chip-set aria-label="Gun Count" class=" card-body align-middle">
                     <mat-chip *ngIf="site" 
                               color="primary" 

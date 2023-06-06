@@ -73,8 +73,8 @@ class GunApi:
             users = User.query().fetch()
             old_site = None
             new_site = None
-            if user_data and user_data.test_user:
-                namespace = 'test'
+            if user_data:
+                namespace = user_data.namespace()
             else:
                 namespace = None
             try:
@@ -157,8 +157,8 @@ class GunApi:
         with client.context():
             user_data = User.get_id(user)
             users = User.query().fetch()
-            if user_data and user_data.test_user:
-                namespace = 'test'
+            if user_data:
+                namespace = user_data.namespace()
             else:
                 namespace = None
             try:
