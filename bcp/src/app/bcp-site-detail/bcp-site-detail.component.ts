@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcpSiteDataService, Site, MapSites } from '../bcp-site-data.service';
 import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
@@ -46,7 +46,8 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
               private request: ActivatedRoute,
               public user: BcpUserService,
               private api: BcpApiService,
-              public DATA_VALUES: BcpFilterValuesService
+              public DATA_VALUES: BcpFilterValuesService,
+              private changeDet: ChangeDetectorRef,
             ) 
     {
 
@@ -68,6 +69,7 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   }
 
   updateSite() : void {
+    this.changeDet.reattach();
     if (this.site_id){
       this.site = this.sites.fetch(this.site_id);
       this.index = this.sites.filteredSites?.findIndex(element => element.id ===  this.site_id);
