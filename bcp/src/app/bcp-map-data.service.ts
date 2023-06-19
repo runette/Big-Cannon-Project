@@ -35,7 +35,10 @@ export class BcpMapDataService implements OnDestroy{
   private transaction: number;
   private subscriptions: Subscription[] = [];
 
-  constructor(private user: BcpUserService, private api: BcpApiService) { 
+  constructor(
+      private user: BcpUserService,
+      private api: BcpApiService,
+      ) { 
     this.$newData = new Subject<boolean>();
     this.$clearMarkers = new Subject<boolean>();
     this.transaction = 0;

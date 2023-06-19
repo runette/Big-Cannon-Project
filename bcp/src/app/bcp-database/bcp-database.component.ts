@@ -1,6 +1,6 @@
 ///<reference types='google.maps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
-import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, ElementRef, ChangeDetectionStrategy} from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, ElementRef, ChangeDetectorRef} from '@angular/core';
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
@@ -16,11 +16,10 @@ import { Subscription } from 'rxjs';
   selector: 'app-bcp-database',
   templateUrl: './bcp-database.component.html',
   styleUrls: ['./bcp-database.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   options: google.maps.MapOptions = {
-    zoom: 2,
+    zoom: 2.5,
     center: {lat: 50, lng: 80},
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     zoomControl: true,
@@ -63,7 +62,8 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(public FILTER_TEXT: BcpFilterValuesService, 
               public data: BcpMapDataService, 
               public sites: BcpSiteDataService,
-              private breakpointObserver: BreakpointObserver
+              private breakpointObserver: BreakpointObserver,
+              private changeDet: ChangeDetectorRef,
               ) { }
 
   ngOnDestroy(): void {
@@ -158,12 +158,17 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     let proj = this.map.getProjection();
     let bounds = this.map.getBounds();
     this.data.nativeBounds = bounds;
-    if (this.breakpointObserver.isMatched([Breakpoints.XSmall, Breakpoints.Small])) {
+    let ne = bounds.getNorthEast();
+    let sw = bounds.getSouthWest();
+    let oob = Math.abs(ne.lat()) == 90 ||
+              Math.abs(ne.lng()) == 180 ||
+              Math.abs(sw.lat()) == 90 ||
+              Math.abs(sw.lng()) == 180;
+    if (oob || this.breakpointObserver.isMatched([Breakpoints.XSmall, Breakpoints.Small])) {
       this.data.boundingBox = bounds;
       this.sites.boundingBox = bounds;
     } else {
-      let ne = bounds.getNorthEast();
-      let sw = bounds.getSouthWest();
+
       let bottomLeft = proj.fromLatLngToPoint(sw);
       let topRight = proj.fromLatLngToPoint(ne);
       let scale = 1 << this.map.getZoom();
@@ -182,9 +187,12 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public updateSites( ): void {}
+  public updateSites( ): void {
+    this.changeDet.detectChanges();
+  }
 
   public loadMarkers( ): void {
+    this.changeDet.reattach();
     if(! this.mc){
       this.clusterOptions.map = this.map;
       this.mc = new MarkerClusterer(this.clusterOptions );
