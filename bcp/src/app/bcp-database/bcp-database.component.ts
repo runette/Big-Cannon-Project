@@ -5,7 +5,7 @@ import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
 import { BcpSiteDataService } from '../bcp-site-data.service';
-import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LocateControlOptions } from '../googlemap-locate/google-locate-control';
 import { MarkerClustererOptions, MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -160,13 +160,16 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     this.data.nativeBounds = bounds;
     let ne = bounds.getNorthEast();
     let sw = bounds.getSouthWest();
+    // if zoomed too close - the calculation will fail because the bounds are limited to +-180. +-90
     let oob = Math.abs(ne.lat()) == 90 ||
               Math.abs(ne.lng()) == 180 ||
               Math.abs(sw.lat()) == 90 ||
               Math.abs(sw.lng()) == 180;
+    // if out of bounds or on a small screen - the map is the bounding box
     if (oob || this.breakpointObserver.isMatched([Breakpoints.XSmall, Breakpoints.Small])) {
       this.data.boundingBox = bounds;
       this.sites.boundingBox = bounds;
+    // otherwise - the dotted line box is the bounding box
     } else {
 
       let bottomLeft = proj.fromLatLngToPoint(sw);

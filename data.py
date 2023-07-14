@@ -27,6 +27,7 @@ import googlemaps
 from images import ndbImage
 from helpers import to_int
 from google.cloud import ndb
+from google.cloud import secretmanager
 
 import requests
 import time
@@ -220,7 +221,10 @@ class User(ndb.Model):
 
 
 def geolocate(location, namespace):
-    gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
+    client = secretmanager.SecretManagerServiceClient()
+    key_path = "projects/927628257279/secrets/keys/versions/1"
+    response = client.access_secret_version(request={"name": key_path})
+    gmaps = googlemaps.Client(key=response.payload.data.decode("UTF-8"))
     loc = (location.latitude, location.longitude)
     reverse_geocode_result = gmaps.reverse_geocode( loc )
     for radius in [100, 300, 600, 1000]:
