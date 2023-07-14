@@ -220,7 +220,7 @@ class User(ndb.Model):
 
 
 def geolocate(location, namespace):
-    gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
+    gmaps = googlemaps.Client(key='AIzaSyBkVN5TnAuicyZPm8Fva3-2Ri4XL-m4IFo')
     loc = (location.latitude, location.longitude)
     reverse_geocode_result = gmaps.reverse_geocode( loc )
     for radius in [100, 300, 600, 1000]:
