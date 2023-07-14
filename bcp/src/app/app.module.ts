@@ -60,6 +60,7 @@ import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.compon
 import { BcpSiteSelectorComponent } from './bcp-site-selector/bcp-site-selector.component';
 import { BcpListInputComponent, UrlProcessPipe } from './bcp-list-input/bcp-list-input.component';
 import { TruncatePipe } from './bcp-truncate-pipe';
+import { CookieDialog } from './app.component'
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { TruncatePipe } from './bcp-truncate-pipe';
     BcpListInputComponent,
     UrlProcessPipe,
     TruncatePipe,
+    CookieDialog,
   ],
   imports: [
     BrowserModule,
@@ -123,7 +125,7 @@ import { TruncatePipe } from './bcp-truncate-pipe';
     ScrollingModule,
     MatCardModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   providers: [
   ],

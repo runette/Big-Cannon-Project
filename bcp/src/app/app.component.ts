@@ -3,11 +3,11 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BcpUserService, BcpUser } from './bcp-user.service';
 import { Subscription } from 'rxjs';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
-import { PreferenceData, BcpPreferencesService } from './bcp-preferences.service'
+import { PreferenceData, BcpPreferencesService, CookieStatus } from './bcp-preferences.service'
 
 const CookieDialogConfig : MatDialogConfig = {
   closeOnNavigation: false,
-  disableClose: false,
+  disableClose: true,
   position: {
     top: '5%',
     left: '10%'
@@ -32,6 +32,7 @@ export class AppComponent implements AfterViewInit{
   constructor(private user: BcpUserService, 
               private sanitizer: DomSanitizer,
               private dialog: MatDialog,
+              private prefs: BcpPreferencesService,
             ){
     this.subs.push(
       this.user.user.subscribe({
@@ -41,8 +42,17 @@ export class AppComponent implements AfterViewInit{
       }
     ))
   }
+
   ngAfterViewInit(): void {
-    this.dialog.open(CookieDialog, CookieDialogConfig)
+    if (! this.prefs.data) { 
+      this.prefs.data = {
+        cookie_status: CookieStatus.NONE
+      };
+    }
+    if (this.prefs.data.cookie_status == CookieStatus.NONE) {
+      CookieDialogConfig.data=this.prefs;
+      this.dialog.open(CookieDialog, CookieDialogConfig)
+    }
   }
 
   onUserChange(user: BcpUser){
@@ -82,10 +92,16 @@ export class AppComponent implements AfterViewInit{
 export class CookieDialog {
   constructor(
     public dialogRef: MatDialogRef<CookieDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: PreferenceData,
+    @Inject(MAT_DIALOG_DATA) public prefs: BcpPreferencesService,
   ) {}
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  change(event:any): void {
+    let data = this.prefs.data;
+    if (event.checked) {
+      data.cookie_status = CookieStatus.ALL;
+    } else {
+      data.cookie_status = CookieStatus.NOT_SOCIAL;
+    }
+    this.prefs.data = data;
   }
 }

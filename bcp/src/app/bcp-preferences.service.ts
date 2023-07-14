@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 export enum CookieStatus {
   ALL,
+  NOT_SOCIAL,
   NONE,
 }
 
@@ -17,10 +18,11 @@ export class BcpPreferencesService {
   private _data: PreferenceData;
 
   get data(): PreferenceData {
-    if (this.data) return this._data;
+    if (this._data) return this._data;
     let storedData = localStorage.getItem('prefs')
     if ( storedData ) {
-      return JSON.parse( storedData )
+      this._data =  JSON.parse( storedData )
+      return this._data;
     }
     return null;
   }
