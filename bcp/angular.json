@@ -103,17 +103,17 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "bcp:build"
+            "buildTarget": "bcp:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "bcp:build:production"
+              "buildTarget": "bcp:build:production"
             },
             "development": {
-              "browserTarget": "bcp:build:development"
+              "buildTarget": "bcp:build:development"
             },
-            "itest":{
-              "browserTarget": "bcp:build:itest"
+            "itest": {
+              "buildTarget": "bcp:build:itest"
             }
           },
           "defaultConfiguration": "development"
@@ -121,7 +121,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bcp:build"
+            "buildTarget": "bcp:build"
           }
         },
         "test": {
