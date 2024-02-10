@@ -242,7 +242,6 @@ export interface DataItem {
   button_code?: string;
   thumbnail?:string;
   quality?: RecordQuality;
-  marker?: Marker;
   attributions?: string[];
   web_links?:boolean;
   urls?: string[];
@@ -260,10 +259,4 @@ export interface Measurements {
   trunnion_width?: number;
   trunnion_diameter?: number;
   trunnion_offset?: number;
-}
-
-export class Marker extends google.maps.Marker {
-  toJSON() {
-    return undefined
-  }
 }

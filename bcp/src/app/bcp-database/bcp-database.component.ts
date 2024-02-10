@@ -1,9 +1,8 @@
-///<reference types='google.maps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, ElementRef, ChangeDetectorRef} from '@angular/core';
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
-import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
+import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
 import { BcpSiteDataService } from '../bcp-site-data.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LocateControlOptions } from '../googlemap-locate/google-locate-control';
@@ -196,7 +195,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public loadMarkers( ): void {
     this.changeDet.reattach();
-    if(! this.mc){
+    /* if(! this.mc){
       this.clusterOptions.map = this.map;
       this.mc = new MarkerClusterer(this.clusterOptions );
       this.mc.clearMarkers();
@@ -242,6 +241,6 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.mc.addMarkers(markers);
       }
-    }
+    } */
   }
 }
