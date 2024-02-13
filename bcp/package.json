@@ -44,7 +44,6 @@
     "@angular/platform-browser-dynamic": "17",
     "@angular/router": "17",
     "@googlemaps/markerclusterer": "*",
-    "@types/firebase": "*",
     "@types/supercluster": "^7.1.3",
     "firebase": "*",
     "ng-gallery": "8",
