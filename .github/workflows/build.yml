@@ -64,7 +64,7 @@ jobs:
         with:
           valueFile: 'app.yaml'
           propertyPath: 'service'
-          value: staging
+          value: stageing
           commitChange: false
           
       - name: 'Authenticate to Google Cloud'
