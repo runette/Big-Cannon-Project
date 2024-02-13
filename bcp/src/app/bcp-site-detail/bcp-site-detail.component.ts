@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcpSiteDataService, Site, MapSites } from '../bcp-site-data.service';
-import { BcpMapDataService, DataItem, Marker } from '../bcp-map-data.service';
+import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
 import { BcpUserService } from '../bcp-user.service';
 import { BcpApiService } from '../bcp-api.service';
 import { Router } from '@angular/router';
@@ -26,7 +26,13 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   fabIcon: string = "add";
   fabTooltip: string = "Add a new Gun to this Site"
   guns: DataItem[] = [];
-  marker: Marker;
+  markerPositions: google.maps.LatLng[] = [];
+
+  markerOptions: google.maps.MarkerOptions = {
+    draggable: false,
+  };
+
+  icon: google.maps.Icon = {'url':''};
 
   options = {
     zoom: 12,
@@ -80,19 +86,12 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   loaded(map: google.maps.Map): void {
     if (map) this.map = map;
     this.map.fitBounds(this.site.geocode.geometry.viewport,0);
-    let options: google.maps.MarkerOptions = {
-      draggable: false,
-    }
-    let icon: google.maps.Icon = {'url':''};
+    
     for (let gun of this.guns) {
-      if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-      else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-      else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-      if (this.marker) this.marker.setVisible(false);
-      this.marker=new Marker(options);
-      this.marker.setPosition(gun.location);
-      this.marker.setIcon(icon);
-      this.marker.setMap(this.map);
+      if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.icon.url = '../assets/cannon_bronze.png';
+      else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.icon.url = '../assets/cannon_silver.png';
+      else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.icon.url = '../assets/cannon_gold.png';
+      this.markerPositions.push(gun.location);
     }
 
   }

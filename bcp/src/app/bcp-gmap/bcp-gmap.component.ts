@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { GoogleMap } from '@angular/google-maps';
-import { DataItem, Marker } from '../bcp-map-data.service';
+import { DataItem } from '../bcp-map-data.service';
 
 
 
@@ -13,10 +13,15 @@ import { DataItem, Marker } from '../bcp-map-data.service';
 export class BcpGmapComponent implements OnInit {
 
 
-  private map: google.maps.Map;
+  map: google.maps.Map;
   @ViewChild(GoogleMap, {static: false}) my_map: GoogleMap;
 
-  private marker: Marker
+  marker: google.maps.LatLng;
+  markerOptions: google.maps.MarkerOptions = {
+    draggable: true,
+  };
+  markerIcon: google.maps.Icon = {'url':''};
+
 
   private _loc: google.maps.LatLng
   
@@ -86,21 +91,10 @@ export class BcpGmapComponent implements OnInit {
       this.map.setCenter(this.location);
       this.map.setZoom(1);
     }
-    let options: google.maps.MarkerOptions = {
-      draggable: true,
-    }
-    if (! this.marker) {
-      let icon: google.maps.Icon = {'url':''};
-      if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-      else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-      else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-      this.marker=new Marker(options);
-      this.marker.setPosition(this.location);
-      this.marker.setIcon(icon);
-      this.marker.setMap(this.map);
-      this.marker.addListener("dragend", event => this.markerDragged(event));
-    }
-
+    if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.markerIcon.url = '../assets/cannon_bronze.png';
+    else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.markerIcon.url = '../assets/cannon_silver.png';
+    else if (this.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.markerIcon.url = '../assets/cannon_gold.png';
+    this.marker = this.location;
   }
 
   markerDragged(event){
@@ -120,7 +114,7 @@ export class BcpGmapComponent implements OnInit {
   private showPosition(position: GeolocationPosition) {
     this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude );
     this.map.setCenter(this.location);
-    this.marker.setPosition(this.location);
+    this.marker = this.location;
     this.newLocation$.next(this.location);
   }
 
@@ -144,7 +138,7 @@ export class BcpGmapComponent implements OnInit {
   set() {
     this.location = new google.maps.LatLng(parseFloat(this.displayLoc.lat), parseFloat(this.displayLoc.lng));
     this.map.setCenter(this.location);
-    this.marker.setPosition(this.location);
+    this.marker = this.location;
     this.newLocation$.next(this.location);
   }
 }

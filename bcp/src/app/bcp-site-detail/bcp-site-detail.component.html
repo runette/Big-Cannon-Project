@@ -94,6 +94,9 @@
                                     [options]="options"
                                     (mapInitialized)="loaded($event)"
                         >
+                            @for (position of markerPositions; track position) {
+                                <map-marker [position]="position" [options]="markerOptions" />
+                            }
                         </google-map>
 
                     </div>

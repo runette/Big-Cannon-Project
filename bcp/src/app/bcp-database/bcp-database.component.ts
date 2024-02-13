@@ -1,3 +1,4 @@
+///<reference types='google.maps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, ElementRef, ChangeDetectorRef} from '@angular/core';
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
@@ -6,9 +7,14 @@ import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
 import { BcpSiteDataService } from '../bcp-site-data.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LocateControlOptions } from '../googlemap-locate/google-locate-control';
-import { MarkerClustererOptions, MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
+import { SuperClusterAlgorithm, MarkerClustererOptions } from '@googlemaps/markerclusterer';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
+
+export interface MarkerData {
+  position: google.maps.LatLng;
+  icon: google.maps.Icon
+}
 
 
 @Component({
@@ -20,10 +26,10 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   options: google.maps.MapOptions = {
     zoom: 2.5,
     center: {lat: 50, lng: 80},
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: 'roadmap',
     zoomControl: true,
     zoomControlOptions:{
-        position: google.maps.ControlPosition.LEFT_BOTTOM},
+        position: 3.0},
     mapTypeControl: false,
     scaleControl: true,
     streetViewControl: false,
@@ -31,7 +37,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     fullscreenControl: false,
   } 
   locateOptions: LocateControlOptions= {
-    position: google.maps.ControlPosition.LEFT_BOTTOM,
+    position: 3.0,
     pan: true,
     zoom: true,
     zoomTo: 17
@@ -39,12 +45,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   clusterOptions: MarkerClustererOptions = {
     algorithm: new SuperClusterAlgorithm({
       maxZoom: 12
-    }),
-    markers: [ new google.maps.Marker(
-      {icon:{
-        url:'../assets/m'
-      }}
-    )]
+    })
   }
   invisMarker: google.maps.MarkerOptions = {visible: false, opacity: 0};
   subscriptions: Subscription[] = [];
@@ -53,10 +54,11 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MapInfoWindow, {static: false}) mapInfo: MapInfoWindow;
   @ViewChild(MapMarker, {static: false}) mapMarker: MapMarker;
   @ViewChild("bounding_box", {static: false}) boundingBoxElement: ElementRef;
-  mc: MarkerClusterer;
 
+  markerPositions: MarkerData[] = [];
+  selectedMarker: DataItem;
 
-  selectedMarker: DataItem[];
+  apiLoaded = new Subject<void>();
 
   constructor(public FILTER_TEXT: BcpFilterValuesService, 
               public data: BcpMapDataService, 
@@ -77,14 +79,12 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
     this.subscriptions.push(this.data.$clearMarkers.subscribe({
       next: () => {
-        this.mc = null;
         this.loadMarkers();
       }
     }));
     this.subscriptions.push(this.sites.$newData.subscribe({
       next: () => this.updateSites(),
     }));
-    this.selectedMarker=[];
     const screenWidth: number = window.innerWidth;
     if (screenWidth < 600) {
       this.options.center = {lat: 30, lng: 20};
@@ -97,6 +97,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded($event) {
     let map = $event;
+    this.apiLoaded.next();
     google.maps.event.addListenerOnce($event, "idle", () =>{
       this.map = map;
       if (this.data.nativeBounds) {
@@ -154,38 +155,40 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onBoundsChanged(): void {
-    let proj = this.map.getProjection();
-    let bounds = this.map.getBounds();
-    this.data.nativeBounds = bounds;
-    let ne = bounds.getNorthEast();
-    let sw = bounds.getSouthWest();
-    // if zoomed too close - the calculation will fail because the bounds are limited to +-180. +-90
-    let oob = Math.abs(ne.lat()) == 90 ||
-              Math.abs(ne.lng()) == 180 ||
-              Math.abs(sw.lat()) == 90 ||
-              Math.abs(sw.lng()) == 180;
-    // if out of bounds or on a small screen - the map is the bounding box
-    if (oob || this.breakpointObserver.isMatched([Breakpoints.XSmall, Breakpoints.Small])) {
-      this.data.boundingBox = bounds;
-      this.sites.boundingBox = bounds;
-    // otherwise - the dotted line box is the bounding box
-    } else {
+    if (this.map){
+      let proj = this.map.getProjection();
+      let bounds = this.map.getBounds();
+      this.data.nativeBounds = bounds;
+      let ne = bounds.getNorthEast();
+      let sw = bounds.getSouthWest();
+      // if zoomed too close - the calculation will fail because the bounds are limited to +-180. +-90
+      let oob = Math.abs(ne.lat()) == 90 ||
+                Math.abs(ne.lng()) == 180 ||
+                Math.abs(sw.lat()) == 90 ||
+                Math.abs(sw.lng()) == 180;
+      // if out of bounds or on a small screen - the map is the bounding box
+      if (oob || this.breakpointObserver.isMatched([Breakpoints.XSmall, Breakpoints.Small])) {
+        this.data.boundingBox = bounds;
+        this.sites.boundingBox = bounds;
+      // otherwise - the dotted line box is the bounding box
+      } else {
 
-      let bottomLeft = proj.fromLatLngToPoint(sw);
-      let topRight = proj.fromLatLngToPoint(ne);
-      let scale = 1 << this.map.getZoom();
-      let boundingBox = new google.maps.LatLngBounds(
-        proj.fromPointToLatLng( new google.maps.Point(
-          10/scale + bottomLeft.x,
-          (this.boundingBoxElement.nativeElement.offsetHeight + 73 )/scale + topRight.y
-        )),
-        proj.fromPointToLatLng ( new google.maps.Point( 
-          (this.boundingBoxElement.nativeElement.offsetWidth + 10)/ scale + bottomLeft.x,
-          73/scale + topRight.y
-        ))
-      );
-      this.data.boundingBox = boundingBox;
-      this.sites.boundingBox = boundingBox;
+        let bottomLeft = proj.fromLatLngToPoint(sw);
+        let topRight = proj.fromLatLngToPoint(ne);
+        let scale = 1 << this.map.getZoom();
+        let boundingBox = new google.maps.LatLngBounds(
+          proj.fromPointToLatLng( new google.maps.Point(
+            10/scale + bottomLeft.x,
+            (this.boundingBoxElement.nativeElement.offsetHeight + 73 )/scale + topRight.y
+          )),
+          proj.fromPointToLatLng ( new google.maps.Point( 
+            (this.boundingBoxElement.nativeElement.offsetWidth + 10)/ scale + bottomLeft.x,
+            73/scale + topRight.y
+          ))
+        );
+        this.data.boundingBox = boundingBox;
+        this.sites.boundingBox = boundingBox;
+      }
     }
   }
 
@@ -195,52 +198,21 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public loadMarkers( ): void {
     this.changeDet.reattach();
-    /* if(! this.mc){
-      this.clusterOptions.map = this.map;
-      this.mc = new MarkerClusterer(this.clusterOptions );
-      this.mc.clearMarkers();
-      let markers: Marker[] = [];
-      if ( this.data.filteredData && this.data.filteredData.length > 0) { 
-        for (let entry of this.data.filteredData) {
-          if (entry.marker) {
-            markers.push(entry.marker);
-          }
-        }
-        this.mc.addMarkers(markers);
+    if ( this.data.filteredData && this.data.filteredData.length > 0) { 
+      for (let entry of this.data.filteredData) {
+        let icon: google.maps.Icon = {'url':''};
+        if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
+        else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
+        else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
+        let md = {position: entry.location, icon:icon}
+        if ( ! this.markerPositions.find( item => item.position == md.position)) this.markerPositions.push(md)
       }
-    } else {
-      if ( this.data.filteredData && this.data.filteredData.length > 0) {
-        let mapInfo = this.mapInfo;
-        let mapMarker = this.mapMarker;
-        let data = this.data;
-        let selectedMarker = this.selectedMarker;
-        let markers: Marker[] = [];
-        // var entry: DataItem;
-        for (let entry of this.data.filteredData) {
-          if (! entry.marker){
-            let options: google.maps.MarkerOptions = {
-              draggable: false,
-            }
-            let icon: google.maps.Icon = {'url':''};
-            if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-            else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-            else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-            let marker=new Marker(options);
-            marker.setPosition(entry.location);
-            marker.setIcon(icon);
-            marker.addListener('click', function (e) {
-              selectedMarker[0] = data.filteredData.find(item => item.location == this.getPosition())
-              mapMarker.marker = this;
-              mapInfo.open(mapMarker);
-            });
-            markers.push(marker)
-            entry.marker = marker;
-          } else {
+    }
+  }
 
-          };
-        }
-        this.mc.addMarkers(markers);
-      }
-    } */
+  public markerClick($event) {
+    this.selectedMarker = this.data.filteredData.find(item => item.location == $event.latLng)
+    this.mapMarker.marker = $event;
+    this.mapInfo.open(this.mapMarker);
   }
 }

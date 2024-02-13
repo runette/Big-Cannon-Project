@@ -44,7 +44,7 @@ MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES,
           'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 SITE_TYPES = ("google", "osm", "other")
 
-PAGE_SIZE = 50
+PAGE_SIZE = 200
         
 class Gun(ndb.Model):
     class Types(Enum):

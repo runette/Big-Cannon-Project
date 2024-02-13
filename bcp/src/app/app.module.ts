@@ -2,13 +2,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { GoogleMapsModule } from '@angular/google-maps';
-import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { environment } from '../environments/environment';
 import { GalleryModule } from 'ng-gallery';
 import { StorageModule } from '@angular/fire/storage';
@@ -60,7 +60,10 @@ import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.compon
 import { BcpSiteSelectorComponent } from './bcp-site-selector/bcp-site-selector.component';
 import { BcpListInputComponent, UrlProcessPipe } from './bcp-list-input/bcp-list-input.component';
 import { TruncatePipe } from './bcp-truncate-pipe';
-import { CookieDialog } from './app.component'
+import { CookieDialog } from './app.component';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { MapMarkerClusterer} from './google-maps-clusterer/map-marker-clusterer';
 
 @NgModule({
   declarations: [
@@ -89,9 +92,11 @@ import { CookieDialog } from './app.component'
     UrlProcessPipe,
     TruncatePipe,
     CookieDialog,
+    MapMarkerClusterer,
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,
@@ -114,7 +119,8 @@ import { CookieDialog } from './app.component'
     MatChipsModule,
     BrowserModule,
     MatStepperModule,
-    NgxAuthFirebaseUIModule.forRoot(environment.firebaseui),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
     MatGridListModule,
     MatRadioModule,
     GalleryModule,

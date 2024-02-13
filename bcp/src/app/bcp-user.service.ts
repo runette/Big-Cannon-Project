@@ -1,8 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import {BcpApiService} from './bcp-api.service';
-import {Subscription, BehaviorSubject} from 'rxjs';
-import {AuthProcessService} from 'ngx-auth-firebaseui';
-import { User }  from 'firebase/auth';
+import { Injectable, OnDestroy, Optional } from '@angular/core';
+import { BcpApiService } from './bcp-api.service';
+import { Subscription, BehaviorSubject } from 'rxjs';
+import { User, Auth, authState }  from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +16,12 @@ export class BcpUserService implements OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private auth: AuthProcessService, private api: BcpApiService) {
-    this.subscriptions.push(auth.user$.subscribe( u => {
-      if (u) {
-          this.getUser(u);
+  constructor(    
+    @Optional() private auth: Auth,
+    private api: BcpApiService) {
+    this.subscriptions.push(authState(this.auth).subscribe(user => {
+      if (user)  {
+          this.getUser(user);
       } else {
         this.user.next(null);
         this.login = false;
