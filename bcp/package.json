@@ -22,7 +22,7 @@
     "start": "ng serve ",
     "build": "./build.sh --configuration=production",
     "deploy": "source deploy.sh",
-    "test": "source build.sh --configuration=itest",
+    "test": "./build.sh --configuration=itest",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
