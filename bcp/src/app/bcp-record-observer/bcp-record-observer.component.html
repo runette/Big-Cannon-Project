@@ -341,7 +341,7 @@
 
 <!-- second row-->
 <div  class="fxRow-sm ">
-    <ng-container *ngIf="user.login">
+    @if (user.login) {
          <!-- Map Pane-->
         <mat-card class="w-100 m-1">
             <mat-card-header>
@@ -376,5 +376,5 @@
                 ></app-bcp-photos>
             </mat-card-content>
         </mat-card>
-    </ng-container>
+    }
 </div>
