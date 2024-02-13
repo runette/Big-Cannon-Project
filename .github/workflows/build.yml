@@ -39,7 +39,7 @@ jobs:
         if: github.event.pull_request.merged == false
         run: |
           cd bcp
-          chmod a+x build-test.sh
+          chmod a+x build.sh
           npm run test
           cd ../dist
           zip -r distro.zip .
