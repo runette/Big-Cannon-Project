@@ -38,7 +38,7 @@ jobs:
       - name: npm run deploy test mode
         if: github.event.pull_request.merged == false
         run: |
-          cd sba
+          cd bcp
           chmod a+x build-test.sh
           npm run test
           cd ../dist
