@@ -16,12 +16,10 @@ import {
   ContentChildren,
   Input,
   NgZone,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
   QueryList,
-  SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
@@ -97,7 +95,7 @@ export class MapMarkerClusterer implements OnInit, AfterContentInit, OnDestroy {
   }
 
   ngAfterContentInit() {
-    if (this._canInitialize && 'google' in window && typeof google === 'object' && typeof google.maps === 'object') {
+    if (this._canInitialize && this._googleMap.googleMap) {
       this._createCluster();
       this._watchForMarkerChanges();
     }
