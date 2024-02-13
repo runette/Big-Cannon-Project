@@ -34,6 +34,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: npm install 
+        run: |
+          cd bcp
+          npm i
           
       - name: npm run deploy test mode
         if: github.event.pull_request.merged == false
