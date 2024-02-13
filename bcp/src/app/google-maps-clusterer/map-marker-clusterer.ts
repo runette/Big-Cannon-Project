@@ -42,7 +42,7 @@ import { MarkerClusterer, MarkerClustererOptions } from '@googlemaps/markerclust
   template: '<ng-content></ng-content>',
   encapsulation: ViewEncapsulation.None,
 })
-export class MapMarkerClusterer implements OnInit, OnChanges, AfterContentInit, OnDestroy {
+export class MapMarkerClusterer implements OnInit, AfterContentInit, OnDestroy {
   private readonly _currentMarkers = new Set<google.maps.Marker>();
   private readonly _closestMapEventManager = new MapEventManager(this._ngZone);
   private _markersSubscription = Subscription.EMPTY;
@@ -64,8 +64,6 @@ export class MapMarkerClusterer implements OnInit, OnChanges, AfterContentInit, 
    */
   @Input()
   options: MarkerClustererOptions;
-
-
 
   /** Emits when clustering has started. */
   @Output() readonly clusteringbegin: Observable<void> =
@@ -98,18 +96,11 @@ export class MapMarkerClusterer implements OnInit, OnChanges, AfterContentInit, 
     })
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    const change = changes['renderer'] || changes['algorithm'];
-
-    // Since the options are set in the constructor, we have to recreate the cluster if they change.
-    if (this.markerClusterer && change && !change.isFirstChange()) {
+  ngAfterContentInit() {
+    if (this._canInitialize && 'google' in window && typeof google === 'object' && typeof google.maps === 'object') {
+      this._createCluster();
       this._watchForMarkerChanges();
     }
-  }
-
-  ngAfterContentInit() {
-
-
   }
 
   ngOnDestroy() {

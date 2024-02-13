@@ -3,7 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BcpUserService, BcpUser } from './bcp-user.service';
 import { Subscription } from 'rxjs';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
-import { PreferenceData, BcpPreferencesService, CookieStatus } from './bcp-preferences.service'
+import { BcpPreferencesService, CookieStatus } from './bcp-preferences.service'
 
 const CookieDialogConfig : MatDialogConfig = {
   closeOnNavigation: false,
@@ -93,7 +93,9 @@ export class CookieDialog {
   constructor(
     public dialogRef: MatDialogRef<CookieDialog>,
     @Inject(MAT_DIALOG_DATA) public prefs: BcpPreferencesService,
-  ) {}
+  ) {
+    if (this.prefs.data.cookie_status ==CookieStatus.NONE ) this.prefs.data = {cookie_status:CookieStatus.ALL};
+  }
 
   change(event:any): void {
     let data = this.prefs.data;

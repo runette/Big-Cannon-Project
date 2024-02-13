@@ -29,7 +29,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     mapTypeId: 'roadmap',
     zoomControl: true,
     zoomControlOptions:{
-        position: 3.0},
+        position: 6.0},
     mapTypeControl: false,
     scaleControl: true,
     streetViewControl: false,
@@ -37,7 +37,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     fullscreenControl: false,
   } 
   locateOptions: LocateControlOptions= {
-    position: 3.0,
+    position: 6.0,
     pan: true,
     zoom: true,
     zoomTo: 17
