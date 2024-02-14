@@ -20,22 +20,30 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import os
-from connexion import App
+from connexion import FlaskApp, options
 import firebase_admin
-from flask_cors import CORS
-import logging
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 from google.cloud import ndb
 
 firebase_admin.initialize_app()
 client = ndb.Client()
 
-options = {"swagger_ui": False}
-app = App(__name__, options=options)
+#create the API instance
+options = options.SwaggerUIOptions()
+options.swagger_ui = False
+app = FlaskApp(__name__, swagger_ui_options=options)
+
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.add_api('openapi.yaml', strict_validation=True)
-# add CORS support
-CORS(app.app)
-logging.getLogger('flask_cors').level = logging.ERROR
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
