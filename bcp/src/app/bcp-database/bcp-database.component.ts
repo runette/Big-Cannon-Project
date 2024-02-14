@@ -1,8 +1,22 @@
 ///<reference types='google.maps' />
 ///<reference path='../googlemap-locate/google-locate-control.ts' />
-import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, ElementRef, ChangeDetectorRef} from '@angular/core';
+import { Component,
+         ViewChild,
+         OnInit,
+         AfterViewInit,
+         OnDestroy,
+         ElementRef,
+         ChangeDetectorRef,
+         QueryList,
+         ViewChildren,
+        } from '@angular/core';
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
-import { BcpFilterValuesService, Material, GunCategory, RecordQuality, Order } from '../bcp-filter-values.service';
+import { BcpFilterValuesService,
+         Material,
+         GunCategory,
+         RecordQuality,
+         Order,
+        } from '../bcp-filter-values.service';
 import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
 import { BcpSiteDataService } from '../bcp-site-data.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
@@ -47,13 +61,19 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
       maxZoom: 12
     })
   }
+
+  infoOptions = {
+    minWidth: 550,
+  }
+
   invisMarker: google.maps.MarkerOptions = {visible: false, opacity: 0};
   subscriptions: Subscription[] = [];
 
   map: google.maps.Map;
   @ViewChild(MapInfoWindow, {static: false}) mapInfo: MapInfoWindow;
-  @ViewChild(MapMarker, {static: false}) mapMarker: MapMarker;
   @ViewChild("bounding_box", {static: false}) boundingBoxElement: ElementRef;
+
+  @ViewChildren(MapMarker) _markers: QueryList<MapMarker>;
 
   markerPositions: MarkerData[] = [];
   selectedMarker: DataItem;
@@ -210,9 +230,9 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public markerClick($event) {
+  public markerClick($event: { latLng: google.maps.LatLng; }) {
     this.selectedMarker = this.data.filteredData.find(item => item.location == $event.latLng)
-    this.mapMarker.marker = $event;
-    this.mapInfo.open(this.mapMarker);
+    let marker = this._markers.find(item => item.getPosition().lat == $event.latLng.lat && item.getPosition().lng == $event.latLng.lng);
+    this.mapInfo.open(marker);
   }
 }

@@ -10,5 +10,5 @@ google-cloud-secret-manager
 googlemaps
 Jinja2
 simplejson
-urllib3==1.26.15
+urllib3
 Pillow>=10.2

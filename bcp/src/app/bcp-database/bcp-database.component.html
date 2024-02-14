@@ -7,7 +7,7 @@
             (zoomChanged)="onBoundsChanged()"
             (mapDragend)="onBoundsChanged()"
 >
-    <map-info-window>
+    <map-info-window [options]="infoOptions">
         <app-bcp-data-card *ngIf="selectedMarker" 
             [routerLink]="['entry']"
             [queryParams]="{gunid:selectedMarker.gunid}"
