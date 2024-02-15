@@ -19,6 +19,7 @@ export class BcpMapDataService implements OnDestroy{
   private _ownRecords : boolean = false;
   private _boundingBox: google.maps.LatLngBounds;
   private _here: boolean = true;
+  private _namespace: string= "";
 
   cluster: boolean= true;
   hereText:string="Here";
@@ -43,12 +44,20 @@ export class BcpMapDataService implements OnDestroy{
     this.$clearMarkers = new Subject<boolean>();
     this.transaction = 0;
     this.subscriptions.push(this.user.user.subscribe({
-      next: () => {
-        this.$clearMarkers.next(true);
-        this.transaction++;
-        this.data = [];
-        this.getMapData();
-      }
+      next: u => {
+        let ns = "prod";
+        if (u) {
+          if (u.test_user) ns="test";
+          if (u.train_user) ns="train";
+        }
+        if (ns != this._namespace) {
+          this._namespace = ns;
+          this.$clearMarkers.next(true);
+          this.transaction++;
+          this.data = [];
+          this.getMapData();
+        }
+        }
     }))
   }
   ngOnDestroy(): void {
@@ -201,7 +210,7 @@ export class BcpMapDataService implements OnDestroy{
   loadDataitem(data: any): DataItem {
     let dataItem: DataItem = {};
     if (data.hasOwnProperty('lat'))
-      dataItem.location = new google.maps.LatLng(data.lat, data.lng);
+      dataItem.location = {lat: data.lat, lng: data.lng};
     if (data.hasOwnProperty('date'))
       dataItem.date = new Date(data.date);
     let keys = ['gunid', 'material','quality', 'description', 'owner', 'site_id', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'userId', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category', 'thumbnail', "attributions", "web_links", "urls" ];
@@ -217,7 +226,7 @@ export interface DataItem {
   gunid?: number;
   images?: [{[key:string]:string}];
   owner?: string;
-  location?: google.maps.LatLng;
+  location?: google.maps.LatLngLiteral;
   material?: Material;
   category?: GunCategory;
   description?:string;

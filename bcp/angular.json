@@ -35,7 +35,11 @@
               "styles/site_theme.scss",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "fast-deep-equal",
+              "bezier-easing"
+           ]
           },
           "configurations": {
             "production": {

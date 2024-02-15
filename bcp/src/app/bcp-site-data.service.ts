@@ -3,6 +3,7 @@ import { BcpUserService } from './bcp-user.service';
 import { BcpApiService } from './bcp-api.service';
 import { Subject, Subscription } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
+import { ValidationError } from 'webpack';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class BcpSiteDataService implements OnDestroy{
 
   private _boundingBox: google.maps.LatLngBounds;
   private _here: boolean = true;
+  private _namespace: string= "";
 
   private transaction: number;
   private subscriptions: Subscription[] = [];
@@ -42,10 +44,18 @@ export class BcpSiteDataService implements OnDestroy{
     this.$newData = new Subject<boolean>();
     this.transaction = 0;
     this.subscriptions.push(this.user.user.subscribe({
-      next: () => {
-        this.transaction++;
-        this.data = [];
-        this.getSiteData();
+      next: u => {
+        let ns = "prod";
+        if (u) {
+          if (u.test_user) ns="test";
+          if (u.train_user) ns="train";
+        }
+        if (ns != this._namespace) {
+          this._namespace = ns;
+          this.transaction++;
+          this.data = [];
+          this.getSiteData();
+        }
       }
     }))
   }
@@ -56,7 +66,10 @@ export class BcpSiteDataService implements OnDestroy{
   public setFilter():void {
     if (this.data) {
       this.filteredSites=this.data.filter(item => {
-        return  (!this.here || this.boundingBox && this.boundingBox.contains(item.geocode.geometry.location))
+        return  (
+          !this.here || this.boundingBox && 
+          this.boundingBox.intersects(new Geo(item.geocode.geometry).viewport)
+        );
       });
       this.siteSort();
       this.$newData.next(true);
@@ -184,14 +197,26 @@ export class Geocode{
 }
 
 export class Geo {
-  location: google.maps.LatLng
-  viewport: google.maps.LatLngBounds
+  location: google.maps.LatLngLiteral
+  viewport: google.maps.LatLngBoundsLiteral
 
   constructor(geo: object) {
-    this.location = new google.maps.LatLng(geo['location'])
-    this.viewport = new google.maps.LatLngBounds(
-      new google.maps.LatLng(geo["viewport"]["southwest"]),
-      new google.maps.LatLng(geo["viewport"]["northeast"])
-      )
+    this.location = geo['location']
+    try {
+      let sw: google.maps.LatLngLiteral = geo["viewport"]["southwest"];
+      let ne: google.maps.LatLngLiteral = geo["viewport"]["northeast"]
+      if ( ne && sw) {
+        this.viewport = {
+          east: ne.lng,
+          west: sw.lng,
+          north: ne.lat,
+          south: sw.lat
+        };
+      } else {
+        throw new Error();
+      }
+    } catch {
+      this.viewport = geo['viewport'];
+    }
   }
 }

@@ -37,5 +37,5 @@ $bcp-app-theme: mat.define-light-theme((
 ));
 
 
-@include mat.all-component-themes($bcp-app-theme);
+
 @include home.color($bcp-app-theme);

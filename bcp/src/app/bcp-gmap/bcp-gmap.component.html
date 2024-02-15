@@ -7,11 +7,14 @@
                         (tilesloaded)="loaded($event)"
                         (boundsChanged)="newBounds$.next($event)"
             >
-                <map-marker 
-                    [position]="marker" 
-                    [options]="markerOptions"
-                    (dragend)="this.markerDragged($event)"
-                />
+                @if (marker) {
+                    <map-marker 
+                        [position]="marker" 
+                        [options]="markerOptions"
+                        [icon]="markerIcon"
+                        (dragend)="markerDragged($event)"
+                    />
+                }
             </google-map>
         </div>
     </mat-card-content>

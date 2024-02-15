@@ -224,15 +224,15 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
         if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
         else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
         else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-        let md = {position: entry.location, icon:icon}
-        if ( ! this.markerPositions.find( item => item.position == md.position)) this.markerPositions.push(md)
+        let md = {position: new google.maps.LatLng(entry.location), icon:icon}
+        if ( ! this.markerPositions.find( item => item.position.equals(md.position))) this.markerPositions.push(md)
       }
     }
   }
 
   public markerClick($event: { latLng: google.maps.LatLng; }) {
-    this.selectedMarker = this.data.filteredData.find(item => item.location == $event.latLng)
-    let marker = this._markers.find(item => item.getPosition().lat == $event.latLng.lat && item.getPosition().lng == $event.latLng.lng);
+    this.selectedMarker = this.data.filteredData.find(item =>  $event.latLng.equals(new google.maps.LatLng(item.location)) )
+    let marker = this._markers.find(item => item.getPosition().equals($event.latLng));
     this.mapInfo.open(marker);
   }
 }

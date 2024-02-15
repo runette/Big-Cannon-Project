@@ -36,9 +36,9 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
 
   options = {
     zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: 'roadmap',
     zoomControl: true,
-    mapTypeControl: false,
+    mapTypeControl: false,  
     scaleControl: true,
     streetViewControl: false,
     rotateControl: true,
@@ -91,7 +91,7 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
       if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.icon.url = '../assets/cannon_bronze.png';
       else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.icon.url = '../assets/cannon_silver.png';
       else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.icon.url = '../assets/cannon_gold.png';
-      this.markerPositions.push(gun.location);
+      this.markerPositions.push(new google.maps.LatLng(gun.location));
     }
 
   }

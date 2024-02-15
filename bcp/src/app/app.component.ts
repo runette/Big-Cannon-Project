@@ -4,6 +4,9 @@ import { BcpUserService, BcpUser } from './bcp-user.service';
 import { Subscription } from 'rxjs';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { BcpPreferencesService, CookieStatus } from './bcp-preferences.service'
+import { BcpMapDataService } from './bcp-map-data.service';
+import { BcpSiteDataService } from './bcp-site-data.service';
+
 
 const CookieDialogConfig : MatDialogConfig = {
   closeOnNavigation: false,
@@ -33,6 +36,8 @@ export class AppComponent implements AfterViewInit{
               private sanitizer: DomSanitizer,
               private dialog: MatDialog,
               private prefs: BcpPreferencesService,
+              private data: BcpMapDataService, 
+              private sites: BcpSiteDataService,
             ){
     this.subs.push(
       this.user.user.subscribe({

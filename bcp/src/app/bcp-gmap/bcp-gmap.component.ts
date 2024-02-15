@@ -16,23 +16,23 @@ export class BcpGmapComponent implements OnInit {
   map: google.maps.Map;
   @ViewChild(GoogleMap, {static: false}) my_map: GoogleMap;
 
-  marker: google.maps.LatLng;
+  marker: google.maps.LatLngLiteral;
   markerOptions: google.maps.MarkerOptions = {
     draggable: true,
   };
-  markerIcon: google.maps.Icon = {'url':''};
+  markerIcon: google.maps.Icon = {'url':'../assets/cannon_bronze.png'};
 
 
-  private _loc: google.maps.LatLng
+  private _loc: google.maps.LatLngLiteral
   
   @Input()
-  set location(loc: google.maps.LatLng){
+  set location(loc: google.maps.LatLngLiteral){
     this._loc = loc
-    this.displayLoc.lat = loc.lat().toLocaleString();
-    this.displayLoc.lng = loc.lng().toLocaleString();
+    this.displayLoc.lat = loc.lat.toLocaleString();
+    this.displayLoc.lng = loc.lng.toLocaleString();
   }
 
-  get location() :google.maps.LatLng { return this._loc}
+  get location() :google.maps.LatLngLiteral { return this._loc}
 
   displayLoc: LatLng = new LatLng();
 
@@ -40,10 +40,10 @@ export class BcpGmapComponent implements OnInit {
   options: google.maps.MapOptions;
 
 
-  _viewport: google.maps.LatLngBounds;
+  _viewport: google.maps.LatLngBoundsLiteral;
 
   @Input()
-  set viewport(vp: google.maps.LatLngBounds){
+  set viewport(vp: google.maps.LatLngBoundsLiteral){
     this._viewport = vp;
     if (this.map && vp) this.makeMap();
   }
@@ -62,7 +62,7 @@ export class BcpGmapComponent implements OnInit {
 
 
   @Output()
-  newLocation$: EventEmitter<google.maps.LatLng> = new EventEmitter<google.maps.LatLng>();
+  newLocation$: EventEmitter<google.maps.LatLngLiteral> = new EventEmitter<google.maps.LatLngLiteral>();
 
   @Output()
   newBounds$: EventEmitter<google.maps.LatLngBounds> = new EventEmitter<google.maps.LatLngBounds>();
@@ -83,10 +83,12 @@ export class BcpGmapComponent implements OnInit {
 
   makeMap(): void {
     if (this.viewport) {
-      if (!this.viewport.contains(this.location)) {
-        this.viewport.extend(this.location);
+      let vp = new google.maps.LatLngBounds(this.viewport);
+      if (!vp.contains(this.location)) {
+        vp.extend(this.location);
       }
-      this.map.fitBounds(this.viewport, 10)
+      this.map.fitBounds(vp, 10)
+      this._viewport = vp.toJSON();
     } else {
       this.map.setCenter(this.location);
       this.map.setZoom(1);
@@ -97,8 +99,8 @@ export class BcpGmapComponent implements OnInit {
     this.marker = this.location;
   }
 
-  markerDragged(event){
-    this.location = event.latLng;
+  markerDragged($event: { latLng: google.maps.LatLngLiteral; }){
+    this.location = $event.latLng;
     this.newLocation$.next(this.location);
   }
 
@@ -112,7 +114,7 @@ export class BcpGmapComponent implements OnInit {
   }
 
   private showPosition(position: GeolocationPosition) {
-    this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude );
+    this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude ).toJSON();
     this.map.setCenter(this.location);
     this.marker = this.location;
     this.newLocation$.next(this.location);
@@ -136,7 +138,7 @@ export class BcpGmapComponent implements OnInit {
   }
 
   set() {
-    this.location = new google.maps.LatLng(parseFloat(this.displayLoc.lat), parseFloat(this.displayLoc.lng));
+    this.location = new google.maps.LatLng(parseFloat(this.displayLoc.lat), parseFloat(this.displayLoc.lng)).toJSON();
     this.map.setCenter(this.location);
     this.marker = this.location;
     this.newLocation$.next(this.location);

@@ -54,7 +54,6 @@ import { BcpGmapComponent } from './bcp-gmap/bcp-gmap.component';
 import { BcpPhotosComponent } from './bcp-photos/bcp-photos.component';
 import { BcpPrivacyComponent } from './bcp-privacy/bcp-privacy.component';
 import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
-import { BcpV2Component } from './bcp-v2/bcp-v2.component';
 import { BcpSiteCardComponent } from './bcp-site-card/bcp-site-card.component';
 import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.component';
 import { BcpSiteSelectorComponent } from './bcp-site-selector/bcp-site-selector.component';
@@ -84,7 +83,6 @@ import { MapMarkerClusterer} from './google-maps-clusterer/map-marker-clusterer'
     BcpPhotosComponent,
     BcpPrivacyComponent,
     BcpTorComponent,
-    BcpV2Component,
     BcpSiteCardComponent,
     BcpSiteDetailComponent,
     BcpSiteSelectorComponent,

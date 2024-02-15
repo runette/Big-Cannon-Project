@@ -68,12 +68,12 @@ get site() {
 set site(site: Site) {
   this._site = site;
   if (site) {
-    this.viewport = site.geocode.geometry.viewport;
+    this.viewport = new google.maps.LatLngBounds(site.geocode.geometry.viewport);
     if (this.viewport.contains(this.location)) {
       this.steponeCompleted = true;
       this.fabActive = true;
     } else {
-      this.location = site.geocode.geometry.location;
+      this.location = new google.maps.LatLng(site.geocode.geometry.location);
       this.steponeCompleted = true;
       this.fabActive = true;
     }
