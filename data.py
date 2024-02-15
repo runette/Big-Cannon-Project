@@ -222,7 +222,7 @@ class User(ndb.Model):
 
 def geolocate(location, namespace):
     client = secretmanager.SecretManagerServiceClient()
-    key_path = "projects/927628257279/secrets/keys/versions/1"
+    key_path = "projects/927628257279/secrets/keys/versions/2"
     response = client.access_secret_version(request={"name": key_path})
     gmaps = googlemaps.Client(key=response.payload.data.decode("UTF-8"))
     loc = (location.latitude, location.longitude)
