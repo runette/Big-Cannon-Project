@@ -8,7 +8,7 @@ import { BcpMapDataService } from '../bcp-map-data.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
-import { Site, BcpSiteDataService } from '../bcp-site-data.service';
+import { Site, BcpSiteDataService, Geo } from '../bcp-site-data.service';
 import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
@@ -24,7 +24,7 @@ import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from '@angular/cdk/step
 })
 export class BcpNewRecordComponent implements OnInit, OnDestroy {
 
-  private _location: google.maps.LatLng;
+  private _location: google.maps.LatLngLiteral;
   private _site: Site;
   private _files: File[] = [];
   private _urls: string[] = [];
@@ -41,7 +41,7 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper: MatStepper;
   @ViewChild(BcpPhotosComponent) photo: BcpPhotosComponent;
   subscriptions: Subscription[] = [];
-  viewport: google.maps.LatLngBounds;
+  viewport: google.maps.LatLngBoundsLiteral;
   steponeCompleted: boolean = false;
   steptwoCompleted: boolean = false;
 
@@ -51,7 +51,7 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
 
   options = {
     zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: "roadmap",
     zoomControl: true,
     mapTypeControl: false,
     scaleControl: true,
@@ -67,13 +67,14 @@ get site() {
 
 set site(site: Site) {
   this._site = site;
+  let geo =  new Geo(site.geocode.geometry)
   if (site) {
-    this.viewport = new google.maps.LatLngBounds(site.geocode.geometry.viewport);
-    if (this.viewport.contains(this.location)) {
+    this.viewport =geo.viewport;
+    if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
       this.steponeCompleted = true;
       this.fabActive = true;
     } else {
-      this.location = new google.maps.LatLng(site.geocode.geometry.location);
+      this.location = geo.location;
       this.steponeCompleted = true;
       this.fabActive = true;
     }
@@ -89,7 +90,7 @@ get location (){
 
 set location (loc){
   this._location = loc;
-  if (this.viewport && this.viewport.contains(this.location)) {
+  if (this.viewport) {
     this.steponeCompleted = true;
     this.fabActive = true;
   } else {
@@ -108,7 +109,7 @@ set location (loc){
               private sites: BcpSiteDataService,
               public changeDetect: ChangeDetectorRef
               ){
-    this.location = new google.maps.LatLng(0,0);
+    this.location = {lat:0, lng:0};
     this.subscriptions.push (userData.user.subscribe(user => this.userChange(user)));
   }
 
@@ -127,7 +128,7 @@ set location (loc){
   }
 
   acceptPhoto(flag: boolean): void {
-    if (! flag || ! this.steptwoCompleted) return;
+    if (! flag ) return;
     if (! this.site.id) {
       let data = {
         source: "Google",

@@ -37,7 +37,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
 import { BcpDatabaseComponent } from './bcp-database/bcp-database.component';
 import { BcpNewRecordComponent } from './bcp-new-record/bcp-new-record.component';
@@ -130,6 +130,7 @@ import { MapMarkerClusterer} from './google-maps-clusterer/map-marker-clusterer'
     MatCardModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatProgressSpinner,
   ],
   providers: [
   ],

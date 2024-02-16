@@ -10,6 +10,8 @@ import { Auth,
   sendEmailVerification
 } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-bcp-login',
@@ -26,13 +28,16 @@ export class BcpLoginComponent implements OnInit, OnDestroy {
   hide: boolean = true;
 
   loggedOut: boolean = true;
-  private subscriptions: Subscription[] = [];
+  private _subscriptions: Subscription[] = [];
+  private _back: boolean = false;
 
   constructor(    
-    @Optional() private auth: Auth,
+    @Optional() private auth: Auth, 
+    private _request: ActivatedRoute,
+    private _location: Location,
     ) {
     if (auth) {
-      this.subscriptions.push(authState(this.auth).subscribe(user => {
+      this._subscriptions.push(authState(this.auth).subscribe(user => {
         if (user) {
           this.loggedOut = false;
           this.currentUser = user;
@@ -40,7 +45,7 @@ export class BcpLoginComponent implements OnInit, OnDestroy {
                                 user.providerData[0].displayName :
                                 user.providerData[0].email
                               ? user.providerData[0].email : "";
-
+          if (this._back) this._location.back();
         } else {
           this.currentUser = undefined;
           this.displayName = "";
@@ -48,13 +53,16 @@ export class BcpLoginComponent implements OnInit, OnDestroy {
         }
       }));
     }
+    this._subscriptions.push( this._request.queryParamMap.subscribe(pmap => {
+      this._back = pmap.get('back')? true : false;
+    }));
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach( sub => sub.unsubscribe());
+    this._subscriptions.forEach( sub => sub.unsubscribe());
   }
 
   async loginGoogle() {

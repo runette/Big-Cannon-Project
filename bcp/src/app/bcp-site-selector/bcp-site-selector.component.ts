@@ -31,6 +31,8 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
   private _location: google.maps.LatLngLiteral;
   private subscriptions: Subscription[] = [];
 
+  fetchSitesWaiting: boolean = false;
+
   @Input()
   get location() {
     return this._location;
@@ -70,6 +72,7 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
 
   getSites():void {
     if (this.user.current_user) {
+      this.fetchSitesWaiting = true;
       this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.GET_LOCATION, {
           lat: this.location.lat,
           lng: this.location.lng,
@@ -97,7 +100,9 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
       }
     }
     this.candidateSites.sort( (a,b) => a[1] - b[1]);
+    this.fetchSitesWaiting = false;
   }
+  
   private showError(error) {
     switch (error.code) {
       case error.PERMISSION_DENIED:

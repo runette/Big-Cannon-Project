@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcpSiteDataService, Site, MapSites } from '../bcp-site-data.service';
 import { BcpMapDataService, DataItem } from '../bcp-map-data.service';
 import { BcpUserService } from '../bcp-user.service';
 import { BcpApiService } from '../bcp-api.service';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bcp-site-detail',
@@ -17,7 +17,6 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
 
   public site: Site;
   public edit: boolean = false;
-  private pmap: ParamMap;
   private subscriptions: Subscription[] = [];
   private index: number = 0;
   private map: google.maps.Map;
@@ -54,9 +53,8 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
               private api: BcpApiService,
               public DATA_VALUES: BcpFilterValuesService,
               private changeDet: ChangeDetectorRef,
-            ) 
-    {
-
+              private _snackBar: MatSnackBar,
+            ) {
   }
 
   ngOnDestroy(): void {
@@ -65,13 +63,13 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.push( this.request.queryParamMap.subscribe(pmap => {
-      this.pmap = pmap;
       this.site_id = parseInt(pmap.get("site_id"))
       this.updateSite();
     }))
     this.subscriptions.push( this.sites.$newData.subscribe( () => {
       this.updateSite();
     }))
+    this.subscriptions.push( this.data.$newData.subscribe( () => this.getGuns()));
   }
 
   updateSite() : void {
@@ -79,7 +77,11 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
     if (this.site_id){
       this.site = this.sites.fetch(this.site_id);
       this.index = this.sites.filteredSites?.findIndex(element => element.id ===  this.site_id);
+      this.getGuns();
     }
+  }
+
+  getGuns(): void {
     this.guns = this.data.data.filter( item => this.site.guns.includes( item.gunid ))
   }
 
@@ -139,4 +141,37 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
     }
   }
+
+link_here() {
+    if (!navigator.clipboard){
+      const el = document.createElement('textarea');  // Create a <textarea> element
+      el.value = window.location.href;                                 // Set its value to the string that you want copied
+      el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+      el.style.position = 'absolute';                 
+      el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+      document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+      const selected =            
+          document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+              ? document.getSelection().getRangeAt(0)     // Store selection if found
+              : false;                                    // Mark as false to know no selection existed before
+      el.select();                                    // Select the <textarea> content
+      document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+      document.body.removeChild(el);                  // Remove the <textarea> element
+      if (selected) {                                 // If a selection existed before copying
+          document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+          document.getSelection().addRange(selected);   // Restore the original selection
+      };
+      this._snackBar.open("Permalink copied", "close", {
+        duration: 3000
+      })
+  } else{
+      navigator.clipboard.writeText( window.location.href).then(
+        () => {
+          this._snackBar.open("Permalink copied", "close", {
+            duration: 3000
+          })
+        }
+      );
+    }    
+  };
 }

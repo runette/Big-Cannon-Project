@@ -63,7 +63,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   infoOptions = {
-    minWidth: 550,
+    minWidth: 375,
   }
 
   invisMarker: google.maps.MarkerOptions = {visible: false, opacity: 0};

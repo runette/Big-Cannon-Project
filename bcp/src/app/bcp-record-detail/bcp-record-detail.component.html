@@ -1,86 +1,85 @@
 
 <div class="fxRow">
     <div class="container" >
-        <form [formGroup]="gunForm" >
-            <mat-card class="w-100">
-                <mat-card-header></mat-card-header>
-                <mat-card-content>
-                    <mat-grid-list cols="12" rowHeight="120px">
-                        <mat-grid-tile colspan="2">
-                            <a  class="align-self-center mr-3" 
-                                *ngIf="gun && gun.images[0]" 
-                                [href]="gun.images[0].original"
-                                >
-                                <img *ngIf="gun.images[0].s200; else elseThumbnail"
+        @if(! gun ){
+            <div class="fxRow">
+                <mat-spinner></mat-spinner>
+                This might take a while
+            </div>
+        }
+        @else {
+            <form [formGroup]="gunForm" >
+                <mat-card class="w-100">
+                    <mat-card-header>
+                        <mat-card-title>
+                            Gun Reference : {{gun.gunid}}
+                        </mat-card-title>
+                        @if (gun.images[0]) {
+                            @if(gun.images[0].s200) {
+                                <img mat-card-sm-image
                                     [src]="gun.images[0].s200" 
                                     alt=""
+                                    style="margin-left: auto;"
                                 />
-                                <ng-template #elseThumbnail>
-                                    <img
-                                        [src]="gun.images[0].original" 
-                                        alt=""
-                                    />
-                                </ng-template>
-                            </a>
-                        </mat-grid-tile>
-                        <mat-grid-tile colspan="8">
-                            <mat-form-field 
-                                    class="mat-h2 m-3"
-                                    appearance="outline"
-                                >
-                                <mat-label>
-                                    Gun ID
-                                </mat-label>
-                                <input 
-                                    matInput 
-                                    [value]="gun ? gun.gunid : '' " 
-                                    readonly="true"
+                            }
+                            @else {
+                                <img mat-card-sm-image 
+                                    [src]="gun.images[0].original" 
+                                    alt=""
+                                    style="margin-left: auto;"
                                 />
-                            </mat-form-field>
-                            <ng-template #waiting>
-                                <p class="w-100" 
-                                        style="text-align: left;"
+                            }
+                        }
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-chip-set>
+                            @if (! currentUser ) {
+                                <mat-chip  
+                                        highlighted="true" 
+                                        color="accent" 
+                                        *ngIf="! currentUser && gun"
+                                        matTooltip="For more information on this gun"
                                     >
-                                    Waiting for data ...
-                                </p>
-                            </ng-template>
-                            <ng-container *ngIf="! currentUser || ! edit">
-                                <mat-chip-listbox>
-                                    <a routerLink="/login" >
-                                    <mat-chip  
-                                            highlighted="true" 
-                                            color="accent" 
-                                            *ngIf="! currentUser && gun"
-                                            matTooltip="For more information on this gun"
-                                        >
-                                        Login
-                                    </mat-chip>
-                                    </a>
-                                    <mat-chip highlighted="true" color="warn" *ngIf="!edit">
-                                        Read Only
-                                    </mat-chip>
-                                </mat-chip-listbox>
-                            </ng-container>
-                        </mat-grid-tile>
-                        <mat-grid-tile colspan="2">
-                            <button mat-raised-button
-                                    type="button" 
-                                    color="primary"
-                                    (click)="link_here()"
-                                    data-toggle="popover"
-                                    data-content="A permanent link to this record has been copied to the clipboard"
-                                    matTooltip="create a Permalink to this record"
+                                    Login
+                                </mat-chip>
+                            }
+                            @if ( ! edit) {
+                                <mat-chip 
+                                    highlighted="true"
+                                    color="warn"
                                 >
-                                <mat-icon fontIcon="link"></mat-icon>
-                                <span class="sm-hide">
-                                    Link here
-                                </span>
+                                    Read Only
+                                </mat-chip>
+                            }
+                        </mat-chip-set>
+                    </mat-card-content>
+                    <mat-card-actions align="end">
+                        <button mat-raised-button
+                                type="button" 
+                                color="primary"
+                                (click)="link_here()"
+                                data-toggle="popover"
+                                data-content="A permanent link to this record has been copied to the clipboard"
+                                matTooltip="create a Permalink to this record"
+                            >
+                            <mat-icon fontIcon="link"></mat-icon>
+                            <span class="sm-hide">
+                                Link here
+                            </span>
+                        </button>
+                        @if (! currentUser) {
+                            <button 
+                                mat-raised-button
+                                routerLink="/login"
+                                [queryParams]="{back:true}"
+                                type="button" 
+                                color="primary"
+                            >
+                                Login
                             </button>
-                        </mat-grid-tile>
-                    </mat-grid-list>
-                </mat-card-content>
-            </mat-card>
-            <ng-container  *ngIf="gun" id="nav-tabContent">
+                        }
+                    </mat-card-actions>
+                </mat-card>
                 <bcp-record-observer *ngIf="currentScreen == 'observer'"
                     [gun]="gun"
                     [gunForm]="gunForm"
@@ -93,8 +92,8 @@
                     [gun]="gun"
                     [gunForm]="gunForm"
                 ></bcp-record-surveyor>
-            </ng-container>
-        </form>
+            </form>
+        }
     </div>
 </div>
 
