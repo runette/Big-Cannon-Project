@@ -31,7 +31,7 @@ class LocationApi:
     @staticmethod
     def get_location(user, body):
         with client.context():
-                user_data = User.get_id(user)
+            user_data = User.get_id(user)
             if user_data:
                 namespace = user_data.namespace()
             else:

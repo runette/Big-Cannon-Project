@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { inject } from '@angular/core';
 
 import {BcpHomeComponent} from './bcp-home/bcp-home.component';
 import {BcpDatabaseComponent} from './bcp-database/bcp-database.component';
