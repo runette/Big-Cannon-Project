@@ -219,12 +219,15 @@ class User(ndb.Model):
     def get_id(cls, id):
         return User.query(cls.user_id == id).get()
 
-
-def geolocate(location, namespace):
-    client = secretmanager.SecretManagerServiceClient()
+def get_google_api():
+    secret_client = secretmanager.SecretManagerServiceClient()
     key_path = "projects/927628257279/secrets/keys/versions/2"
-    response = client.access_secret_version(request={"name": key_path})
-    gmaps = googlemaps.Client(key=response.payload.data.decode("UTF-8"))
+    response = secret_client.access_secret_version(request={"name": key_path})
+    return googlemaps.Client(key=response.payload.data.decode("UTF-8"))
+
+
+def reverse_geocode(location, namespace):
+    gmaps=get_google_api()
     loc = (location.latitude, location.longitude)
     reverse_geocode_result = gmaps.reverse_geocode( loc )
     for radius in [100, 300, 600, 1000]:
@@ -251,6 +254,12 @@ def geolocate(location, namespace):
         if Site.query(Site.place_id == geo["place_id"], namespace=namespace).get():
             results.remove(geo)    
     return {"geolocation": reverse_geocode_result, "places": results}
+
+def geocode(place_id):
+    gmap = get_google_api();
+    place = gmap.place(place_id)
+    geocode = place.get("result")
+    return (place, geocode)
 
 
 def get_serving_url(upload_metadata):

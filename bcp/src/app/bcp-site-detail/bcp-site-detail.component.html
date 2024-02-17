@@ -147,20 +147,20 @@
                             <mat-spinner></mat-spinner>
                         }
                         @else {
-                            <cdk-virtual-scroll-viewport 
-                                appendOnly 
-                                itemSize="64" 
-                                class="w-100 h-100 p-1"
-                                style="display: contents;"
-                                > 
-                                <div *cdkVirtualFor="let record of guns">
-                                    <app-bcp-data-card 
-                                        [routerLink]="['/database/entry']" 
-                                        [queryParams]="{gunid:record.gunid}"
-                                        [record]="record"
-                                    ></app-bcp-data-card>
-                                </div>
-                            </cdk-virtual-scroll-viewport>
+                            <div style="height: 50vh;">
+                                <cdk-virtual-scroll-viewport 
+                                    itemSize="64" 
+                                    class="w-100 h-100 p-1"
+                                    > 
+                                    <div *cdkVirtualFor="let record of guns">
+                                        <app-bcp-data-card 
+                                            [routerLink]="['/database/entry']" 
+                                            [queryParams]="{gunid:record.gunid}"
+                                            [record]="record"
+                                        ></app-bcp-data-card>
+                                    </div>
+                                </cdk-virtual-scroll-viewport>
+                            </div>
                         }
                     </mat-card-content>
                 </mat-card>

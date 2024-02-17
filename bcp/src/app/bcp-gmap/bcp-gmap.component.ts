@@ -28,7 +28,6 @@ export class BcpGmapComponent implements OnInit {
   @Input()
   set location(loc: google.maps.LatLngLiteral){
     this._loc = loc
-    this.newLocation$.next(loc);
     this.displayLoc.lat = loc.lat.toLocaleString();
     this.displayLoc.lng = loc.lng.toLocaleString();
   }
@@ -70,7 +69,6 @@ export class BcpGmapComponent implements OnInit {
   }
 
   loaded(_: any) {
-    this.newLocation$.next(this.location);
     if (!this.map) {
       this.map = this.my_map.googleMap;
       this.makeMap();
@@ -97,6 +95,7 @@ export class BcpGmapComponent implements OnInit {
 
   markerDragged($event: { latLng: google.maps.LatLngLiteral; }){
     this.location = $event.latLng;
+    this.newLocation$.next(this.location);
   }
 
   getLocation() {
@@ -116,6 +115,7 @@ export class BcpGmapComponent implements OnInit {
     this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude ).toJSON();
     this.map.setCenter(this.location);
     this.marker = this.location;
+    this.newLocation$.next(this.location);
   }
 
   private showError(error) {

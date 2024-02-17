@@ -21,12 +21,9 @@
 #SOFTWARE.
 
 import json
-from data import User, Gun, Site
+from data import User, Gun, Site, geocode
 from flask import Response
 from google.cloud import ndb
-import googlemaps
-
-gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
 
 client = ndb.Client()
 
@@ -102,14 +99,14 @@ class MapApi:
                     namespace = user_data.namespace()
                 else:
                     namespace = None
-                place = gmaps.place(body.get("place_id"))
-                geocode = place.get("result")
-                address_comps = geocode.get("address_components")
+                place_id = body.get("place_id")
+                (place, gc) = geocode(place_id)
+                address_comps = gc.get("address_components")
                 site = Site(
-                    place_id = body.get("place_id"),
-                    geocode = geocode,
+                    place_id = place_id,
+                    geocode = gc,
                     attribution = place.get("html_attributions"),
-                    display_name = geocode.get("name"),
+                    display_name = gc.get("name"),
                     guns = [],
                     namespace= namespace
                     )

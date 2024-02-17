@@ -36,8 +36,8 @@ export class AppComponent implements AfterViewInit{
               private sanitizer: DomSanitizer,
               private dialog: MatDialog,
               private prefs: BcpPreferencesService,
-              private data: BcpMapDataService, 
-              private sites: BcpSiteDataService,
+              private _data: BcpMapDataService, 
+              private _sites: BcpSiteDataService,
             ){
     this.subs.push(
       this.user.user.subscribe({

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { inject } from '@angular/core';
 
 import {BcpHomeComponent} from './bcp-home/bcp-home.component';
 import {BcpDatabaseComponent} from './bcp-database/bcp-database.component';
@@ -16,7 +17,11 @@ const routes: Routes = [
 { path: '', component: BcpHomeComponent },
 { path: 'database', component: BcpDatabaseComponent },
 { path: 'new_record', component: BcpNewRecordComponent},
-{ path: 'database/entry', component: BcpRecordDetailComponent},
+{ path: 'database/entry', component: BcpRecordDetailComponent, canDeactivate: [
+  (component: BcpRecordDetailComponent) => component.dirty? confirm(
+    'WARNING: You have unsaved changes. Press Cancel to go back and save these changes, or OK to lose these changes.'
+  ): true
+]},
 { path: 'database/site', component:BcpSiteDetailComponent},
 { path: 'recording', component: BcpHelpComponent},
 { path: 'login', component: BcpLoginComponent},

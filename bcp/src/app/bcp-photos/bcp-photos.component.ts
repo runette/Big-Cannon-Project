@@ -4,7 +4,6 @@ import { uploadBytesResumable,
         ref,
         StorageReference,
         Storage,
-        getDownloadURL,
         UploadTaskSnapshot
 } from '@angular/fire/storage';
 import { BcpApiService,  } from '../bcp-api.service';
@@ -112,8 +111,7 @@ export class BcpPhotosComponent implements OnInit {
     if (snapshot.state == "success"){
       this.updateProgress(snapshot);
       let data = snapshot.metadata;
-      if (data.ref) getDownloadURL(data.ref).then( url=>{
-        data.fullPath = url;
+      if (data.ref) {
         data['id'] = id;
         this.user.current_user.getIdToken().then(token => {
           this.api.apiPost(token, this.api.ADDPHOTO, data ).subscribe( {next :response => {
@@ -123,7 +121,7 @@ export class BcpPhotosComponent implements OnInit {
             error: e => console.error(e)
           })
         })
-      })
+      }
     }
   }
 }
