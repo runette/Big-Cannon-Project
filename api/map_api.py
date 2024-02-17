@@ -44,7 +44,11 @@ class MapApi:
                     cursor = ndb.Cursor(urlsafe=body.get("cursor").encode("utf-8"))
                 else:
                     cursor= ndb.Cursor()
-                (data, cursor, f) = Gun.map_data(namespace, cursor, login)
+                if body.get('page_size'):
+                    page_size = body.get('page_size')
+                else:
+                    page_size = 200
+                (data, cursor, f) = Gun.map_data(namespace, cursor, login, page_size)
                 if data:
                     map = {
                         "entries": data,
@@ -74,7 +78,11 @@ class MapApi:
                     cursor = ndb.Cursor(urlsafe=body.get("cursor").encode("utf-8"))
                 else:
                     cursor= ndb.Cursor()
-                (data, cursor) = Site.data(namespace, cursor)
+                if body.get('page_size'):
+                    page_size = body.get('page_size')
+                else:
+                    page_size = 200
+                (data, cursor) = Site.data(namespace, cursor, page_size)
                 if data:
                     map = {
                         "sites": data,

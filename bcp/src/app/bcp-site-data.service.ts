@@ -84,9 +84,9 @@ export class BcpSiteDataService implements OnDestroy{
     }
   }
 
-  public getSiteData(cursor: string = ""): void{
+  public getSiteData(cursor: string = "", page_size: number = 10): void{
     if (this.user.current_user) {
-      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_SITES, {"cursor": cursor, "transaction": this.transaction},"response" as "body" ).subscribe({next: response => {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_SITES, {"cursor": cursor, "transaction": this.transaction, page_size: page_size},"response" as "body" ).subscribe({next: response => {
         this.loadSiteData( response as HttpResponse<any>);
         this.setFilter();
       },
@@ -94,7 +94,7 @@ export class BcpSiteDataService implements OnDestroy{
       ),
       e => console.error(e))
     } else {
-      this.api.apiPost( null, this.api.FETCH_SITES, {"cursor": cursor, "transaction": this.transaction}, "response" as "body" ).subscribe({next: response => {
+      this.api.apiPost( null, this.api.FETCH_SITES, {"cursor": cursor, "transaction": this.transaction, page_size: page_size}, "response" as "body" ).subscribe({next: response => {
         this.loadSiteData( response as HttpResponse<any>);
         this.setFilter();
       },
@@ -106,7 +106,7 @@ export class BcpSiteDataService implements OnDestroy{
   private loadSiteData(response: HttpResponse<any> ) {
     if (response && response.status === 200 && response.body["transaction"] == this.transaction) {
       let cursor: string = response.body["cursor"]
-      this.getSiteData(cursor);
+      this.getSiteData(cursor, 200);
       for (let item of response.body["sites"]) {
         this.data.push(this.loadDataitem(item));
       }

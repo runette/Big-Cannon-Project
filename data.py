@@ -43,8 +43,6 @@ GUN_STATUS = ('Unverified', 'Auto', 'Verified')
 MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES,
           'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 SITE_TYPES = ("google", "osm", "other")
-
-PAGE_SIZE = 200
         
 class Gun(ndb.Model):
     class Types(Enum):
@@ -101,8 +99,8 @@ class Gun(ndb.Model):
     urls = ndb.TextProperty(repeated=True)
 
     @classmethod
-    def map_data(cls, namespace:str, cursor, login: bool) -> List:
-        (result, cursor, f) = cls.query(order_by=['gunid'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
+    def map_data(cls, namespace:str, cursor:ndb.Cursor, login: bool, page_size: int) -> List:
+        (result, cursor, f) = cls.query(order_by=['gunid'], namespace=namespace).fetch_page(page_size, start_cursor= cursor)
         users = User.query().fetch()
         temp = []
         for gun in result:
@@ -321,8 +319,8 @@ class Site(ndb.Model):
     MATRIX=["display_name", "country", "geocode", "guns", "attribution"]
     
     @classmethod
-    def data(cls, namespace: str, cursor: ndb.Cursor):
-        (result, cursor, f) = cls.query(order_by=['display_name'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
+    def data(cls, namespace: str, cursor: ndb.Cursor, page_size: int):
+        (result, cursor, f) = cls.query(order_by=['display_name'], namespace=namespace).fetch_page(page_size, start_cursor= cursor)
         temp = []
         for site in result:
             temp.append(site.api_data())

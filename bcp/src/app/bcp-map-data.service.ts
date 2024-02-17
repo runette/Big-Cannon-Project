@@ -178,9 +178,9 @@ export class BcpMapDataService implements OnDestroy{
     this.$newData.next(true);
   }
 
-  public getMapData(cursor: string = ""): void{
+  public getMapData(cursor: string = "", page_size: number = 10): void{
     if (this.user.current_user) {
-      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction},"response" as "body" ).subscribe({next: response => {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction, page_size: page_size},"response" as "body" ).subscribe({next: response => {
         this.loadMapData( response as HttpResponse<any>);
         this.setFilter();
       },
@@ -188,7 +188,7 @@ export class BcpMapDataService implements OnDestroy{
       ),
       e => console.error(e))
     } else {
-      this.api.apiPost( null, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction}, "response" as "body" ).subscribe({next: response => {
+      this.api.apiPost( null, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction, page_size: page_size}, "response" as "body" ).subscribe({next: response => {
         this.loadMapData( response as HttpResponse<any>);
         this.setFilter();
       },
@@ -200,7 +200,7 @@ export class BcpMapDataService implements OnDestroy{
   private loadMapData(response: HttpResponse<any> ) {
     if (response && response.status === 200 && response.body["transaction"] == this.transaction) {
       let cursor: string = response.body["cursor"]
-      this.getMapData(cursor);
+      this.getMapData(cursor, 200);
       for (let item of response.body["entries"]) {
         this.data.push(this.loadDataitem(item));
       }
