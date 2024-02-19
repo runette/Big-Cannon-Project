@@ -7,6 +7,7 @@ import { Router,ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MarkerData } from '../bcp-database/bcp-database.component';
 
 @Component({
   selector: 'app-bcp-site-detail',
@@ -25,7 +26,7 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   fabIcon: string = "add";
   fabTooltip: string = "Add a new Gun to this Site"
   guns: DataItem[] = [];
-  markerPositions: google.maps.LatLng[] = [];
+  markerPositions: MarkerData[] = [];
 
   markerOptions: google.maps.MarkerOptions = {
     draggable: false,
@@ -93,7 +94,7 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
       if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.icon.url = '../assets/cannon_bronze.png';
       else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.icon.url = '../assets/cannon_silver.png';
       else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.icon.url = '../assets/cannon_gold.png';
-      this.markerPositions.push(new google.maps.LatLng(gun.location));
+      this.markerPositions.push({position: new google.maps.LatLng(gun.location), icon:this.icon});
     }
 
   }

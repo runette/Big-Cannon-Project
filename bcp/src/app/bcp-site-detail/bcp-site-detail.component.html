@@ -126,8 +126,12 @@
                                         [options]="options"
                                         (mapInitialized)="loaded($event)"
                             >
-                                @for (position of markerPositions; track position) {
-                                    <map-marker [position]="position" [options]="markerOptions" />
+                                @for (marker of markerPositions; track marker.position) {
+                                    <map-marker
+                                        [position]="marker.position" 
+                                        [icon]="marker.icon"  
+                                        [options]="markerOptions"
+                                    />
                                 }
                             </google-map>
 

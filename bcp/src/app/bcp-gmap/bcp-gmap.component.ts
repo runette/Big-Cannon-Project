@@ -93,8 +93,8 @@ export class BcpGmapComponent implements OnInit {
     this.marker = this.location;
   }
 
-  markerDragged($event: { latLng: google.maps.LatLngLiteral; }){
-    this.location = $event.latLng;
+  markerDragged($event: { latLng: google.maps.LatLng; }){
+    this.location = $event.latLng.toJSON();
     this.newLocation$.next(this.location);
   }
 
