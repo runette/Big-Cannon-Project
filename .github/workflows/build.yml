@@ -52,7 +52,7 @@ jobs:
       - name: npm run deploy prod mode
         if: github.event.pull_request.merged == true
         run: |
-          cd sba
+          cd bcp
           chmod a+x build.sh
           npm run build
           cd ../dist
