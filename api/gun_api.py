@@ -60,11 +60,12 @@ class GunApi:
                         gun.images = image_list
                     gun.put_async()
                 success = True
+                result = gun.api_data(users, True)
             except Exception as e:
                 logging.error(str(e))
                 success = False
-                gun = None
-            return gun.api_data(users, True), (200 if success else 500)
+                result = {}
+            return result, (200 if success else 500)
 
     @staticmethod
     def set_record(user, body):

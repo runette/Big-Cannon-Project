@@ -2,7 +2,7 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef, HostListener   } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { DataItem } from '../bcp-map-data.service';
-import { Site, BcpSiteDataService } from '../bcp-site-data.service';
+import { Site, BcpSiteDataService, Geo } from '../bcp-site-data.service';
 import { BcpFilterValuesService}  from '../bcp-filter-values.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { GalleryItem, ImageItem } from 'ng-gallery';
@@ -50,9 +50,9 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
 
   set site(site: Site) {
     this._site = site;
-    if (site) this.viewport = site.geocode.geometry.viewport;
+    if (site) this.viewport = new Geo(site.geocode.geometry).viewport;
   }
-  viewport: google.maps.LatLngBounds;
+  viewport: google.maps.LatLngBoundsLiteral;
 
   currentUser: BcpUser;
 
@@ -85,7 +85,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
 
   options = {
     zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: 'roadmap',
     zoomControl: true,
     mapTypeControl: false,
     scaleControl: true,
@@ -140,7 +140,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     }
   }
 
-  formChanged(event: any) {
+  formChanged(_: any) {
     this.keys.forEach(key => {
       this.gun[key] = this.gunForm.value[key];
       this.site = this.sites.fetch(this.gun.site_id);
@@ -175,7 +175,7 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     }
   }
 
-  locationUpdate($event){
+  locationUpdate($event: any){
     if (this.edit) {
       this.gunForm.patchValue({location:$event})
     }

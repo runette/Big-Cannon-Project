@@ -1,3 +1,4 @@
+
 <mat-card>
     <mat-card-content>
         <div id="map_canvas" class="map-container-inline" > 
@@ -7,53 +8,68 @@
                         (tilesloaded)="loaded($event)"
                         (boundsChanged)="newBounds$.next($event)"
             >
+                @if (marker) {
+                    <map-marker 
+                        [position]="marker" 
+                        [options]="markerOptions"
+                        [icon]="markerIcon"
+                        (mapDragend)="markerDragged($event)"
+                    />
+                }
             </google-map>
         </div>
     </mat-card-content>
 </mat-card>
 <mat-card>
-    <div class="fxRow " >
-        <button mat-raised-button
-            type="button"
-            style="width:auto;"
-            color="primary"
-            (click)="getLocation()"
-            matTooltip="Set the Gun location to your current Device Location"
-        >
-            Set to Your Current Location
-        </button>
-    </div>
-    <div class="fxRow " >
-        <mat-form-field appearance="fill" class="m-1">
-            <mat-label>
-                Lat
-            </mat-label>
-            <input matInput
-                class="form-control"
-                type="text"
-                id="lat"
-                name="lat"
-                [(ngModel)]="displayLoc.lat"
-                (input)="set()"
-            />
-        </mat-form-field>
-        <mat-form-field appearance="fill" class="m-1">
-            <mat-label>
-                Lng
-            </mat-label> 
-            <input matInput
-                class="form-control"
-                type="text"
-                id="lon"
-                name="lon"
-                [(ngModel)]="displayLoc.lng"
-                (input)="set()"
-            />
-        </mat-form-field>
-    </div>
-    <div class="fxRow m-1" >
-        <p class="mat-caption">
-            All Lat/lon coordinates must be in WGS84/Geographic
-        </p>
-    </div>
+    @if (locationWaiting) {
+        <div class="fxRow " >
+            <mat-spinner></mat-spinner>
+        </div>
+    }
+    @else {
+        <div class="fxRow " >
+            <button mat-raised-button
+                type="button"
+                style="width:auto;"
+                color="primary"
+                (click)="getLocation()"
+                matTooltip="Set the Gun location to your current Device Location"
+            >
+                Set to Your Current Location
+            </button>
+        </div>
+        <div class="fxRow " >
+            <mat-form-field appearance="fill" class="m-1">
+                <mat-label>
+                    Lat
+                </mat-label>
+                <input matInput
+                    class="form-control"
+                    type="text"
+                    id="lat"
+                    name="lat"
+                    [(ngModel)]="displayLoc.lat"
+                    (input)="set()"
+                />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="m-1">
+                <mat-label>
+                    Lng
+                </mat-label> 
+                <input matInput
+                    class="form-control"
+                    type="text"
+                    id="lon"
+                    name="lon"
+                    [(ngModel)]="displayLoc.lng"
+                    (input)="set()"
+                />
+            </mat-form-field>
+        </div>
+        <div class="fxRow m-1" >
+            <p class="mat-caption">
+                All Lat/lon coordinates must be in WGS84/Geographic
+            </p>
+        </div>
+    }
 </mat-card>

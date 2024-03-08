@@ -95,7 +95,7 @@ class ndbImage(Blob):
         resize.content_format = self.content_format
         resize.content_type = self.content_type
         resize.image = self.image.copy()
-        resize.image.thumbnail(size, Image.ANTIALIAS)
+        resize.image.thumbnail(size)
         return resize
 
     def copy(self):

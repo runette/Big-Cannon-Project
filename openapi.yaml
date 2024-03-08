@@ -36,6 +36,8 @@
                     type: string
                   transaction:
                     type: number
+                  page_size:
+                    type: number
 
         responses:
           200:
@@ -60,6 +62,8 @@
                   cursor:
                     type: string
                   transaction:
+                    type: number
+                  page_size:
                     type: number
 
         responses:

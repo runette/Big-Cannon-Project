@@ -7,12 +7,18 @@
 	"launch": {
 		"version": "0.2.0",
 		"configurations": [
-			{   "type": "python",
+			{   "type": "debugpy",
+				"request": "launch",
+				"name": "Launch Main",
+				"program": "/Users/paulharwood/Documents/GitHub/ultima-ratio/main.py",
+				"env": {"GOOGLE_APPLICATION_CREDENTIALS":"/Users/paulharwood/Documents/GitHub/ultima-ratio/ultima-ratio-221014-e18b185a3810.json"}
+			},
+			{   "type": "debugpy",
 				"request": "launch",
 				"name": "Launch Program",
-				"program": "/Users/user/Documents/GitHub/Big-Cannon-Project/main.py",
-				"env": {"GOOGLE_APPLICATION_CREDENTIALS":"/Users/user/Documents/GitHub/Big-Cannon-Project/ultima-ratio-221014-e18b185a3810.json"}
-			}
+				"program": "${file}",
+				"env": {"GOOGLE_APPLICATION_CREDENTIALS":"/Users/paulharwood/Documents/GitHub/ultima-ratio/ultima-ratio-221014-e18b185a3810.json"}
+			},
 		]
 	}
 }

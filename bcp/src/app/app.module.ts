@@ -2,13 +2,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { GoogleMapsModule } from '@angular/google-maps';
-import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { environment } from '../environments/environment';
 import { GalleryModule } from 'ng-gallery';
 import { StorageModule } from '@angular/fire/storage';
@@ -37,7 +37,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BcpHomeComponent } from './bcp-home/bcp-home.component';
 import { BcpDatabaseComponent } from './bcp-database/bcp-database.component';
 import { BcpNewRecordComponent } from './bcp-new-record/bcp-new-record.component';
@@ -54,13 +54,15 @@ import { BcpGmapComponent } from './bcp-gmap/bcp-gmap.component';
 import { BcpPhotosComponent } from './bcp-photos/bcp-photos.component';
 import { BcpPrivacyComponent } from './bcp-privacy/bcp-privacy.component';
 import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
-import { BcpV2Component } from './bcp-v2/bcp-v2.component';
 import { BcpSiteCardComponent } from './bcp-site-card/bcp-site-card.component';
 import { BcpSiteDetailComponent } from './bcp-site-detail/bcp-site-detail.component';
 import { BcpSiteSelectorComponent } from './bcp-site-selector/bcp-site-selector.component';
 import { BcpListInputComponent, UrlProcessPipe } from './bcp-list-input/bcp-list-input.component';
 import { TruncatePipe } from './bcp-truncate-pipe';
-import { CookieDialog } from './app.component'
+import { CookieDialog } from './app.component';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { MapMarkerClusterer} from './google-maps-clusterer/map-marker-clusterer';
 
 @NgModule({
   declarations: [
@@ -81,7 +83,6 @@ import { CookieDialog } from './app.component'
     BcpPhotosComponent,
     BcpPrivacyComponent,
     BcpTorComponent,
-    BcpV2Component,
     BcpSiteCardComponent,
     BcpSiteDetailComponent,
     BcpSiteSelectorComponent,
@@ -89,9 +90,11 @@ import { CookieDialog } from './app.component'
     UrlProcessPipe,
     TruncatePipe,
     CookieDialog,
+    MapMarkerClusterer,
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,
@@ -114,7 +117,8 @@ import { CookieDialog } from './app.component'
     MatChipsModule,
     BrowserModule,
     MatStepperModule,
-    NgxAuthFirebaseUIModule.forRoot(environment.firebaseui),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
     MatGridListModule,
     MatRadioModule,
     GalleryModule,
@@ -126,6 +130,7 @@ import { CookieDialog } from './app.component'
     MatCardModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatProgressSpinner,
   ],
   providers: [
   ],

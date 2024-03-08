@@ -20,7 +20,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-from data import geolocate, User
+from data import reverse_geocode, User
 import logging
 from google.cloud.datastore.helpers import GeoPoint
 from google.cloud import ndb
@@ -41,7 +41,7 @@ class LocationApi:
                     lat = body['lat']
                     lon = body['lng']
                     location = GeoPoint(lat, lon)
-                    geo = geolocate(location, namespace)
+                    geo = reverse_geocode(location, namespace)
                     geo.update({"location": [lat, lon]})
                     success = True
                 except Exception as e:

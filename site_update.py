@@ -1,12 +1,11 @@
-from data import Gun, Site
+from data import Gun, Site, get_google_api
 
 from google.cloud import ndb
 client = ndb.Client()
 
 import googlemaps
-gmaps = googlemaps.Client(key='AIzaSyDZcNCn8CzpdFG58rzRxQBORIWPN9LOVYg')
-
-namespace = None
+gmaps = get_google_api()
+namespace = "test"
 
 class Update:
 

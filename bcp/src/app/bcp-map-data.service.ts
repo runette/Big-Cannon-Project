@@ -19,6 +19,7 @@ export class BcpMapDataService implements OnDestroy{
   private _ownRecords : boolean = false;
   private _boundingBox: google.maps.LatLngBounds;
   private _here: boolean = true;
+  private _namespace: string= "";
 
   cluster: boolean= true;
   hereText:string="Here";
@@ -43,12 +44,20 @@ export class BcpMapDataService implements OnDestroy{
     this.$clearMarkers = new Subject<boolean>();
     this.transaction = 0;
     this.subscriptions.push(this.user.user.subscribe({
-      next: () => {
-        this.$clearMarkers.next(true);
-        this.transaction++;
-        this.data = [];
-        this.getMapData();
-      }
+      next: u => {
+        let ns = "prod";
+        if (u) {
+          if (u.test_user) ns="test";
+          if (u.train_user) ns="train";
+        }
+        if (ns != this._namespace) {
+          this._namespace = ns;
+          this.$clearMarkers.next(true);
+          this.transaction++;
+          this.data = [];
+          this.getMapData();
+        }
+        }
     }))
   }
   ngOnDestroy(): void {
@@ -169,9 +178,9 @@ export class BcpMapDataService implements OnDestroy{
     this.$newData.next(true);
   }
 
-  public getMapData(cursor: string = ""): void{
+  public getMapData(cursor: string = "", page_size: number = 10): void{
     if (this.user.current_user) {
-      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction},"response" as "body" ).subscribe({next: response => {
+      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction, page_size: page_size},"response" as "body" ).subscribe({next: response => {
         this.loadMapData( response as HttpResponse<any>);
         this.setFilter();
       },
@@ -179,7 +188,7 @@ export class BcpMapDataService implements OnDestroy{
       ),
       e => console.error(e))
     } else {
-      this.api.apiPost( null, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction}, "response" as "body" ).subscribe({next: response => {
+      this.api.apiPost( null, this.api.FETCH_MAP, {"cursor": cursor, "transaction": this.transaction, page_size: page_size}, "response" as "body" ).subscribe({next: response => {
         this.loadMapData( response as HttpResponse<any>);
         this.setFilter();
       },
@@ -191,7 +200,7 @@ export class BcpMapDataService implements OnDestroy{
   private loadMapData(response: HttpResponse<any> ) {
     if (response && response.status === 200 && response.body["transaction"] == this.transaction) {
       let cursor: string = response.body["cursor"]
-      this.getMapData(cursor);
+      this.getMapData(cursor, 200);
       for (let item of response.body["entries"]) {
         this.data.push(this.loadDataitem(item));
       }
@@ -201,7 +210,7 @@ export class BcpMapDataService implements OnDestroy{
   loadDataitem(data: any): DataItem {
     let dataItem: DataItem = {};
     if (data.hasOwnProperty('lat'))
-      dataItem.location = new google.maps.LatLng(data.lat, data.lng);
+      dataItem.location = {lat: data.lat, lng: data.lng};
     if (data.hasOwnProperty('date'))
       dataItem.date = new Date(data.date);
     let keys = ['gunid', 'material','quality', 'description', 'owner', 'site_id', 'display_name', 'context', 'collection', 'coll_name', 'coll_ref', 'images', 'markings', 'mark_details', 'interpretation', 'inter_details', 'country', 'geocode', 'userId', 'status', 'measurements', 'moulding_code', 'muzzle_code', 'cas_code', 'button_code', 'category', 'thumbnail', "attributions", "web_links", "urls" ];
@@ -217,7 +226,7 @@ export interface DataItem {
   gunid?: number;
   images?: [{[key:string]:string}];
   owner?: string;
-  location?: google.maps.LatLng;
+  location?: google.maps.LatLngLiteral;
   material?: Material;
   category?: GunCategory;
   description?:string;
@@ -242,7 +251,6 @@ export interface DataItem {
   button_code?: string;
   thumbnail?:string;
   quality?: RecordQuality;
-  marker?: Marker;
   attributions?: string[];
   web_links?:boolean;
   urls?: string[];
@@ -260,10 +268,4 @@ export interface Measurements {
   trunnion_width?: number;
   trunnion_diameter?: number;
   trunnion_offset?: number;
-}
-
-export class Marker extends google.maps.Marker {
-  toJSON() {
-    return undefined
-  }
 }

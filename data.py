@@ -43,8 +43,6 @@ GUN_STATUS = ('Unverified', 'Auto', 'Verified')
 MATRIX = {'type': GUN_TYPES, 'quality': RECORD_QUALITIES,
           'category': GUN_CATEGORIES, 'status': GUN_STATUS}
 SITE_TYPES = ("google", "osm", "other")
-
-PAGE_SIZE = 50
         
 class Gun(ndb.Model):
     class Types(Enum):
@@ -101,8 +99,8 @@ class Gun(ndb.Model):
     urls = ndb.TextProperty(repeated=True)
 
     @classmethod
-    def map_data(cls, namespace:str, cursor, login: bool) -> List:
-        (result, cursor, f) = cls.query(order_by=['gunid'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
+    def map_data(cls, namespace:str, cursor:ndb.Cursor, login: bool, page_size: int) -> List:
+        (result, cursor, f) = cls.query(order_by=['gunid'], namespace=namespace).fetch_page(page_size, start_cursor= cursor)
         users = User.query().fetch()
         temp = []
         for gun in result:
@@ -219,12 +217,15 @@ class User(ndb.Model):
     def get_id(cls, id):
         return User.query(cls.user_id == id).get()
 
+def get_google_api():
+    secret_client = secretmanager.SecretManagerServiceClient()
+    key_path = "projects/927628257279/secrets/keys/versions/2"
+    response = secret_client.access_secret_version(request={"name": key_path})
+    return googlemaps.Client(key=response.payload.data.decode("UTF-8"))
 
-def geolocate(location, namespace):
-    client = secretmanager.SecretManagerServiceClient()
-    key_path = "projects/927628257279/secrets/keys/versions/1"
-    response = client.access_secret_version(request={"name": key_path})
-    gmaps = googlemaps.Client(key=response.payload.data.decode("UTF-8"))
+
+def reverse_geocode(location, namespace):
+    gmaps=get_google_api()
     loc = (location.latitude, location.longitude)
     reverse_geocode_result = gmaps.reverse_geocode( loc )
     for radius in [100, 300, 600, 1000]:
@@ -251,6 +252,12 @@ def geolocate(location, namespace):
         if Site.query(Site.place_id == geo["place_id"], namespace=namespace).get():
             results.remove(geo)    
     return {"geolocation": reverse_geocode_result, "places": results}
+
+def geocode(place_id):
+    gmap = get_google_api();
+    place = gmap.place(place_id)
+    geocode = place.get("result")
+    return (place, geocode)
 
 
 def get_serving_url(upload_metadata):
@@ -312,8 +319,8 @@ class Site(ndb.Model):
     MATRIX=["display_name", "country", "geocode", "guns", "attribution"]
     
     @classmethod
-    def data(cls, namespace: str, cursor: ndb.Cursor):
-        (result, cursor, f) = cls.query(order_by=['display_name'], namespace=namespace).fetch_page(PAGE_SIZE, start_cursor= cursor)
+    def data(cls, namespace: str, cursor: ndb.Cursor, page_size: int):
+        (result, cursor, f) = cls.query(order_by=['display_name'], namespace=namespace).fetch_page(page_size, start_cursor= cursor)
         temp = []
         for site in result:
             temp.append(site.api_data())

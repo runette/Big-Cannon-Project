@@ -1,4 +1,8 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import { Component,
+         OnInit,
+         OnDestroy,
+         HostListener
+        } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DataItem, MapData } from '../bcp-map-data.service';
 import { BcpMapDataService } from '../bcp-map-data.service';
@@ -29,6 +33,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   pmap: ParamMap;
   fabIcon: string = "add";
   fabTooltip: string = "add a new Gun record";
+  dirty: boolean = false;
 
   constructor(public request: ActivatedRoute,
               public user: BcpUserService,
@@ -75,6 +80,11 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
         urls: null
       })
       this.gunForm.valueChanges.subscribe(event => this.formChanged(event));
+   }
+
+  @HostListener('window:beforeunload', ['$event'])
+  canDeactivate(e: BeforeUnloadEvent): void {
+    if (this.dirty) e.preventDefault();
    }
 
   onUserChange(user: BcpUser): void{
@@ -142,6 +152,13 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   };
 
   next() {
+    if (this.dirty)
+      if (! confirm(
+        'WARNING: You have unsaved changes. Press Cancel to go back and save these changes, or OK to lose these changes.'
+      )) {
+      this.formUnchanged();
+      return
+    };
     let data: MapData = this.mapData.filteredData;
     this.index++;
     if ( this.index >= data.length) {
@@ -158,6 +175,13 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   };
 
   last() {
+    if (this.dirty)
+    if (! confirm(
+      'WARNING: You have unsaved changes. Press Cancel to go back and save these changes, or OK to lose these changes.'
+    )) {
+      this.formUnchanged();
+      return
+    };
     let data: MapData = this.mapData.filteredData;
     this.index--;
     if ( this.index < 0) {
@@ -176,6 +200,13 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
   formChanged(event: any){
     this.fabIcon = "save";
     this.fabTooltip= "Save this Gun record";
+    this.dirty = true;
+  }
+
+  formUnchanged() {
+    this.fabIcon = "add";
+    this.fabTooltip = "add a new Gun record";
+    this.dirty = false;
   }
 
   submit(){
@@ -195,8 +226,7 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
           }),
           e => console.error(e)
         )
-        this.fabIcon = "add";
-        this.fabTooltip = "add a new Gun record";
+        this.formUnchanged();
       } else {
         this.router.navigate(["new_record","site_id", this.gun.site_id]);
       }

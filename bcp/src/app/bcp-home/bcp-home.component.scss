@@ -17,15 +17,15 @@
         background-attachment: fixed;
         background-size: cover;
         background-position: 50% 50%;
-        }
+    }
         
     .para01 {
         background-image: url("/assets/gun-map-768.jpg");
-        }
+    }
         
     .para02 {
         background-image: url("/assets/cannon_measuring.jpg");
-        }
+    }
 
 
     .img-back {
@@ -33,12 +33,17 @@
         background-color: $primary;
         padding: 10px;
         margin: 10px;
-        }
+    }
         
     .img-text {
         color: white;
         opacity:1.0 !important;
         font-weight: bold;
         text-shadow: #444 0 1px 1px;
-        }
+    }
+
+    .os-avatar {
+        background-image: url("../../assets/CLEAN OS LOGO-640.png");
+        background-size: cover;
+    }
 }

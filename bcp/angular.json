@@ -20,7 +20,9 @@
             "preserveSymlinks": true,
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
@@ -33,7 +35,11 @@
               "styles/site_theme.scss",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "fast-deep-equal",
+              "bezier-easing"
+           ]
           },
           "configurations": {
             "production": {
@@ -53,13 +59,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "3mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "100kb",
-                  "maximumError": "100kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "10kb"
                 }
               ]
             },
@@ -103,17 +109,17 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "bcp:build"
+            "buildTarget": "bcp:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "bcp:build:production"
+              "buildTarget": "bcp:build:production"
             },
             "development": {
-              "browserTarget": "bcp:build:development"
+              "buildTarget": "bcp:build:development"
             },
-            "itest":{
-              "browserTarget": "bcp:build:itest"
+            "itest": {
+              "buildTarget": "bcp:build:itest"
             }
           },
           "defaultConfiguration": "development"
@@ -121,7 +127,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bcp:build"
+            "buildTarget": "bcp:build"
           }
         },
         "test": {

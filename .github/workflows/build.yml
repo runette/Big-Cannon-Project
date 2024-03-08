@@ -22,21 +22,50 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
           path: bcp
+
+      - name: Check for Tag
+        run: |
+          if git show-ref --tags --verify --quiet "refs/tags/${{ steps.package-version.outputs.current-version}}"; then
+            echo "Tag ${{ steps.package-version.outputs.current-version}} exists"
+            exit 1
+          fi
         
       - name: Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          
-      - name: npm install and npm run deploy
+
+      - name: npm install 
         run: |
           cd bcp
-          npm i --force
-          npx patch-package
+          npm i
+          
+      - name: npm run deploy test mode
+        if: github.event.pull_request.merged == false
+        run: |
+          cd bcp
+          chmod a+x build.sh
+          npm run test
+          cd ../dist
+          zip -r distro.zip .
+
+      - name: npm run deploy prod mode
+        if: github.event.pull_request.merged == true
+        run: |
+          cd sba
           chmod a+x build.sh
           npm run build
           cd ../dist
           zip -r distro.zip .
+
+      - name: Set to Staging
+        uses: fjogeleit/yaml-update-action@main
+        if: github.event.pull_request.merged == false
+        with:
+          valueFile: 'app.yaml'
+          propertyPath: 'service'
+          value: stageing
+          commitChange: false
           
       - name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v1'
@@ -44,11 +73,31 @@ jobs:
           workload_identity_provider: 'projects/927628257279/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
           service_account: 'ultima-ratio-221014@appspot.gserviceaccount.com'
           project_id: 'ultima-ratio-221014'
-          
-      - name: 'Deploy'
+
+      - name: 'Deploy to Staging'
+        if: github.event.pull_request.merged == false
         uses: 'google-github-actions/deploy-appengine@v1'
+
+      - name: Set to Production
+        uses: fjogeleit/yaml-update-action@main
         if: github.event.pull_request.merged == true
-        
+        with:
+          valueFile: 'app.yaml'
+          propertyPath: 'service'
+          value: default
+          commitChange: false
+
+      - name: Get release tag
+        id: version
+        run: |
+          echo "::set-output name=tag::$(echo ${{ steps.package-version.outputs.current-version}} | sed 's/\./-/g')"
+
+      - name: 'Deploy to Production'
+        if: github.event.pull_request.merged == true
+        uses: 'google-github-actions/deploy-appengine@v1'
+        with:
+          version: ${{ steps.version.outputs.tag}}
+
       - name: Push Build to Releases
         uses: ncipollo/release-action@v1
         if: github.event.pull_request.merged == true
@@ -56,3 +105,4 @@ jobs:
           artifacts: "dist/distro.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.package-version.outputs.current-version}}
+
