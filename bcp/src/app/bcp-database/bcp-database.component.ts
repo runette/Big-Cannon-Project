@@ -9,6 +9,7 @@ import { Component,
          ChangeDetectorRef,
          QueryList,
          ViewChildren,
+         NgZone,
         } from '@angular/core';
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { BcpFilterValuesService,
@@ -85,6 +86,7 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
               public sites: BcpSiteDataService,
               private breakpointObserver: BreakpointObserver,
               private changeDet: ChangeDetectorRef,
+              private zone: NgZone,
               ) { }
 
   ngOnDestroy(): void {
@@ -217,17 +219,20 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public loadMarkers( ): void {
-    this.changeDet.reattach();
-    if ( this.data.filteredData && this.data.filteredData.length > 0) { 
-      for (let entry of this.data.filteredData) {
-        let icon: google.maps.Icon = {'url':''};
-        if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
-        else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
-        else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
-        let md = {position: new google.maps.LatLng(entry.location), icon:icon}
-        if ( ! this.markerPositions.find( item => item.position.equals(md.position))) this.markerPositions.push(md)
-      }
-    }
+    google.maps.importLibrary('maps').then( (_) => {
+      this.zone.run((_) => {
+        if ( this.data.filteredData && this.data.filteredData.length > 0) { 
+          for (let entry of this.data.filteredData) {
+            let icon: google.maps.Icon = {'url':''};
+            if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[1]) icon.url = '../assets/cannon_bronze.png';
+            else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[2]) icon.url = '../assets/cannon_silver.png';
+            else if (entry.quality == this.FILTER_TEXT.RECORD_QUALITIES[3]) icon.url = '../assets/cannon_gold.png';
+            let md = {position: new google.maps.LatLng(entry.location), icon:icon}
+            if ( ! this.markerPositions.find( item => item.position.equals(md.position))) this.markerPositions.push(md)
+          }
+        }
+      });
+    });
   }
 
   public markerClick($event: { latLng: google.maps.LatLng; }) {

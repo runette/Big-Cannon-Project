@@ -10,6 +10,7 @@ import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { Subscription } from 'rxjs';
 import { Site, BcpSiteDataService, Geo } from '../bcp-site-data.service';
 import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from '@angular/cdk/stepper';
+import { ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-bcp-new-record',
@@ -67,8 +68,8 @@ get site() {
 
 set site(site: Site) {
   this._site = site;
-  let geo =  new Geo(site.geocode.geometry)
   if (site) {
+    let geo =  new Geo(site.geocode.geometry)
     this.viewport =geo.viewport;
     if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
       this.steponeCompleted = true;
@@ -114,9 +115,12 @@ set location (loc){
   }
 
   ngOnInit(): void {
-        this.subscriptions.push(this.request.queryParamMap.subscribe(pmap => {
-      this.site = this.sites.fetch(parseInt(pmap.get("site_id")));
-    }));
+        this.subscriptions.push(this.request.queryParamMap.subscribe((pmap: ParamMap) => {
+          if (pmap.has('site_id'))
+            this.site = this.sites.fetch(parseInt(pmap.get("site_id")));
+        }
+      )
+    );
   }
 
   ngOnDestroy(): void {

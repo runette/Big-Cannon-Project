@@ -39,19 +39,21 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
     }
   
   set location(loc: google.maps.LatLngLiteral) {
-    this._location = loc;
-    if (this._location.lat == 0 && this._location.lng == 0) {
-      navigator.geolocation.getCurrentPosition(position => this.location = {lat:position.coords.latitude,lng:position.coords.longitude }, this.showError);
-    } else {
-      this.closestSites = []
-      this.sites.data.forEach( site => {
-        if (new google.maps.LatLngBounds(site.geocode.geometry.viewport).contains(this._location)
-          ) {
-          this.closestSites.push([site, google.maps.geometry.spherical.computeDistanceBetween(loc, site.geocode.geometry.location)])
-        };
-      });
-      this.closestSites.sort( (a,b) => a[1] - b[1])
-    }
+    google.maps.importLibrary('geometry').then( (_) => {
+      this._location = loc;
+      if (this._location.lat == 0 && this._location.lng == 0) {
+        navigator.geolocation.getCurrentPosition(position => this.location = {lat:position.coords.latitude,lng:position.coords.longitude }, this.showError);
+      } else {
+        this.closestSites = []
+        this.sites.data.forEach( site => {
+          if (new google.maps.LatLngBounds(site.geocode.geometry.viewport).contains(this._location)
+            ) {
+            this.closestSites.push([site, google.maps.geometry.spherical.computeDistanceBetween(loc, site.geocode.geometry.location)])
+          };
+        });
+        this.closestSites.sort( (a,b) => a[1] - b[1])
+      }
+    });
   }
 
   SOURCES = SOURCES;
@@ -84,23 +86,25 @@ export class BcpSiteSelectorComponent implements OnInit, OnDestroy {
   }
 
   newGeo(response: any): void{
-    let map = ["geolocation", "places"]
-    for (let key of map) {
-      let data = response[key];
-      for (let geocode of data) {
-        let site = Site.fromGeocode(geocode);
-        if (new google.maps.LatLngBounds(site.geocode.geometry.viewport).contains(this.location)) {
-          this.candidateSites = [...this.candidateSites,
-            [site, 
-            google.maps.geometry.spherical.computeDistanceBetween(
-              this.location, site.geocode.geometry.location
-            )]
-          ];
+    google.maps.importLibrary('geometry').then( (_) => {
+      let map = ["geolocation", "places"]
+      for (let key of map) {
+        let data = response[key];
+        for (let geocode of data) {
+          let site = Site.fromGeocode(geocode);
+          if (new google.maps.LatLngBounds(site.geocode.geometry.viewport).contains(this.location)) {
+            this.candidateSites = [...this.candidateSites,
+              [site, 
+              google.maps.geometry.spherical.computeDistanceBetween(
+                this.location, site.geocode.geometry.location
+              )]
+            ];
+          }
         }
       }
-    }
-    this.candidateSites.sort( (a,b) => a[1] - b[1]);
-    this.fetchSitesWaiting = false;
+      this.candidateSites.sort( (a,b) => a[1] - b[1]);
+      this.fetchSitesWaiting = false;
+    })
   }
   
   private showError(error) {
