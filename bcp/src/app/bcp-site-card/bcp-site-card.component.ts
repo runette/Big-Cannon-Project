@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit , Input, ElementRef } from '@angular/core';
 import { Site } from '../bcp-site-data.service';
 
 @Component({
@@ -12,10 +12,21 @@ export class BcpSiteCardComponent implements OnInit {
   @Input()
   site: Site;
 
-  constructor() { }
+  showImage: boolean = true;
+  numberOfCols: number = 10;
+
+  @Input()
+  showGuns: boolean = true;
+
+  constructor( private ref: ElementRef) { }
 
   ngOnInit(): void {
+    if ( this.ref && this.ref.nativeElement) {
+      if (this.ref.nativeElement.offsetWidth < 350) {
+        this.showImage = false;
+        this.numberOfCols = 8;
+      }
+    }
   }
-
 }
 

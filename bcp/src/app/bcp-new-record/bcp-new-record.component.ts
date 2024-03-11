@@ -68,8 +68,8 @@ get site() {
 
 set site(site: Site) {
   this._site = site;
-  let geo =  new Geo(site.geocode.geometry)
   if (site) {
+    let geo =  new Geo(site.geocode.geometry)
     this.viewport =geo.viewport;
     if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
       this.steponeCompleted = true;
