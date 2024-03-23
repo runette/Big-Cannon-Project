@@ -67,22 +67,24 @@ get site() {
 }
 
 set site(site: Site) {
-  this._site = site;
-  if (site) {
-    let geo =  new Geo(site.geocode.geometry)
-    this.viewport =geo.viewport;
-    if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
-      this.steponeCompleted = true;
-      this.fabActive = true;
+  google.maps.importLibrary('geometry').then( (_) => {
+    this._site = site;
+    if (site) {
+      let geo =  new Geo(site.geocode.geometry)
+      this.viewport =geo.viewport;
+      if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
+        this.steponeCompleted = true;
+        this.fabActive = true;
+      } else {
+        this.location = geo.location;
+        this.steponeCompleted = true;
+        this.fabActive = true;
+      }
     } else {
-      this.location = geo.location;
-      this.steponeCompleted = true;
-      this.fabActive = true;
+      this.steponeCompleted=false;
+      this.fabActive = false;
     }
-  } else {
-    this.steponeCompleted=false;
-    this.fabActive = false;
-  }
+  })
 }
 
 get location (){
@@ -165,22 +167,25 @@ set location (loc){
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
 
     if (this.user.current_user) {
-      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDRECORD, data ).subscribe({
-        next: response => {
-          const gun = response['gun'];
-          const sites = response['sites'];
-          this.mapData.add(gun);
-          for (const site of sites) {
-            if (site) {
-              this.sites.add(site);
-            }
-          };
+      this.user.current_user.getIdToken().then( 
+        token => this.api.apiPost( token, this.api.ADDRECORD, data )
+          .subscribe({
+            next: response => {
+              const gun = response['gun'];
+              const sites = response['sites'];
+              this.mapData.add(gun);
+              for (const site of sites) {
+                if (site) {
+                  this.sites.add(site);
+                }
+              };
 
-          this.photo.send_file( `${folderName}/${gun['gunid']}`, gun['gunid']);
-          this.router.navigate(["/database","entry"], {queryParams:{"gunid":gun['gunid']}});
-        }
-      }
-      ))
+              this.photo.send_file( `${folderName}/${gun['gunid']}`, gun['gunid']);
+              this.router.navigate(["/database","entry"], {queryParams:{"gunid":gun['gunid']}});
+            }
+          }
+        )
+      )
     }
   }
 
