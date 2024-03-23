@@ -34,7 +34,7 @@ export class BcpGmapComponent implements OnInit {
 
   get location() :google.maps.LatLngLiteral { return this._loc}
 
-  displayLoc: LatLng = new LatLng();
+  displayLoc: BcpLatLng = new BcpLatLng();
 
   @Input()
   options: google.maps.MapOptions;
@@ -76,21 +76,23 @@ export class BcpGmapComponent implements OnInit {
   }
 
   makeMap(): void {
-    if (this.viewport) {
-      let vp = new google.maps.LatLngBounds(this.viewport);
-      if (!vp.contains(this.location)) {
-        vp.extend(this.location);
+    google.maps.importLibrary('maps').then( (_) => {
+      if (this.viewport) {
+        let vp = new google.maps.LatLngBounds(this.viewport);
+        if (!vp.contains(this.location)) {
+          vp.extend(this.location);
+        }
+        this.map.fitBounds(vp, 10)
+        this._viewport = vp.toJSON();
+      } else {
+        this.map.setCenter(this.location);
+        this.map.setZoom(1);
       }
-      this.map.fitBounds(vp, 10)
-      this._viewport = vp.toJSON();
-    } else {
-      this.map.setCenter(this.location);
-      this.map.setZoom(1);
-    }
-    if (this._quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.markerIcon.url = '../assets/cannon_bronze.png';
-    else if (this._quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.markerIcon.url = '../assets/cannon_silver.png';
-    else if (this._quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.markerIcon.url = '../assets/cannon_gold.png';
-    this.marker = this.location;
+      if (this._quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.markerIcon.url = '../assets/cannon_bronze.png';
+      else if (this._quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.markerIcon.url = '../assets/cannon_silver.png';
+      else if (this._quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.markerIcon.url = '../assets/cannon_gold.png';
+      this.marker = this.location;
+    })
   }
 
   markerDragged($event: { latLng: google.maps.LatLng; }){
@@ -112,10 +114,12 @@ export class BcpGmapComponent implements OnInit {
   }
 
   private showPosition(position: GeolocationPosition) {
-    this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude ).toJSON();
-    this.map.setCenter(this.location);
-    this.marker = this.location;
-    this.newLocation$.next(this.location);
+    google.maps.importLibrary('maps').then( (_) => {
+      this.location = new google.maps.LatLng(position.coords.latitude,position.coords.longitude ).toJSON();
+      this.map.setCenter(this.location);
+      this.marker = this.location;
+      this.newLocation$.next(this.location);
+    })
   }
 
   private showError(error) {
@@ -136,13 +140,18 @@ export class BcpGmapComponent implements OnInit {
   }
 
   set() {
-    this.location = new google.maps.LatLng(parseFloat(this.displayLoc.lat), parseFloat(this.displayLoc.lng)).toJSON();
-    this.map.setCenter(this.location);
-    this.marker = this.location;
+    google.maps.importLibrary('maps').then( (_) => {
+      this.location = new google.maps.LatLng(
+        parseFloat(this.displayLoc.lat), 
+        parseFloat(this.displayLoc.lng)
+      ).toJSON();
+      this.map.setCenter(this.location);
+      this.marker = this.location;
+    })
   }
 }
 
-export class LatLng{
+export class BcpLatLng{
   lat: string;
   lng: string;
 
