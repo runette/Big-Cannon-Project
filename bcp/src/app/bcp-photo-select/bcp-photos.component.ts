@@ -1,5 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Gallery, GalleryRef, GalleryItem } from 'ng-gallery';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { uploadBytesResumable,
         ref,
         StorageReference,
@@ -11,37 +10,19 @@ import { BcpMapDataService } from '../bcp-map-data.service';
 import { BcpUserService } from '../bcp-user.service';
 
 @Component({
-  selector: 'app-bcp-photos',
+  selector: 'app-bcp-photo-select',
   templateUrl: './bcp-photos.component.html',
   styleUrls: ['./bcp-photos.component.scss']
 })
-export class BcpPhotosComponent implements OnInit {
+export class BcpPhotosComponent {
 
-  private _images: GalleryItem[];
   @ViewChild('fileinput') fileInput: ElementRef;
   @Input() changeDetect: ChangeDetectorRef;
-
-
-  @Input()
-  set images(images: GalleryItem[]){
-    this._images = images;
-    this.error.next(null)
-    this.updateImages();
-  }
-
-  get images():GalleryItem[]{
-    return this._images;
-  }
 
   files: string[];
   fileNumber: number;
 
   @Output() newImage$: EventEmitter<FileList> = new EventEmitter<FileList>();
-  @Output() submit$: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() error: EventEmitter<any> = new EventEmitter<any>();
-
-
-  galleryRef: GalleryRef;
 
   pbarFlag: boolean = false;
   pbarMode: string = "indeterminate";
@@ -49,27 +30,11 @@ export class BcpPhotosComponent implements OnInit {
   progressHash: {[Key: string]: UploadTaskSnapshot} = {};
 
 
-  constructor(private gallery: Gallery,
-              private storage: Storage,
+  constructor(private storage: Storage,
               private user: BcpUserService,
               private mapData: BcpMapDataService,
               private api: BcpApiService ) { }
 
-  ngOnInit(): void {
-    this.galleryRef = this.gallery.ref('photos');
-    this.updateImages();
-  }
-
-  updateImages(){
-    if (this.galleryRef) {
-      this.galleryRef.reset();
-      this.galleryRef.load(this.images)
-    }
-  }
-
-  upload() {
-    this.submit$.next(this.fileInput.nativeElement.files.length > 0);
-  }
 
   fileAdded() {
     this.newImage$.next(this.fileInput.nativeElement.files);
@@ -77,7 +42,7 @@ export class BcpPhotosComponent implements OnInit {
   }
 
   send_file(folder: string, id: number) {
-    this.pbarFlag = true;
+    if (! this.pbarFlag ) return;
     let imageRef: StorageReference
     let fileArray = Array.from(this.fileInput.nativeElement.files as FileList)
     this.fileNumber = fileArray.length

@@ -51,7 +51,8 @@ import { BcpList2stringPipe } from './bcp-list2string.pipe';
 import { BcpHelpComponent } from './bcp-help/bcp-help.component';
 import { BcpLoginComponent } from './bcp-login/bcp-login.component';
 import { BcpGmapComponent } from './bcp-gmap/bcp-gmap.component';
-import { BcpPhotosComponent } from './bcp-photos/bcp-photos.component';
+import { BcpPhotosComponent } from './bcp-photo-select/bcp-photos.component';
+import { BcpPhotoGalleryComponent} from './bcp-photo-gallery/bcp-photo-gallery.component';
 import { BcpPrivacyComponent } from './bcp-privacy/bcp-privacy.component';
 import { BcpTorComponent } from './bcp-tor/bcp-tor.component';
 import { BcpSiteCardComponent } from './bcp-site-card/bcp-site-card.component';
@@ -81,6 +82,7 @@ import { MapMarkerClusterer} from './google-maps-clusterer/map-marker-clusterer'
     BcpLoginComponent,
     BcpGmapComponent,
     BcpPhotosComponent,
+    BcpPhotoGalleryComponent,
     BcpPrivacyComponent,
     BcpTorComponent,
     BcpSiteCardComponent,

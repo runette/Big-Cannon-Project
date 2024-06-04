@@ -7,7 +7,7 @@ import { BcpFilterValuesService}  from '../bcp-filter-values.service';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
 import { GalleryItem, ImageItem } from 'ng-gallery';
 import { Subscription } from 'rxjs';
-import { BcpPhotosComponent } from '../bcp-photos/bcp-photos.component';
+import { BcpPhotosComponent } from '../bcp-photo-select/bcp-photos.component';
 import { BcpApiService } from '../bcp-api.service';
 
 
@@ -186,6 +186,8 @@ export class BcpRecordObserverComponent implements OnInit, OnDestroy {
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
     this.photo.send_file(`/${folderName}/${this.gun.gunid}`, this.gun.gunid)
   }
+
+  newImageUrl($event) {}
 
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
