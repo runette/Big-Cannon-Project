@@ -65,7 +65,6 @@ export class BcpRecordDetailComponent implements OnInit, OnDestroy {
         country: null,
         length: null,
         base_ring: null,
-        muzzle: null,
         bore: null,
         trunnion_position: null,
         trunnion_width:  null,

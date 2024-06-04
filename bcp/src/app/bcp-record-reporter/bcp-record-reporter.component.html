@@ -16,7 +16,7 @@
                                 <h4 class="bg-primary text-white p-1">Muzzle</h4> 
                             </mat-panel-title>
                             <mat-panel-description>
-                                <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  *ngIf="gunForm.value.muzzle_code" [value]="gunForm.value.muzzle_code"></textarea>
+                                <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding" formControlName="muzzle_code"></textarea>
                             </mat-panel-description>
                         </mat-expansion-panel-header>
                         <mat-button-toggle-group class="w-100" name="muzzle" formControlName="muzzle_code">
@@ -67,7 +67,7 @@
                                 <h4 class="bg-primary text-white p-1">Cascable</h4> 
                             </mat-panel-title>
                             <mat-panel-description>
-                                <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  *ngIf="gunForm.value.cas_code" [value]="gunForm.value.cas_code"></textarea>
+                                <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  formControlName="cas_code"></textarea>
                             </mat-panel-description>
                         </mat-expansion-panel-header>
                         <mat-button-toggle-group class="w-100" name="cascable" formControlName="cas_code">
@@ -112,7 +112,7 @@
                             <h4 class="bg-primary text-white p-1">Button</h4> 
                         </mat-panel-title>
                         <mat-panel-description>
-                            <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding" *ngIf="gunForm.value.button_code" [value]="gunForm.value.button_code"></textarea>
+                            <textarea disabled class="bg-site w-auto"  rows="1" name="moulding" id="moulding"  formControlName="button_code"></textarea>
                         </mat-panel-description>
                     </mat-expansion-panel-header>
                     <mat-button-toggle-group class="w-100" name="button" formControlName="button_code">
