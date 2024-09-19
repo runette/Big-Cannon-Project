@@ -7,7 +7,8 @@ import { Auth,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  sendEmailVerification
+  sendEmailVerification,
+  sendPasswordResetEmail
 } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
