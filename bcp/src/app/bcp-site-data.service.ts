@@ -3,7 +3,6 @@ import { BcpUserService } from './bcp-user.service';
 import { BcpApiService } from './bcp-api.service';
 import { Subject, Subscription } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { ValidationError } from 'webpack';
 
 @Injectable({
   providedIn: 'root'
@@ -15,19 +14,19 @@ export class BcpSiteDataService implements OnDestroy{
   $clearMarkers: Subject<boolean>;
   data: MapSites
 
-  private _boundingBox: google.maps.LatLngBounds;
+  private _boundingBox: google.maps.LatLngBoundsLiteral;
   private _here: boolean = true;
   private _namespace: string= "";
 
   private transaction: number;
   private subscriptions: Subscription[] = [];
 
-  set boundingBox(bbox: google.maps.LatLngBounds) {
+  set boundingBox(bbox: google.maps.LatLngBoundsLiteral) {
     this._boundingBox = bbox;
     this.setFilter();
   }
 
-  get boundingBox(): google.maps.LatLngBounds {
+  get boundingBox(): google.maps.LatLngBoundsLiteral {
     return this._boundingBox;
   }
 
@@ -64,16 +63,18 @@ export class BcpSiteDataService implements OnDestroy{
   }
 
   public setFilter():void {
-    if (this.data) {
+    google.maps.importLibrary('geometry').then( (_) =>{
+      if (! this.data ) return;
+      const boundingBox = new google.maps.LatLngBounds(this.boundingBox);
       this.filteredSites=this.data.filter(item => {
         return  (
           !this.here || this.boundingBox && 
-          this.boundingBox.intersects(new Geo(item.geocode.geometry).viewport)
+          boundingBox.intersects(new Geo(item.geocode.geometry).viewport)
         );
       });
       this.siteSort();
       this.$newData.next(true);
-    }
+    })
   }
 
   public siteSort(): void {

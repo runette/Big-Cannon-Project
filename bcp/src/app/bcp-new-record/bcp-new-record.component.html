@@ -108,23 +108,38 @@
                             <mat-card-content>
                                 <div class="fxRow-sm">
                                     <mat-card class="w-100">
-                                        <app-bcp-photos
-                                            [changeDetect]="changeDetect"
-                                            (submit$)="acceptPhoto($event)"
-                                            (newImage$)="newImage($event)"
+                                        <app-bcp-photo-gallery
                                             [images]="images"
                                             (error)="imageError($event)"
-                                        ></app-bcp-photos>
+                                        ></app-bcp-photo-gallery>
                                     </mat-card>
                                     <div class="fxCol w-100">
                                         <mat-card>
                                             <mat-card-header>
+                                                <mat-card-title>Upload Photos</mat-card-title>
+                                                <mat-card-subtitle>Leave Blank if Not Needed</mat-card-subtitle>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <app-bcp-photo-select
+                                                    [changeDetect]="changeDetect"
+                                                    (newImage$)="newImage($event)"
+                                                ></app-bcp-photo-select>
+                                            </mat-card-content>
+                                        </mat-card>
+                                        <mat-card>
+                                            <mat-card-header>
                                                 <mat-card-title>Link to Existing Photographs</mat-card-title>
+                                                <mat-card-subtitle>Leave Blank if Not Needed</mat-card-subtitle>
+                                                <button mat-icon-button colour="primary" matTooltip="Info about Social Media Photos" (click)="showDialog()">
+                                                    <mat-icon color="accent">
+                                                        help
+                                                    </mat-icon>
+                                                </button>
                                             </mat-card-header>
                                             <mat-card-content>
                                                 <app-bcp-list-input
                                                     label="Enter the URLs for the Photos"
-                                                    placeholder="add url (e.g. https://www.site.com/photo.jpg"
+                                                    placeholder="add url (e.g. https://www.site.com/photo.jpg)"
                                                     (updateList)="newImageUrl($event)"
                                                 >
                                                 </app-bcp-list-input>
@@ -139,6 +154,7 @@
                                         <mat-card>
                                             <mat-card-header>
                                                 <mat-card-title>Link to Relevant Web Sites</mat-card-title>
+                                                <mat-card-subtitle>Leave Blank if Not Needed</mat-card-subtitle>
                                             </mat-card-header>
                                             <mat-card-content>
                                                 <app-bcp-list-input
@@ -148,6 +164,9 @@
                                                 >
                                                 </app-bcp-list-input>
                                             </mat-card-content>
+                                            <mat-card-actions align="end">
+                                                <button mat-raised-button color="primary" (click)="acceptPhoto()">Upload</button>
+                                            </mat-card-actions>
                                         </mat-card>
                                     </div>
                                 </div>

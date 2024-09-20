@@ -97,6 +97,13 @@ class GunApi:
                             old_site.put()                        
                     new_site.guns.append(gun.gunid)
                     new_site.put()
+                delete = []
+                measurements = body.get('measurements')
+                for key,value in measurements.items():
+                    if value == 0 or value is None:
+                        delete.append(key)
+                for item in delete:
+                    measurements.pop(item, None)
                 gun.populate(
                     description=body.get('description', ""),
                     type=Gun.Types(GUN_TYPES.index(body.get('material'))).value,
@@ -116,6 +123,7 @@ class GunApi:
                     location=GeoPoint(body.get('location').get(
                         'lat'), body.get('location').get('lng')),
                     moulding_code=list(body.get('moulding_code', "")),
+                    measurements=measurements,
                     muzzle_code=body.get('muzzle_code', ""),
                     cas_code=body.get('cas_code', ""),
                     button_code=body.get('button_code', ""),
@@ -123,14 +131,6 @@ class GunApi:
                     urls=list(body.get('urls', "")),
                     attributions=list(body.get("attributions", ""))
                 )
-                gun.measurements = {}
-                MEASUREMENTS = ['length', 'base_ring', 'muzzle', 'bore', 'trunnion_position',
-                                'trunnion_width', 'trunnion_diameter', 'trunnion_offset']
-                for item in MEASUREMENTS:
-                    m = gun.measurements
-                    value = body.get(item) if body.get(item) else "0"
-                    m.update({item: to_int(value)})
-                    gun.measurements = m
                 gun.put()
                 return {"gun": gun.api_data(users, True),
                         "sites": [new_site.api_data() if old_site is None else old_site.api_data() , new_site.api_data()]
@@ -176,7 +176,8 @@ class GunApi:
                           description= body.get("description", ""),
                           context= body.get("context", ""),
                           urls = list(body.get("urls","")),
-                          attributions = list(body.get("attributions",""))
+                          attributions = list(body.get("attributions","")),
+                          web_links = False if body.get("urls", "") == "" else True,
                           )
                 gun.location = GeoPoint(location["lat"], location["lng"])
                 for url in body.get("image_urls", []):

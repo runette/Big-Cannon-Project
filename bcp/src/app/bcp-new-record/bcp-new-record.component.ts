@@ -3,7 +3,7 @@ import { BcpFilterValuesService } from '../bcp-filter-values.service';
 import { GalleryItem, ImageItem  } from 'ng-gallery';
 import { BcpApiService } from '../bcp-api.service';
 import { MatStepper } from '@angular/material/stepper';
-import { BcpPhotosComponent } from '../bcp-photos/bcp-photos.component';
+import { BcpPhotosComponent } from '../bcp-photo-select/bcp-photos.component';
 import { BcpMapDataService } from '../bcp-map-data.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BcpUser, BcpUserService } from '../bcp-user.service';
@@ -11,6 +11,8 @@ import { Subscription } from 'rxjs';
 import { Site, BcpSiteDataService, Geo } from '../bcp-site-data.service';
 import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ParamMap } from '@angular/router';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   selector: 'app-bcp-new-record',
@@ -44,7 +46,9 @@ export class BcpNewRecordComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
   viewport: google.maps.LatLngBoundsLiteral;
   steponeCompleted: boolean = false;
-  steptwoCompleted: boolean = false;
+  get steptwoCompleted(): boolean {
+    return this._files.length > 0 || this._urls.length > 0;
+  }
 
   fabIcon: string = "skip_next";
   fabActive: boolean = false;
@@ -67,22 +71,24 @@ get site() {
 }
 
 set site(site: Site) {
-  this._site = site;
-  if (site) {
-    let geo =  new Geo(site.geocode.geometry)
-    this.viewport =geo.viewport;
-    if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
-      this.steponeCompleted = true;
-      this.fabActive = true;
+  google.maps.importLibrary('geometry').then( (_) => {
+    this._site = site;
+    if (site) {
+      let geo =  new Geo(site.geocode.geometry)
+      this.viewport =geo.viewport;
+      if (new google.maps.LatLngBounds(this.viewport).contains(this.location)) {
+        this.steponeCompleted = true;
+        this.fabActive = true;
+      } else {
+        this.location = geo.location;
+        this.steponeCompleted = true;
+        this.fabActive = true;
+      }
     } else {
-      this.location = geo.location;
-      this.steponeCompleted = true;
-      this.fabActive = true;
+      this.steponeCompleted=false;
+      this.fabActive = false;
     }
-  } else {
-    this.steponeCompleted=false;
-    this.fabActive = false;
-  }
+  })
 }
 
 get location (){
@@ -108,7 +114,8 @@ set location (loc){
               public userData: BcpUserService,
               public request: ActivatedRoute,
               private sites: BcpSiteDataService,
-              public changeDetect: ChangeDetectorRef
+              public changeDetect: ChangeDetectorRef,
+              public dialog: MatDialog,
               ){
     this.location = {lat:0, lng:0};
     this.subscriptions.push (userData.user.subscribe(user => this.userChange(user)));
@@ -131,8 +138,7 @@ set location (loc){
     this.currentUser = user;
   }
 
-  acceptPhoto(flag: boolean): void {
-    if (! flag ) return;
+  acceptPhoto(): void {
     if (! this.site.id) {
       let data = {
         source: "Google",
@@ -165,22 +171,25 @@ set location (loc){
     if (this.currentUser && this.currentUser.test_user) folderName = "dev";
 
     if (this.user.current_user) {
-      this.user.current_user.getIdToken().then( token => this.api.apiPost( token, this.api.ADDRECORD, data ).subscribe({
-        next: response => {
-          const gun = response['gun'];
-          const sites = response['sites'];
-          this.mapData.add(gun);
-          for (const site of sites) {
-            if (site) {
-              this.sites.add(site);
-            }
-          };
+      this.user.current_user.getIdToken().then( 
+        token => this.api.apiPost( token, this.api.ADDRECORD, data )
+          .subscribe({
+            next: response => {
+              const gun = response['gun'];
+              const sites = response['sites'];
+              this.mapData.add(gun);
+              for (const site of sites) {
+                if (site) {
+                  this.sites.add(site);
+                }
+              };
 
-          this.photo.send_file( `${folderName}/${gun['gunid']}`, gun['gunid']);
-          this.router.navigate(["/database","entry"], {queryParams:{"gunid":gun['gunid']}});
-        }
-      }
-      ))
+              this.photo.send_file( `${folderName}/${gun['gunid']}`, gun['gunid']);
+              this.router.navigate(["/database","entry"], {queryParams:{"gunid":gun['gunid']}});
+            }
+          }
+        )
+      )
     }
   }
 
@@ -203,7 +212,7 @@ set location (loc){
 
   fabAction(): void{
     if (this.stepper.selectedIndex == 1 && this.steponeCompleted && this.steptwoCompleted) {
-      this.acceptPhoto(true);
+      this.acceptPhoto();
     } else {
       this.stepper.next();
     }
@@ -212,25 +221,27 @@ set location (loc){
   selectionChange(event: StepperSelectionEvent): void{
     if (event.selectedIndex == 0) {
       this.fabActive = this.steponeCompleted;
+      this.fabIcon= "skip_next";
     } else {
       this.fabActive = this.steptwoCompleted;
+      this.fabIcon= "upload_file";
     }
   }
 
   newImageUrl(urls: string[]): void {
     this._urls = urls;
-    const flag = this._files.length > 0 || this._urls.length > 0;
-    this.steptwoCompleted=flag;
-    this.fabActive=flag;
+    this.fabActive=this.steptwoCompleted;
+    this.fabIcon = "upload_file";
     this.setImages();
+    this.changeDetect.detectChanges();
   }
 
   newImage(files: FileList): void {
-    const flag = files.length > 0 || this._urls.length > 0;
-    this.steptwoCompleted=flag;
-    this.fabActive=flag;
+    this.fabActive=this.steptwoCompleted;
     this._files = Array.from(files)
+    this.fabIcon = "upload_file";
     this.setImages();
+    this.changeDetect.detectChanges();
   }
 
   setImages():void {
@@ -252,8 +263,19 @@ set location (loc){
 
   imageError($event: any): void {
     if ($event) {
-      this.steptwoCompleted = false;
       this.fabActive = false;
     }
   }
+
+  showDialog() {
+    this.dialog.open(DialogContent);
+  }
 }
+
+@Component({
+  selector: 'help-dialog-content',
+  templateUrl: 'help-dialog-content.html',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule],
+})
+export class DialogContent {}

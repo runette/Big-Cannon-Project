@@ -84,7 +84,7 @@ export class BcpRecordSurveyorComponent implements OnInit, AfterViewInit, OnDest
   
   updateSvg(): void {
     for (let i = 0; i< this.keys.length; i++){
-      this.cannonSvg.getElementById(this.elements[i]).firstElementChild.innerHTML = this.gunForm.value[this.keys[i]] ? this.gunForm.value[this.keys[i]] : "";
+      this.cannonSvg.getElementById(this.elements[i]).firstElementChild.innerHTML = isNaN(this.gun.measurements[this.keys[i]]) ? "" : this.gun.measurements[this.keys[i]] / this.scale;
     };
   }
 
@@ -93,8 +93,15 @@ export class BcpRecordSurveyorComponent implements OnInit, AfterViewInit, OnDest
       this.edit = this.currentUser.fireUserData.uid == this.gun.userId ? true : false || this.currentUser.standing != "OBSERVER";
     }
     if(this.gunForm) 
-      this.keys.forEach(key => {this.gunForm.patchValue({
-          [key]: this.gun[key]
+      this.keys.forEach(key => {
+        let value;
+        if(isNaN(this.gun.measurements[key])) {
+          value = "";
+        } else {
+          value = this.gun.measurements[key] / this.scale;
+        }
+        this.gunForm.patchValue({
+          [key]: value
         }, {
           emitEvent: false
         });

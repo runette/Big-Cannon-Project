@@ -177,10 +177,12 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onBoundsChanged(): void {
-    if (this.map){
+    google.maps.importLibrary('maps').then( (_) =>{
+      if (! this.map ) return;
       let proj = this.map.getProjection();
       let bounds = this.map.getBounds();
-      this.data.nativeBounds = bounds;
+      let boundsLiteral = bounds.toJSON();
+      this.data.nativeBounds = boundsLiteral;
       let ne = bounds.getNorthEast();
       let sw = bounds.getSouthWest();
       // if zoomed too close - the calculation will fail because the bounds are limited to +-180. +-90
@@ -190,8 +192,8 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
                 Math.abs(sw.lng()) == 180;
       // if out of bounds or on a small screen - the map is the bounding box
       if (oob || this.breakpointObserver.isMatched([Breakpoints.XSmall, Breakpoints.Small])) {
-        this.data.boundingBox = bounds;
-        this.sites.boundingBox = bounds;
+        this.data.boundingBox = boundsLiteral;
+        this.sites.boundingBox = boundsLiteral;
       // otherwise - the dotted line box is the bounding box
       } else {
 
@@ -208,10 +210,11 @@ export class BcpDatabaseComponent implements OnInit, AfterViewInit, OnDestroy {
             73/scale + topRight.y
           ))
         );
-        this.data.boundingBox = boundingBox;
-        this.sites.boundingBox = boundingBox;
+        boundsLiteral = boundingBox.toJSON();
+        this.data.boundingBox = boundsLiteral;
+        this.sites.boundingBox = boundsLiteral;
       }
-    }
+    });
   }
 
   public updateSites( ): void {

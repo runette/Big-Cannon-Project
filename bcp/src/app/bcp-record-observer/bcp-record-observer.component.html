@@ -369,11 +369,44 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <app-bcp-photos 
-                    [changeDetect]="changeDetect"
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                       Add Photos
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Upload Photos</mat-card-title>
+                            <mat-card-subtitle>Leave Blank if Not Needed</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <app-bcp-photo-select
+                                [changeDetect]="changeDetect"
+                            ></app-bcp-photo-select>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Link to Existing Photographs</mat-card-title>
+                            <mat-card-subtitle>Leave Blank if Not Needed</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <app-bcp-list-input
+                                label="Enter the URLs for the Photos"
+                                placeholder="add url (e.g. https://www.site.com/photo.jpg)"
+                                (updateList)="newImageUrl($event)"
+                            >
+                            </app-bcp-list-input>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-action-row>
+                        <button mat-raised-button color="primary" (click)="acceptPhoto()">Upload</button>
+                    </mat-action-row>
+                  </mat-expansion-panel>
+                <app-bcp-photo-gallery
                     [images]="images"
-                    (submit$)="acceptPhoto()"
-                ></app-bcp-photos>
+                ></app-bcp-photo-gallery>
             </mat-card-content>
         </mat-card>
     }

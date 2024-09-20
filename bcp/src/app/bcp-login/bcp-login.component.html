@@ -32,7 +32,9 @@
         </mat-card-header>
         <mat-card-content>
             <p>
-                @if (error) {Login Failed!}
+                @if (error) {
+                    {{errorText}}
+                }
             </p>
             <p>
                 <mat-form-field>
@@ -76,6 +78,19 @@
                     </div>
                     <span class="gsi-material-button-contents">Sign in with Email</span>
                     <span style="display: none;">Sign in with Email</span>
+                </div>
+            </button>
+            <button class="gsi-material-button" (click)="resetLogin()">
+                <div class="gsi-material-button-state">
+                </div>
+                <div class="gsi-material-button-content-wrapper">
+                    <div class="gsi-material-button-icon">
+                        <i class="material-icons" >
+                            restart_alt
+                        </i>
+                    </div>
+                    <span class="gsi-material-button-contents">Password Reset</span>
+                    <span style="display: none;">Password Reset</span>
                 </div>
             </button>
         </mat-card-actions>

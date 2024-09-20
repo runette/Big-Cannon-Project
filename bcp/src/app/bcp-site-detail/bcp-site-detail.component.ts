@@ -87,16 +87,17 @@ export class BcpSiteDetailComponent implements OnInit, OnDestroy {
   }
 
   loaded(map: google.maps.Map): void {
-    if (map) this.map = map;
-    this.map.fitBounds(this.site.geocode.geometry.viewport,0);
-    
-    for (let gun of this.guns) {
-      if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.icon.url = '../assets/cannon_bronze.png';
-      else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.icon.url = '../assets/cannon_silver.png';
-      else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.icon.url = '../assets/cannon_gold.png';
-      this.markerPositions.push({position: new google.maps.LatLng(gun.location), icon:this.icon});
-    }
-
+    google.maps.importLibrary('maps').then( (_) => {
+      if (map) this.map = map;
+      this.map.fitBounds(this.site.geocode.geometry.viewport,0);
+      
+      for (let gun of this.guns) {
+        if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[1]) this.icon.url = '../assets/cannon_bronze.png';
+        else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[2]) this.icon.url = '../assets/cannon_silver.png';
+        else if (gun.quality == this.DATA_VALUES.RECORD_QUALITIES[3]) this.icon.url = '../assets/cannon_gold.png';
+        this.markerPositions.push({position: new google.maps.LatLng(gun.location), icon:this.icon});
+      }
+    })
   }
 
   submit(){}

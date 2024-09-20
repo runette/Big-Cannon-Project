@@ -48,6 +48,6 @@ export const environment = {
     storageBucket: STORAGE_BUCKET,
   },
 
-  apiUrl: 'https://www.bigcannonproject.org/_ah/api'
-  //apiUrl: 'http://localhost:8000/_ah/api',
+  //apiUrl: 'https://www.bigcannonproject.org/_ah/api'
+  apiUrl: 'http://localhost:8000/_ah/api',
 }

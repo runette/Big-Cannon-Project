@@ -17,7 +17,7 @@ export class BcpMapDataService implements OnDestroy{
   private _recordStatus : RecordStatus = "All";
   private _order : Order = "Latest First";
   private _ownRecords : boolean = false;
-  private _boundingBox: google.maps.LatLngBounds;
+  private _boundingBox: google.maps.LatLngBoundsLiteral;
   private _here: boolean = true;
   private _namespace: string= "";
 
@@ -25,7 +25,7 @@ export class BcpMapDataService implements OnDestroy{
   hereText:string="Here";
   ownText:string="Everyone";
   clusterText:string="Sites";
-  nativeBounds: google.maps.LatLngBounds;
+  nativeBounds: google.maps.LatLngBoundsLiteral;
 
   filteredData: MapData;
   geoFilteredData: MapData;
@@ -112,12 +112,12 @@ export class BcpMapDataService implements OnDestroy{
     return this._ownRecords;
   }
 
-  set boundingBox(bbox: google.maps.LatLngBounds) {
+  set boundingBox(bbox: google.maps.LatLngBoundsLiteral) {
     this._boundingBox = bbox;
     this.geoFilter();
   }
 
-  get boundingBox(): google.maps.LatLngBounds {
+  get boundingBox(): google.maps.LatLngBoundsLiteral {
     return this._boundingBox;
   }
 
@@ -145,12 +145,15 @@ export class BcpMapDataService implements OnDestroy{
   }
 
   public geoFilter():void {
-    if (this.filteredData && this.filteredData.length > 0) {
-      this.geoFilteredData = this.filteredData.filter(item => {
-        return (!this.here || this.boundingBox && this.boundingBox.contains(item.location));
-      })
-      this.gunSort();
-    }
+    google.maps.importLibrary('geometry').then( (_) => {
+      if (this.filteredData && this.filteredData.length > 0) {
+        const boundingBox = new google.maps.LatLngBounds(this.boundingBox);
+        this.geoFilteredData = this.filteredData.filter(item => {
+          return (!this.here || boundingBox.contains(item.location));
+        })
+        this.gunSort();
+      }
+    })
   }
 
   public gunSort(): void {
