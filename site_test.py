@@ -15,6 +15,3 @@ with client.context():
     users = User.query().fetch()
     for gun in result:
         print(gun.api_data(users, False))
-            
-
-

@@ -1,6 +1,6 @@
 {
   "name": "bcp",
-  "version": "3.1.0.b3",
+  "version": "3.1.0.b4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/runette/Big-Cannon-Project.git"
@@ -20,9 +20,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve ",
-    "build": "./build.sh --configuration=production",
+    "build": "./build.sh",
     "deploy": "source deploy.sh",
-    "test": "./build.sh --configuration=itest",
+    "test": "./build-test.sh",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
