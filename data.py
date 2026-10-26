@@ -123,9 +123,11 @@ class Gun(ndb.Model):
                 thumbnail = images[0].get("original")
             except Exception:
                 thumbnail= ""
-
-        name = [user for user in users if user.user_id ==
+        try:
+            name = [user for user in users if user.user_id ==
                 self.user_id][0].fire_user['name']
+        except:
+            name = "anon"
         try:
             line = {}
             line.update({'thumbnail': thumbnail, 'owner': name})
